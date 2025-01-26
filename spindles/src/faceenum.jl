@@ -72,7 +72,11 @@ facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) && s.faces[k] !== nothing
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
 
-    # base cases 0 and 1
+    if !inciscomputed(s)
+        computeinc!(s)
+    end
+
+    # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
         s.faces[0] = [findall(s.inc[v]) for v=1:nv]
     elseif k == 1
@@ -127,9 +131,9 @@ stores list of all facets (more memory eff, near-simple polytopes have few inc f
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     if !(-1 <= k <= size(s.B, 2))
-        return nothing
+        return Vector{Int}()  # no face
     elseif k == -1  # empty face
-        return [Vector{Int}()]
+        return [collect(1:size(s.B, 1))]  # TODO assuming a polytope
     else
         if !facescomputed(s, k)
             computefacesofdim!(s, k, stopatvertex)

@@ -58,7 +58,7 @@ end
 Returns a `FaceState` object.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
-    nv = nvertices(s)
+    #nv = nvertices(s)
 
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
     face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
