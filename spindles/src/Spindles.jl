@@ -55,6 +55,18 @@ function computeinc!(s::Spindle)
     s.inc = [isapprox.(s.B * v, s.d) for v in vertices(s)]
 end
 
+"""
+    incidentvertices
+
+List the indices of all vertices of the spindle `s` that are incident with `facets`. Returns an iterator.
+"""
+function incidentvertices(s::Spindle, facets::Vector{Int})
+    if !inciscomputed(s)
+        computeinc!(s)
+    end
+    return (v for v=1:nvertices(s) if all(s.inc[v][facets]))
+end
+
 
 apicescomputed(s::Spindle) = s.apices !== nothing
 function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)  # or write two methods for function
