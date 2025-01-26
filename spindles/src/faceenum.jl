@@ -126,7 +126,7 @@ stores list of all facets (more memory eff, near-simple polytopes have few inc f
 # containing the face instead of vertex sets of faces
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    if k < -1 || k > size(s.B, 2)
+    if !(-1 <= k <= size(s.B, 2))
         return nothing
     elseif k == -1  # empty face
         return [Vector{Int}()]
