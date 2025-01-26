@@ -3,14 +3,32 @@ struct FaceState
     good::Bool
     facets::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}  # TODO create abstracttype for edge?
-    vsubsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} # TODO
+    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} # TODO
 
     # TODO perform checks on construction
 end
 
+distscomputed(s::Spindle) = s.dists !== nothing
+function computedistances!(s::Spindle)
+    # for each apex, use the Bellman-Ford algorithm to compute the length of shortest edge walks to all vertices
+    s.dists = Dict(a => bellman_ford_shortest_paths(s.graph, a).dists for a in apices(s))
+end
 
-# lists the vertices on the face in cyclic order
-# using DFS=BFS here
+"""
+
+"""
+function dist_toapex(s::Spindle, apex::Int, v::Int)
+    if !distscomputed(s)
+        computedistances!(s)
+    end
+    
+    apex in apices(s) || error("$(apex) is not an apex")
+    1 <= v <= nvertices(s) || error("index out of bounds")  # TODO
+    
+    return s.dists[apex][v]
+end
+
+# lists the vertices on the face in cyclic order (DFS/BFS)
 function cyclicorder(adj::Dict)  # TODO type
     if !all(length.(values(adj)) .== 2)
         error("not a cycle")
@@ -34,14 +52,16 @@ function cyclicorder(adj::Dict)  # TODO type
 end
 
 
-# return FaceState
+"""
+
+
+Returns a `FaceState` object.
+"""
 function isgood2face(s::Spindle, facets::Vector{Int})
     nv = nvertices(s)
 
-    #verticesinface = [v for v=1:nv if all(s.inc[v][facets])]
-    #edgesinface = [e for e in edges(s) if all(reduce(.&, s.inc[e])[facets])]
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
-    face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)  # more efficient!
+    face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
     edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]    
     n = length(verticesinface)
 
@@ -51,10 +71,8 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     # TODO equivalent?
     n >= 6 && length(edgesinface) == n || return FaceState(false, nothing, nothing, nothing)
     
-    # we avoid building the graph using Graphs package...
-    # TODO compare @time Graphs.induced_subgraph
     # and instead build adjacency list, probably not much more expensive than building a high-level graph?
-    # or try adj matrix? sum over row/col must be 2 everywhere
+    # TODO try adj matrix? sum over row/col must be 2 everywhere
     adj = Dict(v => [] for v in verticesinface)
     for (u,v) in edgesinface
         push!(adj[u],v)
@@ -65,11 +83,11 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     all(length.(values(adj)) .== 2) || return FaceState(false, nothing, nothing, nothing)
 
     # (3) shortest edge walks to and from the face must have total length <= k-2
-    dists_to_apex = [bellman_ford_shortest_paths(s.graph, a).dists for a in apices(s)]
-    # TODO cache distances!
-
-    #@show sum(map(d -> minimum(d.dists[verticesinface]), dists_to_apex))
-    if sum(map(d -> minimum(d[verticesinface]), dists_to_apex)) > dim(s)-2  # TODO debug
+    # TODO debug
+    dists_by_apex = [[dist_toapex(s, a, v) for v in verticesinface] for a in apices(s)]
+    #map(a -> map(v -> dist_toapex(s, a, v), verticesinface), apices(s))
+    #println("DEBUG: ", sum(map(minimum, dists_by_apex)))
+    if sum(map(minimum, dists_by_apex)) > dim(s)-2
         return FaceState(false, nothing, nothing, nothing)
     end
 
@@ -85,11 +103,10 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     # and the corresponding edges are i,i+1 and j,j+1 (indices wrap around)
     # (i,j) must allow for at least one vertex in between i+1 and j and between j+1 and i:
 
-    for i=1:n, j=i+1:n  # invariant i<j
+    for i=1:n, j=i+1:n
         if mod(i-j, n) >= 3 && mod(j-i, n) >= 3
-            vertices_plus = i+2:j-1   # TODO naming suggest V^\pm when it has nothing do with it!!!
+            vertices_plus = i+2:j-1   # TODO naming suggests V^\pm when it has nothing do with it
             vertices_minus = [j+2:n; max(1,j+2-n):i-1]
-            #println(n, " ", (i,j), "\t", vertices_plus," ", vertices_minus)
             
             # both sets of vertices are connected, and they must be nonempty:
             @assert length(vertices_plus) * length(vertices_minus) > 0
@@ -98,14 +115,11 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             # their distances to opposite apices are at most d-2
 
             # maximum distance of a vertex in _plus (or _minus, resp.) to each apex (lists with 2 entries each)
-            max_dists_plus  = map(d -> maximum(d[cyclic[vertices_plus]]),  dists_to_apex)
-            max_dists_minus = map(d -> maximum(d[cyclic[vertices_minus]]), dists_to_apex)
-
-            #@show max_dists_plus, max_dists_minus
+            max_dists_plus  = [maximum([dist_toapex(s, a, cyclic[vp]) for vp in vertices_plus]) for a in apices(s)]
+            max_dists_minus = [maximum([dist_toapex(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
 
             if min(max_dists_plus[1] + max_dists_minus[2], max_dists_plus[2] + max_dists_minus[1]) <= dim(s)-2
-                #println("good: ", (i,j), " ", (cyclic[i:i+1], cyclic[[j,mod(j,n)+1]]))  
-                # mod(j,n)+1 test!!! j is 1-based index
+                # mod(j,n)+1 ----- j is 1-based index
                 fstate = FaceState(
                     true, facets, (cyclic[i:i+1], cyclic[[j,mod(j,n)+1]]), 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  

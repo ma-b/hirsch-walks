@@ -11,6 +11,7 @@ mutable struct Spindle
     apices::Union{Nothing, Vector{Int}}  # TODO tuple or vector?
     graph::Union{Nothing, SimpleGraph}
     faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of facets for each face of dim k
+    dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
     """
         Spindle(B, d [,lib])
@@ -32,7 +33,7 @@ mutable struct Spindle
 
         fdict = Dict(k => nothing for k=0:size(B,2))
 
-        return new(P, B, d, nothing, nothing, nothing, fdict)
+        return new(P, B, d, nothing, nothing, nothing, fdict, nothing)
     end
 
     function Spindle(P::Polyhedron)
@@ -41,7 +42,7 @@ mutable struct Spindle
         d = hrep(P).A[:,1]
         fdict = Dict(k => nothing for k=0:size(B,2))
 
-        return new(P, B, d, nothing, nothing, nothing, fdict)
+        return new(P, B, d, nothing, nothing, nothing, fdict, nothing)
     end
 end
 
@@ -120,6 +121,7 @@ end
 
 include("faceenum.jl")
 include("goodfaces.jl")
+#include("plots.jl")
 include("util.jl")
 
 end
