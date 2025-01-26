@@ -1,6 +1,7 @@
 module Spindles
 
 using Polyhedra
+using Graphs
 
 mutable struct Spindle
     P::Polyhedron
@@ -8,6 +9,8 @@ mutable struct Spindle
     d::Vector{T} where T<:Number
     inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
     apices::Union{Nothing, Vector{Int}}  # TODO tuple or vector?
+    graph::Union{Nothing, AbstractGraph}  # TODO Graphs.SimpleGraph
+    faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of facets for each face of dim k
 
     """
         Spindle(B, d [,lib])
@@ -19,6 +22,7 @@ mutable struct Spindle
         if size(B,1) != size(d,1)
             error("dimension mismatch: along axis 1, matrix B has $(size(B,1)) elements and d has $(size(d,1))")
         end
+    
         if lib !== nothing
             P = polyhedron(hrep(B,d), lib)
         else
@@ -26,14 +30,18 @@ mutable struct Spindle
             P = polyhedron(hrep(B,d))
         end
 
-        return new(P, B, d, nothing, nothing)
+        fdict = Dict(k => nothing for k=0:size(B,2))
+
+        return new(P, B, d, nothing, nothing, nothing, fdict)
     end
 
     function Spindle(P::Polyhedron)
         # extract B and d from homogenized representation
         B = -hrep(P).A[:,2:end]
         d = hrep(P).A[:,1]
-        return new(P, B, d, nothing, nothing)
+        fdict = Dict(k => nothing for k=0:size(B,2))
+
+        return new(P, B, d, nothing, nothing, nothing, fdict)
     end
 end
 
@@ -98,6 +106,7 @@ end
 
 # 
 
+include("faceenum.jl")
 include("util.jl")
 
 end
