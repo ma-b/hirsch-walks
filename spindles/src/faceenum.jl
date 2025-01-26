@@ -1,7 +1,7 @@
 graphiscomputed(s::Spindle) = s.graph !== nothing
 
 function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
-    nv = stopatvertex === nothing ? nvertices(s) : stopatvertex
+    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
 
     if !inciscomputed(s)
         computeinc!(s)
@@ -70,7 +70,7 @@ end
 
 facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) && s.faces[k] !== nothing
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    nv = stopatvertex === nothing ? nvertices(s) : stopatvertex
+    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
 
     # base cases 0 and 1
     if k == 0
