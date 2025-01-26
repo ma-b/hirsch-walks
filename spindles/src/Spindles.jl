@@ -119,6 +119,7 @@ end
 # 
 
 include("faceenum.jl")
+include("goodfaces.jl")
 include("util.jl")
 
 end
