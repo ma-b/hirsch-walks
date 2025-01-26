@@ -9,7 +9,7 @@ mutable struct Spindle
     d::Vector{T} where T<:Number
     inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
     apices::Union{Nothing, Vector{Int}}  # TODO tuple or vector?
-    graph::Union{Nothing, AbstractGraph}  # TODO Graphs.SimpleGraph
+    graph::Union{Nothing, SimpleGraph}
     faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of facets for each face of dim k
 
     """
