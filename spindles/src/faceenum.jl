@@ -25,13 +25,13 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     # (2) drop all pairs that do not define edges: 
 
     # For two vertices i,j that are not adjacent, the minimal face containing both i and j must be at least 2-dimensional.
-    # This face could still be contained in (at least) dimension minus 1 facets (more than would be needed) if the polytope is degenerate.
+    # This face could still be contained in dimension minus 1 facets (more than would be needed) if the polytope is degenerate.
     # But then this face has an edge, which is contained in at least one additional facet. So for i,j to be adjacent, 
     # their set of common facets must be inclusion-maximal among all such sets.
 
     # For near-simple polytopes, the task of checking for inclusion-maximality can be sped up be splitting the list of possibly
-    # adjacent pairs i,j into those that are contained in exactly dimension minus 1 facets and those that are contained in more,
-    # since most pairs will be of the first type. Inclusion among their sets of common facets does not have to be checked 
+    # adjacent pairs i,j into those that are contained in exactly dimension minus 1 facets and those that are contained in more:
+    # most pairs will be of the first type, and inclusion among their sets of common facets does not have to be checked 
     # because they are all distinct and of the same size.
 
     nondegenerate_pairs = [e for (e,m) in pairs if m == dim(s)-1]
@@ -68,18 +68,21 @@ function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
 end
 
 
-facescomputed(s::Spindle, k::Int) = k >= 0 && s.faces[k] !== nothing  # TODO guard k >= 0 needed?
+facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) && s.faces[k] !== nothing
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     nv = stopatvertex === nothing ? nvertices(s) : stopatvertex
 
-    if k == 1
+    # base cases 0 and 1
+    if k == 0
+        s.faces[0] = [findall(s.inc[v]) for v=1:nv]
+    elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[k] = [findall(reduce(.&, s.inc[e])) for e in edges(s, nv)]
+        s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s, nv)]
     else
         s.faces[k] = Vector{Vector{Int}}()
 
-        # enumerate faces of one dimension lower
+        # recurse and enumerate faces of one dimension lower
         lowerfaces = facesofdim(s, k-1, nv)
 
         # TODO rename pairs
@@ -123,12 +126,16 @@ stores list of all facets (more memory eff, near-simple polytopes have few inc f
 # containing the face instead of vertex sets of faces
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    k >= 1 || error("dimension must be at least 1")  # TODO allow k==0
-
-    if !facescomputed(s, k)
-        computefacesofdim!(s, k, stopatvertex)
+    if k < -1 || k > size(s.B, 2)
+        return nothing
+    elseif k == -1  # empty face
+        return [Vector{Int}()]
+    else
+        if !facescomputed(s, k)
+            computefacesofdim!(s, k, stopatvertex)
+        end
+        return s.faces[k]
     end
-    return s.faces[k]
 end
 
 
@@ -136,5 +143,6 @@ end
     nfacesofdim(s, k)
 
 Count the `k`-dimensional faces of the spindle `s`. Shorthand for `length(facesofdim(s, k))`.
+Uses the convention that the dimension of the empty face is -1.
 """
-nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k))
+nfacesofdim(s::Spindle, k::Int) = facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0
