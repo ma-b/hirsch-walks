@@ -1,3 +1,5 @@
+export facesofdim, nfacesofdim, edges
+
 graphiscomputed(s::Spindle) = s.graph !== nothing
 
 function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)

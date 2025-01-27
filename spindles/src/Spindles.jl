@@ -3,6 +3,8 @@ module Spindles
 using Polyhedra
 using Graphs
 
+export Spindle, vertices, nvertices, apices
+
 mutable struct Spindle
     P::Polyhedron
     B::Matrix{T} where T<:Number

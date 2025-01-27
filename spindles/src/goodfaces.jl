@@ -1,3 +1,5 @@
+export isgood2face
+
 # TODO incorporate direction of shortcuts
 struct FaceState
     good::Bool
@@ -10,6 +12,9 @@ end
 
 distscomputed(s::Spindle) = s.dists !== nothing
 function computedistances!(s::Spindle)
+    if !graphiscomputed(s)
+        computegraph!(s)
+    end
     # for each apex, use the Bellman-Ford algorithm to compute the length of shortest edge walks to all vertices
     s.dists = Dict(a => bellman_ford_shortest_paths(s.graph, a).dists for a in apices(s))
 end
@@ -53,7 +58,7 @@ end
 
 
 """
-
+    isgood2face(s, facets)
 
 Returns a `FaceState` object.
 """
