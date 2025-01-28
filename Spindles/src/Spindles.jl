@@ -48,7 +48,8 @@ mutable struct Spindle
     end
 end
 
-dim(s::Spindle) = Polyhedra.dim(s.P)
+nfacets(s::Spindle) = size(s.B, 1)  # TODO
+dim(s::Spindle) = size(s.B, 2) #Polyhedra.dim(s.P)  # TODO
 
 vertices(s::Spindle) = Polyhedra.points(s.P)  # returns an iterator
 nvertices(s::Spindle) = Polyhedra.npoints(s.P)
