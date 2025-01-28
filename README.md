@@ -7,7 +7,7 @@ This repository provides a collection of tools to study paths on polytopes:
 These tools have been developed to analyze known counterexamples to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). See here for the theoretical results that the authors of this repository obtained.
 
 The package `Spindles` uses the [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) interface for polyhedral computations, and [Graphs.jl](https://juliagraphs.org/Graphs.jl/) for basic graph computations. 
-See [here](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/examples/Demo.ipynb) for a demo.
+See [here](Spindles/examples/Demo.ipynb) for a demo.
 
 ## Getting Started
 
