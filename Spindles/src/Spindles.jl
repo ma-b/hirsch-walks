@@ -10,16 +10,16 @@ mutable struct Spindle
     B::Matrix{T} where T<:Number
     d::Vector{T} where T<:Number
     inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
-    apices::Union{Nothing, Vector{Int}}  # TODO tuple or vector?
+    apices::Union{Nothing, Vector{Int}}
     graph::Union{Nothing, SimpleGraph}
-    faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of facets for each face of dim k
+    faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of incident facets for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
     """
         Spindle(B, d [,lib])
 
     If `lib` is not specified, use the default library implemented in `Polyhedra`, 
-    see [here](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/).
+    see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/).
     """
     function Spindle(B::Matrix{T}, d::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
         if size(B,1) != size(d,1)

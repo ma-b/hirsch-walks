@@ -38,9 +38,8 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(labels[facet
 2D projection or combinatorial plot (graph)
 """
 function plot2face(s::Spindle, facets::Vector{Int}; 
-    usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,  # TODO more specific type for markupedges
-    #facelabel::Bool=true, edgelabels::Bool
-    #labels=label(:face, :edge, :vertex)
+    usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
+    showdist::Bool=false,
     facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing, #map(string, 1:size(s.B,1))
     figsize::Tuple{Int, Int}=(300,300),
     #plot_kwargs...
@@ -69,40 +68,32 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # ---- coordinates ----
 
     if usecoordinates
-        verts = hcat(vertices(s)...)'  # TODO performance? only use subset of vertices...
+        verts = hcat(vertices(s)...)'  # TODO only use subset of vertices
 
         # project out all but 2 coordinates in such a way that the projection is 2-dimensional again:
-        # the projection is 1-dimensional if all vertices, in particular the first three (recall that there
-        # are at least three), are collinear.
+        # the projection is 1-dimensional if the images of all vertices, in particular of the first three 
+        # (recall that there are at least three), are collinear.
 
+        # these two vectors are nonzero (and linearly independent) since they are differences of distinct vertices
         r12 = verts[cyclic[1],:] - verts[cyclic[2],:]
         r13 = verts[cyclic[1],:] - verts[cyclic[3],:]
-        # must be lin indep
         # TODO normalize?
-        #@show r12
-        #@show r13
 
-        # TODO better check absolute value > EPS ?
-        # find first nonzero component
-        i = findfirst(r12 .!= 0)
-        #@show i
+        # find first nonzero component (must exist since r12 is nonzero)
+        i = findfirst(@. !isapprox(r12, 0))
 
         # perform one Gauss step to eliminate component i of r2 (note: no zero division because of choice of i)
         r13_elim = r13 - r12 * r13[i] / r12[i]
-        #@show r13_elim #r12 * r13[i] / r12[i]#r13_
         
         # find first nonzero component of resulting vector
-        # note that entry i must be zero (or approx?)
-        @assert isapprox(r13_elim[i], 0)  # TODO or == 0
-        j = findfirst(@. !isapprox(r13_elim, 0))  # TODO test
-        # such a j must exist since r1 and r2 are lin indep (collinear => not vertices)
+        # note that entry i must be zero by construction
+        @assert isapprox(r13_elim[i], 0)
+        j = findfirst(@. !isapprox(r13_elim, 0))
+        # such a j must exist since r1 and r2 are linearly independent
         # now the 2x2 matrix induced by components i and j of r1 and r2_ is of the form [* *; 0 *] and has rank 2,
         # so projecting out all but i,j leaves projections of r1 and r2_ (and therefore r2) linearly independent.
-        #proj_onto_coords = i,j
-        #@show i,j
         
-        xs, ys = verts[cyclic,i], verts[cyclic,j]
-        # TODO better convert to float
+        xs, ys = verts[cyclic,i], verts[cyclic,j]  # TODO convert to float
     else
         R = 1
         angles = [2*pi*i/n for i=1:n]
@@ -111,7 +102,6 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # clear plot pane
     plot(
-        #border=:none, ticks=(0),
         ticks=nothing, legend=false, aspect_ratio=usecoordinates ? :auto : :equal, 
         framestyle=:box, size=figsize
     )
@@ -140,33 +130,34 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # vertex labels
     for i=1:n
         dists = [dist_toapex(s, a, cyclic[i]) for a in apices(s)]
+        labeltext = "$(cyclic[i])\n"
+        if showdist
+            labeltext *= "$(@sprintf("%d | %d", dists...))"
+        end
+
         annotate!(
             xs[i]+2*xs_offset[i], ys[i]+2*ys_offset[i], 
-            text("$(cyclic[i])\n$(@sprintf("%d | %d", dists...))", 10, :center), 
+            text(labeltext, 10, :center), 
             #size=12,   # TODO font size
             #color=:blue
-            #, horizontalalignment='center', verticalalignment='center'
         )
     end
 
     # edge labels
-    if true #show_edge_labels:
-        for i=1:n
-            j = mod(i,n)+1  # successor of i on the cycle
-            tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])  # TODO exclude facets
-            tightfacets = [f for f in tightfacets if !(f in facets)] # is Bool vector more efficient than BitVector?
-            annotate!(
-                (xs[i]+xs[j]+xs_offset[i]+xs_offset[j])/2, 
-                (ys[i]+ys[j]+ys_offset[i]+ys_offset[j])/2,
-                text(label(tightfacets, facetlabels), 8, :center)
-            )
-        end
+    for i=1:n
+        j = mod(i,n)+1  # successor of i on the cycle
+        tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
+        tightfacets = [f for f in tightfacets if !(f in facets)]
+        annotate!(
+            (xs[i]+xs[j]+xs_offset[i]+xs_offset[j])/2, 
+            (ys[i]+ys[j]+ys_offset[i]+ys_offset[j])/2,
+            text(label(tightfacets, facetlabels), 8, :center)
+        )
     end
 
     title!(label(facets, facetlabels))
-    if true #show_face_label:
-        annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))  # TODO vert/horiz text alignment? # gray35
-    end
+    # face label
+    annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))
 
     # set limits
     L = 1
@@ -177,17 +168,14 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # ---- mark up edges ----
     if edgepair !== nothing
-        # TODO check two edges, and of length 2 each
+        if !all(@. length(edgepair) == 2) || !all(Graphs.has_edge(s.graph, e...) for e in edgepair)
+            error("invalid edges")
+        end
 
         for k=1:2
-            # TODO # get edge-defining inequality for reference edge
+            # get edge-defining inequality for reference edge
             efacets = findall(reduce(.&, s.inc[edgepair[k==1 ? 2 : 1]]))
-            efacets = [f for f in efacets if !(f in facets)]
-            #@show efacets
-            if length(efacets) > 1
-                println("degenerate endpoints")
-            end
-            ineq = efacets[1]  # get single element
+            efacets = findfirst(f -> !(f in facets), efacets)
 
             (u,v), uniquedir = directedge(s, edgepair[k], ineq)
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
