@@ -41,7 +41,9 @@ function plot2face(s::Spindle, facets::Vector{Int};
     usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,  # TODO more specific type for markupedges
     #facelabel::Bool=true, edgelabels::Bool
     #labels=label(:face, :edge, :vertex)
-    facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing#map(string, 1:size(s.B,1))
+    facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing, #map(string, 1:size(s.B,1))
+    figsize::Tuple{Int, Int}=(300,300),
+    #plot_kwargs...
 )
     if !graphiscomputed(s)
         computegraph!(s)
@@ -110,8 +112,8 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # clear plot pane
     plot(
         #border=:none, ticks=(0),
-        ticks=nothing, legend=false, aspect_ratio=:equal, framestyle=:box, 
-        size=(300,300)
+        ticks=nothing, legend=false, aspect_ratio=usecoordinates ? :auto : :equal, 
+        framestyle=:box, size=figsize
     )
     plot!(Shape(xs,ys), lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
     scatter!(xs, ys, markercolor=:steelblue, markersize=5, markerstrokewidth=0)
