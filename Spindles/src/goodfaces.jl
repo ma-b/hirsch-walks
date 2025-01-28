@@ -33,6 +33,10 @@ function dist_toapex(s::Spindle, apex::Int, v::Int)
     return s.dists[apex][v]
 end
 
+#comblength(s::Spindle) = dist_toapex(s, apices(s)...)  # TODO test symmetry
+
+
+
 # lists the vertices on the face in cyclic order (DFS/BFS)
 function cyclicorder(adj::Dict)  # TODO type
     if !all(length.(values(adj)) .== 2)
@@ -63,7 +67,9 @@ end
 Returns a `FaceState` object.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
-    #nv = nvertices(s)
+    if !graphiscomputed(s)
+        computegraph!(s)
+    end
 
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
     face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
