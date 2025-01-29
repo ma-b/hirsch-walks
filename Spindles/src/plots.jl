@@ -39,10 +39,8 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(labels[facet
 """
 function plot2face(s::Spindle, facets::Vector{Int}; 
     usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
-    showdist::Bool=false,
-    facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing, #map(string, 1:size(s.B,1))
+    showdist::Bool=false, facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing,
     figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
-    #plot_kwargs...
 )
     if !graphiscomputed(s)
         computegraph!(s)
@@ -50,23 +48,9 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     verticesinface = collect(incidentvertices(s, facets))
     n = length(verticesinface)
-    #face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
-    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
-    #edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]
     
-    #=
-    # we avoid building the graph using Graphs package...
-    # TODO compare @time Graphs.induced_subgraph
-    # and instead build adjacency list, probably not much more expensive than building a high-level graph?
-    # or try adj matrix? sum over row/col must be 2 everywhere
-    adj = Dict(v => [] for v in verticesinface)
-    for (u,v) in edgesinface
-        push!(adj[u],v)
-        push!(adj[v],u)
-    end
-
-    cyclic = cyclicorder(adj)
-    =#
+    # list the vertices in cyclic order around the polygon
+    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
 
     # ---- coordinates ----
 
@@ -114,26 +98,22 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # ---- labels ----
 
-    # barycentre of face
-    bx, by = sum(xs)/length(xs), sum(ys)/length(ys)
-
-    # normalize offset vectors
-    lengths =  @. sqrt((xs-bx)^2 + (ys-by)^2)
-    #M = 2  # factor by which the normalized offset vector is scaled
-    xlabel_offset, ylabel_offset = map(arr -> (maximum(arr) .- minimum(arr)) / M, [xs,ys])  # TODO
-    #@show xlabel_offset, ylabel_offset
-    #@show lengths
-
-    xs_offset = @. (xs.-bx) / lengths * xlabel_offset
-    ys_offset = @. (ys.-by) / lengths * ylabel_offset
-
-    #@show xs_offset, ys_offset
-
     if facetlabels === nothing
         facetlabels = map(string, 1:nfacets(s))
     end
 
-    
+    # vertex and edge labels are unformly shifted outwards from the respective vertex positions and edge midpoints,
+    # away from the barycentre of face
+
+    # first compute the barycentre
+    bx, by = sum(xs)/length(xs), sum(ys)/length(ys)
+
+    # compute normalized offset vectors
+    lengths =  @. sqrt((xs-bx)^2 + (ys-by)^2)
+    xlabel_offset, ylabel_offset = map(arr -> (maximum(arr) .- minimum(arr)) / M, [xs,ys])  # TODO
+    xs_offset = @. (xs.-bx) / lengths * xlabel_offset
+    ys_offset = @. (ys.-by) / lengths * ylabel_offset
+
     # vertex labels
     for i=1:n
         dists = [dist_toapex(s, a, cyclic[i]) for a in apices(s)]
@@ -158,8 +138,6 @@ function plot2face(s::Spindle, facets::Vector{Int};
         annotate!(
             (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
             (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
-            #(xs[i]+xs[j]+xs_offset[i]+xs_offset[j])/2, 
-            #(ys[i]+ys[j]+ys_offset[i]+ys_offset[j])/2,
             text(label(tightfacets, facetlabels), 8, :center)
         )
     end

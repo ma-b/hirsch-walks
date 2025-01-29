@@ -63,30 +63,6 @@ function cyclicorder(g::SimpleGraph, vmap::Vector{Int})
     return vmap[cyclic[1:end-1]]  # last element is starting vertex again
 end
 
-#=
-# lists the vertices on the face in cyclic order (DFS/BFS)
-function cyclicorder2(adj::Dict)  # TODO type
-    if !all(length.(values(adj)) .== 2)
-        error("not a cycle")
-    end
-
-    # pick an arbitrary starting vertex
-    v = first(keys(adj))
-    u = v  # will keep track of the predecessor of v, initialize to v
-    cyclic = [v]
-    for count=1:length(keys(adj))
-        # find neighbor of v distinct from u and append it to list
-        nb = adj[v][1] != u ? adj[v][1] : adj[v][2]
-        push!(cyclic, nb)
-        u = v
-        v = nb
-    end
-
-    # we know that graph of face must be a cycle  
-    @assert cyclic[1] == cyclic[end]  # BUG may still work if adj defines two cycles of same length, then loop twice!!
-    return cyclic[1:end-1]  # last element is starting vertex again
-end
-=#
 
 """
     isgood2face(s, facets)
@@ -102,49 +78,24 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     n = length(verticesinface)
 
     # first, check simple necessary conditions to speed up computations:
+    
     # (1) good faces must have at least 6 vertices
     n >= 6 || return FaceState(false, nothing, nothing, nothing)
 
-    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
     # (2) good faces must be 2-faces, i.e., their graph is a cycle
+    # to check this, list the vertices in cyclic order around the face
+    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
     cyclic !== nothing || return FaceState(false, nothing, nothing, nothing)
-    
-    #face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
-    #edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]    
-    
-    #=
-    # first, check simple necessary conditions:
-    # (1) good faces must have at least 6 vertices
-    # (2) good faces must be 2-faces, i.e., their graph is a cycle with all node degrees equal to 2
-    # TODO equivalent?
-    n >= 6 && length(edgesinface) == n || return FaceState(false, nothing, nothing, nothing)
-    
-    # and instead build adjacency list, probably not much more expensive than building a high-level graph?
-    # TODO try adj matrix? sum over row/col must be 2 everywhere
-    adj = Dict(v => [] for v in verticesinface)
-    for (u,v) in edgesinface
-        push!(adj[u],v)
-        push!(adj[v],u)
-    end
-
-    # for each vertex (key), the list of neighbors (values) must have length 2
-    all(length.(values(adj)) .== 2) || return FaceState(false, nothing, nothing, nothing)
-    =#
 
     # (3) shortest edge walks to and from the face must have total length <= dim-2
-    # TODO debug
     dists_by_apex = [[dist_toapex(s, a, v) for v in verticesinface] for a in apices(s)]
     if sum(map(minimum, dists_by_apex)) > dim(s)-2
         return FaceState(false, nothing, nothing, nothing)
     end
 
-    # Now that all preliminary checks have been successful, we check the face for being good as follows:
-    # 'good' means that there are connected subsets of vertices vertices_plus and _minus
-    # such that there are exactly two edges with no endpoints in these sets. TODO necessary cond.
-    # So we may enumerate all possible subsets of vertices by checking pairs of edges.
-
-    ## first list the vertices on the face in cyclic order
-    #cyclic = cyclicorder(adj)
+    # now that all preliminary checks have been successful, we may check the face for being good 
+    # by enumerating all pairs of edges that partition the remaining vertices into nonempty "shores"
+    # at the right distance from the apices
     
     # enumerate pairs of edges that may work: tuples (i,j) where i and j are positions of vertices along the cyclic ordering
     # and the corresponding edges are i,i+1 and j,j+1 (indices wrap around)
@@ -166,7 +117,6 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             max_dists_minus = [maximum([dist_toapex(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
 
             if min(max_dists_plus[1] + max_dists_minus[2], max_dists_plus[2] + max_dists_minus[1]) <= dim(s)-2
-                # mod(j,n)+1 ----- j is 1-based index
                 fstate = FaceState(
                     true, facets, (cyclic[i:i+1], cyclic[[j,mod(j,n)+1]]), 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  
