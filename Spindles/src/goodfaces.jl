@@ -33,12 +33,39 @@ function dist_toapex(s::Spindle, apex::Int, v::Int)
     return s.dists[apex][v]
 end
 
-#comblength(s::Spindle) = dist_toapex(s, apices(s)...)  # TODO test symmetry
+# arguments as returned by induced subgraph; return nothing of not a cycle
+function cyclicorder(g::SimpleGraph, vmap::Vector{Int})
+    # pick an arbitrary starting vertex and traverse the graph g depth-first
+    start = first(Graphs.vertices(g))
+    cyclic = [start]
 
+    v = start
+    u = v  # will keep track of the predecessor of v throughout the following loop, initialize to v (arbitrary)
+    it = 0  # number of iterations
+    
+    while (v != start || it == 0) && it < Graphs.nv(g)
+        # find a neighbor of v distinct from u and append it to list
+        nb_idx = findfirst(neighbors(g, v) .!= u)
+        nb = neighbors(g, v)[nb_idx]
+        push!(cyclic, nb)
 
+        u = v
+        v = nb
+        it += 1
+    end
 
+    # for g to be a cycle, we must have traversed all vertices of g
+    if it < Graphs.nv(g)
+        return
+    end
+    
+    # map vertex indices back to vertices of the original graph
+    return vmap[cyclic[1:end-1]]  # last element is starting vertex again
+end
+
+#=
 # lists the vertices on the face in cyclic order (DFS/BFS)
-function cyclicorder(adj::Dict)  # TODO type
+function cyclicorder2(adj::Dict)  # TODO type
     if !all(length.(values(adj)) .== 2)
         error("not a cycle")
     end
@@ -59,7 +86,7 @@ function cyclicorder(adj::Dict)  # TODO type
     @assert cyclic[1] == cyclic[end]  # BUG may still work if adj defines two cycles of same length, then loop twice!!
     return cyclic[1:end-1]  # last element is starting vertex again
 end
-
+=#
 
 """
     isgood2face(s, facets)
@@ -72,10 +99,20 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     end
 
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
-    face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
-    edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]    
     n = length(verticesinface)
 
+    # first, check simple necessary conditions to speed up computations:
+    # (1) good faces must have at least 6 vertices
+    n >= 6 || return FaceState(false, nothing, nothing, nothing)
+
+    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
+    # (2) good faces must be 2-faces, i.e., their graph is a cycle
+    cyclic !== nothing || return FaceState(false, nothing, nothing, nothing)
+    
+    #face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
+    #edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]    
+    
+    #=
     # first, check simple necessary conditions:
     # (1) good faces must have at least 6 vertices
     # (2) good faces must be 2-faces, i.e., their graph is a cycle with all node degrees equal to 2
@@ -92,12 +129,11 @@ function isgood2face(s::Spindle, facets::Vector{Int})
 
     # for each vertex (key), the list of neighbors (values) must have length 2
     all(length.(values(adj)) .== 2) || return FaceState(false, nothing, nothing, nothing)
+    =#
 
-    # (3) shortest edge walks to and from the face must have total length <= k-2
+    # (3) shortest edge walks to and from the face must have total length <= dim-2
     # TODO debug
     dists_by_apex = [[dist_toapex(s, a, v) for v in verticesinface] for a in apices(s)]
-    #map(a -> map(v -> dist_toapex(s, a, v), verticesinface), apices(s))
-    #println("DEBUG: ", sum(map(minimum, dists_by_apex)))
     if sum(map(minimum, dists_by_apex)) > dim(s)-2
         return FaceState(false, nothing, nothing, nothing)
     end
@@ -107,8 +143,8 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     # such that there are exactly two edges with no endpoints in these sets. TODO necessary cond.
     # So we may enumerate all possible subsets of vertices by checking pairs of edges.
 
-    # first list the vertices on the face in cyclic order
-    cyclic = cyclicorder(adj)
+    ## first list the vertices on the face in cyclic order
+    #cyclic = cyclicorder(adj)
     
     # enumerate pairs of edges that may work: tuples (i,j) where i and j are positions of vertices along the cyclic ordering
     # and the corresponding edges are i,i+1 and j,j+1 (indices wrap around)
