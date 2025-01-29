@@ -41,7 +41,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
     showdist::Bool=false,
     facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing, #map(string, 1:size(s.B,1))
-    figsize::Tuple{Int, Int}=(300,300),
+    figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
     #plot_kwargs...
 )
     if !graphiscomputed(s)
@@ -49,10 +49,12 @@ function plot2face(s::Spindle, facets::Vector{Int};
     end
 
     verticesinface = collect(incidentvertices(s, facets))
-    face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
-    edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]
     n = length(verticesinface)
-
+    #face_subgraph, vmap = induced_subgraph(s.graph, verticesinface)
+    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
+    #edgesinface = [(vmap[src(e)], vmap[dst(e)]) for e in Graphs.edges(face_subgraph)]
+    
+    #=
     # we avoid building the graph using Graphs package...
     # TODO compare @time Graphs.induced_subgraph
     # and instead build adjacency list, probably not much more expensive than building a high-level graph?
@@ -64,6 +66,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     end
 
     cyclic = cyclicorder(adj)
+    =#
 
     # ---- coordinates ----
 
@@ -115,28 +118,32 @@ function plot2face(s::Spindle, facets::Vector{Int};
     bx, by = sum(xs)/length(xs), sum(ys)/length(ys)
 
     # normalize offset vectors
-    lengths = @. sqrt((xs-bx)^2 + (ys-by)^2)
-    M = 3  # factor by which the normalized offset vector is scaled
+    lengths =  @. sqrt((xs-bx)^2 + (ys-by)^2)
+    #M = 2  # factor by which the normalized offset vector is scaled
     xlabel_offset, ylabel_offset = map(arr -> (maximum(arr) .- minimum(arr)) / M, [xs,ys])  # TODO
+    #@show xlabel_offset, ylabel_offset
+    #@show lengths
 
-    xs_offset = (xs.-bx) / lengths * xlabel_offset
-    ys_offset = (ys.-by) / lengths * ylabel_offset
+    xs_offset = @. (xs.-bx) / lengths * xlabel_offset
+    ys_offset = @. (ys.-by) / lengths * ylabel_offset
+
+    #@show xs_offset, ys_offset
 
     if facetlabels === nothing
-        facetlabels = map(string, 1:size(s.B,1))
+        facetlabels = map(string, 1:nfacets(s))
     end
 
     
     # vertex labels
     for i=1:n
         dists = [dist_toapex(s, a, cyclic[i]) for a in apices(s)]
-        labeltext = "$(cyclic[i])\n"
+        labeltext = "$(cyclic[i])"
         if showdist
-            labeltext *= "$(@sprintf("%d | %d", dists...))"
+            labeltext *= "\n$(@sprintf("%d | %d", dists...))"
         end
 
         annotate!(
-            xs[i]+2*xs_offset[i], ys[i]+2*ys_offset[i], 
+            xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 
             text(labeltext, 10, :center), 
             #size=12,   # TODO font size
             #color=:blue
@@ -149,8 +156,10 @@ function plot2face(s::Spindle, facets::Vector{Int};
         tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
         tightfacets = [f for f in tightfacets if !(f in facets)]
         annotate!(
-            (xs[i]+xs[j]+xs_offset[i]+xs_offset[j])/2, 
-            (ys[i]+ys[j]+ys_offset[i]+ys_offset[j])/2,
+            (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
+            (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
+            #(xs[i]+xs[j]+xs_offset[i]+xs_offset[j])/2, 
+            #(ys[i]+ys[j]+ys_offset[i]+ys_offset[j])/2,
             text(label(tightfacets, facetlabels), 8, :center)
         )
     end
@@ -160,7 +169,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))
 
     # set limits
-    L = 1
+    #L = 1
     plot!(
         xlim=[minimum(xs) - L*xlabel_offset, maximum(xs) + L*xlabel_offset], 
         ylim=[minimum(ys) - L*ylabel_offset, maximum(ys) + L*ylabel_offset]
@@ -175,12 +184,13 @@ function plot2face(s::Spindle, facets::Vector{Int};
         for k=1:2
             # get edge-defining inequality for reference edge
             efacets = findall(reduce(.&, s.inc[edgepair[k==1 ? 2 : 1]]))
-            efacets = findfirst(f -> !(f in facets), efacets)
+            ineq = findfirst(f -> !(f in facets), efacets)
 
-            (u,v), uniquedir = directedge(s, edgepair[k], ineq)
+            (u,v), uniquedir = directedge(s, edgepair[k], efacets[ineq])
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
-            plot!(xs[[i,j]],ys[[i,j]], linecolor=:red, linewidth=3, 
-                arrow=uniquedir
+            plot!(
+                xs[[i,j]], ys[[i,j]], 
+                linecolor=:red, linewidth=3, arrow=uniquedir
                 #arrow=arrow(:head, 10, 101)
             )
         end
