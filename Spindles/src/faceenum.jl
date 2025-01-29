@@ -39,8 +39,6 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     nondegenerate_pairs = [e for (e,m) in pairs if m == dim(s)-1]
     degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(s)-1]
 
-    #@show length(nondegenerate_pairs), length(degenerate_pairs)
-
     # we use this function to check inclusion-maximality:
     # return true if and only if each facet that contains all vertices in list `a` also contains all vertices in `b`
     iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, s.inc[a]) .<= reduce(.&, s.inc[b]))
@@ -97,11 +95,9 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
             f[s.inc[v][f]] for v=1:nv, f in lowerfaces
             if !all(s.inc[v][f]) && sum(s.inc[v][f]) >= dim(s)-k  
         )
-        @show length(pairs)
 
         nondegenerate_pairs = [f for f in pairs if length(f) == dim(s)-k]
         degenerate_pairs = [f for f in pairs if length(f) > dim(s)-k]
-        @show length(nondegenerate_pairs), length(degenerate_pairs)
 
         # find inclusion-maximal subsets among all subsets of facets found 
         # (some may be higher-dim faces contained in more than the minimum number of facets)
