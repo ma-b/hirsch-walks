@@ -3,12 +3,11 @@ export facesofdim, nfacesofdim, edges
 graphiscomputed(s::Spindle) = s.graph !== nothing
 
 function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
-    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
-
     if !inciscomputed(s)
         computeinc!(s)
     end
-
+    
+    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
     s.graph = Graph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
@@ -21,7 +20,7 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     
     pairs = [
         ([i,j], n_inc(i,j)) for i=1:nv, j=1:nv 
-        if i < j && n_inc(i,j) >= dim(s)-1  # TODO assuming dim is cached
+        if i < j && n_inc(i,j) >= dim(s)-1
     ]
 
     # (2) drop all pairs that do not define edges: 
@@ -70,11 +69,11 @@ end
 
 facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) && s.faces[k] !== nothing
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
-
     if !inciscomputed(s)
         computeinc!(s)
     end
+    
+    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))    
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
@@ -131,7 +130,7 @@ function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothin
     if !(-1 <= k <= size(s.B, 2))
         return Vector{Int}()  # no face
     elseif k == -1  # empty face
-        return [collect(1:size(s.B, 1))]  # TODO assuming a polytope
+        return [collect(1:nfacets(s))]  # TODO assuming a polytope
     else
         if !facescomputed(s, k)
             computefacesofdim!(s, k, stopatvertex)
