@@ -12,11 +12,8 @@ end
 
 distscomputed(s::Spindle) = s.dists !== nothing
 function computedistances!(s::Spindle)
-    if !graphiscomputed(s)
-        computegraph!(s)
-    end
     # for each apex, use the Bellman-Ford algorithm to compute the length of shortest edge walks to all vertices
-    s.dists = Dict(a => bellman_ford_shortest_paths(s.graph, a).dists for a in apices(s))
+    s.dists = Dict(a => bellman_ford_shortest_paths(graph(s), a).dists for a in apices(s))
 end
 
 """
@@ -70,10 +67,6 @@ end
 Returns a `FaceState` object.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
-    if !graphiscomputed(s)
-        computegraph!(s)
-    end
-
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
     n = length(verticesinface)
 
@@ -84,7 +77,7 @@ function isgood2face(s::Spindle, facets::Vector{Int})
 
     # (2) good faces must be 2-faces, i.e., their graph is a cycle
     # to check this, list the vertices in cyclic order around the face
-    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
+    cyclic = cyclicorder(induced_subgraph(graph(s), verticesinface)...)
     cyclic !== nothing || return FaceState(false, nothing, nothing, nothing)
 
     # (3) shortest edge walks to and from the face must have total length <= dim-2

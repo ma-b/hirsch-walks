@@ -14,7 +14,7 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
     
     nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
-    s.graph = Graph(nv)
+    s.graph = Graph(nv)  # TODO SimpleGraph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
     # https://sites.google.com/site/christopheweibel/research/hirsch-conjecture    
@@ -65,11 +65,8 @@ end
 lifts Graphs.edges to Spindle
 """
 function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
-    if !graphiscomputed(s)
-        computegraph!(s, stopatvertex)
-    end
     # TODO return iterator?
-    return [[src(e), dst(e)] for e in Graphs.edges(s.graph)]
+    return [[src(e), dst(e)] for e in Graphs.edges(graph(s))]
 end
 
 

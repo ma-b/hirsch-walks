@@ -73,7 +73,7 @@ end
 
 
 apicescomputed(s::Spindle) = s.apices !== nothing
-function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)  # or write two methods for function
+function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)
     nv = nvertices(s)  # triggers vertex enumeration if necessary
     if !inciscomputed(s)
         computeinc!(s)

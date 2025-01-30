@@ -42,15 +42,11 @@ function plot2face(s::Spindle, facets::Vector{Int};
     showdist::Bool=false, facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing,
     figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
 )
-    if !graphiscomputed(s)
-        computegraph!(s)
-    end
-
     verticesinface = collect(incidentvertices(s, facets))
     n = length(verticesinface)
     
     # list the vertices in cyclic order around the polygon
-    cyclic = cyclicorder(induced_subgraph(s.graph, verticesinface)...)
+    cyclic = cyclicorder(induced_subgraph(graph(s), verticesinface)...)
 
     # ---- coordinates ----
 
@@ -155,7 +151,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # ---- mark up edges ----
     if edgepair !== nothing
-        if !all(@. length(edgepair) == 2) || !all(Graphs.has_edge(s.graph, e...) for e in edgepair)
+        if !all(@. length(edgepair) == 2) || !all(Graphs.has_edge(graph(s), e...) for e in edgepair)
             error("invalid edges")
         end
 
