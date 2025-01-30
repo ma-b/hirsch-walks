@@ -24,8 +24,8 @@ function dist_toapex(s::Spindle, apex::Int, v::Int)
         computedistances!(s)
     end
     
-    apex in apices(s) || error("$(apex) is not an apex")
-    1 <= v <= nvertices(s) || error("index out of bounds")  # TODO
+    apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
+    1 <= v <= nvertices(s) || throw(ArgumentError("index $(v) out of bounds for $(nvertices(s)) vertices"))
     
     return s.dists[apex][v]
 end

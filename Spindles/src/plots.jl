@@ -152,7 +152,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # ---- mark up edges ----
     if edgepair !== nothing
         if !all(@. length(edgepair) == 2) || !all(Graphs.has_edge(graph(s), e...) for e in edgepair)
-            error("invalid edges")
+            throw(ArgumentError("invalid edges"))
         end
 
         for k=1:2

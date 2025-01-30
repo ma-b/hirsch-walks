@@ -94,7 +94,7 @@ function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)
     else
         # check index, (assuming fits into Int)
         if apex < 1 || apex > nv
-            error("not a vertex: $(apex)")
+            throw(ArgumentError("not a vertex: $(apex)"))
         end
 
         for i=1:nv
