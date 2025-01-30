@@ -6,4 +6,4 @@ using Test
 using Spindles
 
 include("polymake.jl")
-include("graph_degen.jl")
+include("inc.jl")
