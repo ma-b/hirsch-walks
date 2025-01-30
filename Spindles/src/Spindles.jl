@@ -5,10 +5,10 @@ using Graphs
 
 export Spindle, vertices, nvertices, nfacets, apices
 
-mutable struct Spindle
-    P::Polyhedron
-    B::Matrix{T} where T<:Number
-    d::Vector{T} where T<:Number
+mutable struct Spindle #{T}
+    const P::Polyhedron #{T}
+    const B::Matrix{T} where T<:Number
+    const d::Vector{T} where T<:Number
     inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
     apices::Union{Nothing, Vector{Int}}
     graph::Union{Nothing, SimpleGraph}
@@ -23,7 +23,7 @@ mutable struct Spindle
     """
     function Spindle(B::Matrix{T}, d::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
         if size(B,1) != size(d,1)
-            error("dimension mismatch: along axis 1, matrix B has $(size(B,1)) elements and d has $(size(d,1))")
+            throw(DimensionMismatch("matrix B has dimensions $(size(B)), vector d has length $(length(d))"))
         end
     
         if lib !== nothing
