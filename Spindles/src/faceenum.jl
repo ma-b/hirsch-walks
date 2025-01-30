@@ -1,6 +1,12 @@
-export facesofdim, nfacesofdim, edges
+export facesofdim, nfacesofdim, graph
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
+function graph(s::Spindle)
+    if !graphiscomputed(s)
+        computegraph!(s)
+    end
+    return s.graph
+end
 
 function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     if !inciscomputed(s)

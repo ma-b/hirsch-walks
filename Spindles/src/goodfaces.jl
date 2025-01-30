@@ -1,4 +1,4 @@
-export isgood2face
+export isgood2face, dist_toapex
 
 # TODO incorporate direction of shortcuts
 struct FaceState
