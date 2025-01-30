@@ -26,10 +26,10 @@ using Graphs: ne
 
     @testset "Length test" begin
         @test nfacesofdim(s, -1) == 1
-		@test nfacesofdim(s, 0) == nvertices(s)
-		@test nfacesofdim(s, 1) == ne(graph(s))
-		@test nfacesofdim(s, 4) == nfacets(s)
-		@test nfacesofdim(s, 5) == 1
-		@test nfacesofdim(s, 6) == 0
+        @test nfacesofdim(s, 0) == nvertices(s)
+        @test nfacesofdim(s, 1) == ne(graph(s))
+        @test nfacesofdim(s, 4) == nfacets(s)
+        @test nfacesofdim(s, 5) == 1
+        @test nfacesofdim(s, 6) == 0
     end
 end
