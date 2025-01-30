@@ -113,7 +113,7 @@ end
 If `apex` is unspecified, ...
 """
 function apices(s::Spindle, apex::Union{Nothing, Int}=nothing)
-    if !apicescomputed(s) || !(apex in s.apices)
+    if !apicescomputed(s) || (apex !== nothing && !(apex in s.apices))
         computeapices!(s, apex)
     end
     return s.apices
