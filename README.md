@@ -11,11 +11,6 @@ These tools have been developed to analyze known counterexamples to the [Hirsch 
 
 To run the Python code, you will need a working installation of Sage. Alternatively, you can use [CoCalc](https://cocalc.com/) to run it.
 
-The Julia code uses the [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) interface for polyhedral computations, and [Graphs.jl](https://juliagraphs.org/Graphs.jl/) for basic graph computations. 
-Besides, the following Julia packages are required:
+The Julia code uses the [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) interface for polyhedral computations, [Graphs.jl](https://juliagraphs.org/Graphs.jl/) for basic graph computations, and [Plots.jl](https://docs.juliaplots.org/) for visualization.
 
-* `Plots`
-* `Printf`
-* `DelimitedFiles`
-
-See [here](Spindles/examples/Demo.ipynb) for a demo.
+See [here](Spindles/examples/Demo.ipynb) for a demo. To run the demo in your own Julia environment, the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required.
