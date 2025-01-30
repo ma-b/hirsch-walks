@@ -3,7 +3,7 @@ module Spindles
 using Polyhedra
 using Graphs
 
-export Spindle, vertices, nvertices, apices
+export Spindle, vertices, nvertices, nfacets, apices
 
 mutable struct Spindle
     P::Polyhedron
