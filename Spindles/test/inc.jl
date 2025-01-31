@@ -9,6 +9,9 @@ using Graphs: degree
 
     Spindles.computeinc!(sp)
 
+    # distance symmetric
+    @test dist_toapex(sp, apices(sp)...) == dist_toapex(sp, reverse(apices(sp))...)
+
     @testset "Count degenerate vertices" begin
         # find all degenerate vertices
         @test findall(degree(graph(sp)) .> 5) == findall(map(sum, sp.inc) .> 5)

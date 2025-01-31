@@ -7,3 +7,5 @@ using Spindles
 
 include("polymake.jl")
 include("inc.jl")
+include("cube.jl")
+include("paper.jl")
