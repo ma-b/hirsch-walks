@@ -12,7 +12,7 @@ These tools have been developed to analyze known counterexamples to the [Hirsch 
 To run the Python code, you will need a working installation of Sage. Alternatively, you can use [CoCalc](https://cocalc.com/) to run it.
 
 The Julia code requires version 1.8 or higher. It uses the following Julia packages:
-* [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/), an interface for polyhedral computations, 
+* [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) for polyhedral computations, 
 * [Graphs.jl](https://juliagraphs.org/Graphs.jl/) for basic graph computations, 
 * [Plots.jl](https://docs.juliaplots.org/) for visualization.
 

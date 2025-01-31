@@ -3,13 +3,18 @@ using Graphs: degree
 
 @testset "Tests for incidence/graph computations" begin
 
-    B = readrational("../examples/s-25-5.txt", BigInt)
+    B = readrational("../examples/s-25-5.txt", BigInt)  # TODO for others too
     d = ones(Rational{BigInt}, size(B, 1))
     sp = Spindle(B, d)
 
     Spindles.computeinc!(sp)
 
-    # distance symmetric
+    @testset "Redundancy/dimension" begin
+        @test nfacets(sp) == size(B, 1)  # we know that Bx <= d is irredundant
+        @test Spindles.dim(sp) == 5
+    end
+
+    # distances must be symmetric
     @test dist_toapex(sp, apices(sp)...) == dist_toapex(sp, reverse(apices(sp))...)
 
     @testset "Count degenerate vertices" begin
@@ -35,8 +40,7 @@ using Graphs: degree
             return inc
         end
 
-        inc2 = inctest(sp)
-        @test sp.inc == inc2
+        @test sp.inc == inctest(sp)
     end
 end
 
