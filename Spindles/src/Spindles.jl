@@ -60,7 +60,7 @@ function computeinc!(s::Spindle)
 end
 
 """
-    incidentvertices
+    incidentvertices(s, facets)
 
 List the indices of all vertices of the spindle `s` that are incident with `facets`. Returns an iterator.
 """
@@ -103,14 +103,17 @@ function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)
                 return s.apices
             end
         end
-        error("not a spindle with $(apex) as an apex")  # TODO more specific error type
+        error("not a spindle with $(apex) as an apex")
     end
 end
 
 """
     apices(s [,apex])
 
-If `apex` is unspecified, ...
+Compute a pair of vertices (the **apices**) such that each facet of `s` is incident to exactly one of them, or throw
+an error if no such pair exists.
+
+If `apex` is specified, find a second vertex for an apex pair.
 """
 function apices(s::Spindle, apex::Union{Nothing, Int}=nothing)
     if !apicescomputed(s) || (apex !== nothing && !(apex in s.apices))
