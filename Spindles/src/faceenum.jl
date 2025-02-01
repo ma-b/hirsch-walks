@@ -1,9 +1,9 @@
 export facesofdim, nfacesofdim, graph
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
-function graph(s::Spindle)
+function graph(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     if !graphiscomputed(s)
-        computegraph!(s)
+        computegraph!(s, stopatvertex)
     end
     return s.graph
 end
@@ -62,11 +62,10 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
 end
 
 """
-lifts Graphs.edges to Spindle
+Lift `Graphs.edges` to `Spindle`. Returns an iterator over all pairs of indices of adjacent vertices.
 """
 function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
-    # TODO return iterator?
-    return [[src(e), dst(e)] for e in Graphs.edges(graph(s))]
+    ([src(e), dst(e)] for e in Graphs.edges(graph(s, stopatvertex)))
 end
 
 
@@ -84,7 +83,7 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s, nv)]
+        s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s)]
     else
         s.faces[k] = Vector{Vector{Int}}()
 
