@@ -7,8 +7,6 @@ using Graphs: degree
     b = ones(Rational{BigInt}, size(A, 1))
     sp = Spindle(A, b)
 
-    @test hrep(sp.P).A == sp.A
-
     Spindles.computeinc!(sp)
 
     @testset "Redundancy/dimension" begin

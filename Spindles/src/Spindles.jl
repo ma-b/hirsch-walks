@@ -1,3 +1,6 @@
+"""
+...
+"""
 module Spindles
 
 using Polyhedra
@@ -44,11 +47,8 @@ mutable struct Spindle #{T}
     end
 
     function Spindle(P::Polyhedron)
-        # extract A and b from homogenized representation
-        A = -hrep(P).A[:,2:end]
-        b = hrep(P).A[:,1]
+        A, b = hrep(P).A, hrep(P).b
         fdict = Dict(k => nothing for k=0:size(A,2))
-
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 end

@@ -5,7 +5,8 @@ end
 using Test
 using Spindles
 
-include("polymake.jl")
+include("rep.jl")
 include("inc.jl")
+include("polymake.jl")
 include("cube.jl")
 include("paper.jl")
