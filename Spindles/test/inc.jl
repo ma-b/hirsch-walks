@@ -3,14 +3,16 @@ using Graphs: degree
 
 @testset "Tests for incidence/graph computations" begin
 
-    B = readrational("../examples/s-25-5.txt", BigInt)  # TODO for others too
-    d = ones(Rational{BigInt}, size(B, 1))
-    sp = Spindle(B, d)
+    A = readrational("../examples/s-25-5.txt", BigInt)  # TODO for others too
+    b = ones(Rational{BigInt}, size(A, 1))
+    sp = Spindle(A, b)
+
+    @test hrep(sp.P).A == sp.A
 
     Spindles.computeinc!(sp)
 
     @testset "Redundancy/dimension" begin
-        @test nfacets(sp) == size(B, 1)  # we know that Bx <= d is irredundant
+        @test nfacets(sp) == size(A, 1)  # we know that Ax <= b is irredundant
         @test Spindles.dim(sp) == 5
     end
 
@@ -32,7 +34,7 @@ using Graphs: degree
 
             for v in eachindex(vertices(s))
                 inc[v.value] = falses(nf)
-                for f in Polyhedra.incidenthalfspaceindices(s.P, v)  # assuming they are numbered as in s.B
+                for f in Polyhedra.incidenthalfspaceindices(s.P, v)  # assuming they are numbered as in s.A
                     inc[v.value][f.value] = true
                 end
             end

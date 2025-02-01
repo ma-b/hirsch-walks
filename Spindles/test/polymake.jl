@@ -3,9 +3,9 @@ using Graphs: nv, ne
 
 @testset "Tests for faceenum.jl" begin
 
-    B = readrational("../examples/s-25-5.txt", BigInt)
-    d = ones(Rational{BigInt}, size(B,1))
-    s = Spindle(B, d)
+    A = readrational("../examples/s-25-5.txt", BigInt)
+    b = ones(Rational{BigInt}, size(A, 1))
+    s = Spindle(A, b)
 
     @testset "Test against polymake" begin
         # parse polymake output from Hasse diagram command and return list of incident facets for each face
@@ -16,7 +16,7 @@ using Graphs: nv, ne
             return [map(x -> parse(Int, x), split(f)) for f in strlist]
         end
 
-        for k=-1:size(B,2)
+        for k=-1:size(s.A, 2)
             ps = readpolymake(@sprintf("s-25-5_f%d.txt", k))
             # convert 0-based polymake indices to 1-based Julia indices
             ps = map(x->x.+1, ps)

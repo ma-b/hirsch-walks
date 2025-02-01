@@ -5,10 +5,15 @@ using Graphs
 
 export Spindle, vertices, nvertices, nfacets, apices
 
+"""
+    Spindle(A, b [,lib])
+
+...
+"""
 mutable struct Spindle #{T}
     const P::Polyhedron #{T}
-    const B::Matrix{T} where T<:Number
-    const d::Vector{T} where T<:Number
+    const A::Matrix{T} where T<:Number
+    const b::Vector{T} where T<:Number
     inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
     apices::Union{Nothing, Vector{Int}}
     graph::Union{Nothing, SimpleGraph}
@@ -16,47 +21,47 @@ mutable struct Spindle #{T}
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
     """
-        Spindle(B, d [,lib])
+        Spindle(A, b [,lib])
 
     If `lib` is not specified, use the default library implemented in `Polyhedra`, 
     see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/).
     """
-    function Spindle(B::Matrix{T}, d::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
-        if size(B,1) != size(d,1)
-            throw(DimensionMismatch("matrix B has dimensions $(size(B)), vector d has length $(length(d))"))
+    function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
+        if size(A,1) != size(b,1)
+            throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
         end
     
         if lib !== nothing
-            P = polyhedron(hrep(B,d), lib)
+            P = polyhedron(hrep(A, b), lib)
         else
             # use default library
-            P = polyhedron(hrep(B,d))
+            P = polyhedron(hrep(A, b))
         end
 
-        fdict = Dict(k => nothing for k=0:size(B,2))
+        fdict = Dict(k => nothing for k=0:size(A,2))
 
-        return new(P, B, d, nothing, nothing, nothing, fdict, nothing)
+        return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 
     function Spindle(P::Polyhedron)
-        # extract B and d from homogenized representation
-        B = -hrep(P).A[:,2:end]
-        d = hrep(P).A[:,1]
-        fdict = Dict(k => nothing for k=0:size(B,2))
+        # extract A and b from homogenized representation
+        A = -hrep(P).A[:,2:end]
+        b = hrep(P).A[:,1]
+        fdict = Dict(k => nothing for k=0:size(A,2))
 
-        return new(P, B, d, nothing, nothing, nothing, fdict, nothing)
+        return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 end
 
-nfacets(s::Spindle) = size(s.B, 1)  # TODO
-dim(s::Spindle) = size(s.B, 2) #Polyhedra.dim(s.P)  # TODO
+nfacets(s::Spindle) = size(s.A, 1)  # TODO
+dim(s::Spindle) = size(s.A, 2) #Polyhedra.dim(s.P)  # TODO
 
 vertices(s::Spindle) = Polyhedra.points(s.P)  # returns an iterator
 nvertices(s::Spindle) = Polyhedra.npoints(s.P)
 
 inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
-    s.inc = [isapprox.(s.B * v, s.d) for v in vertices(s)]
+    s.inc = [isapprox.(s.A * v, s.b) for v in vertices(s)]
 end
 
 """

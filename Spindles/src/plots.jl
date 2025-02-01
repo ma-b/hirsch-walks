@@ -15,7 +15,7 @@ function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
     i = findfirst(@. !isapprox(r, 0))
     #@show i
     r ./= abs(r[i]) # normalize
-    dotproduct = s.B[facet,:]' * r
+    dotproduct = s.A[facet,:]' * r
 
     # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
     if dotproduct == 0
