@@ -27,7 +27,7 @@ using Graphs: nv, ne
     @testset "Length test" begin
         @test nfacesofdim(s, -1) == 1
         @test nfacesofdim(s, 0) == nvertices(s)
-        @test nv(graph(sp)) == nvertices(sp)
+        @test nv(graph(s)) == nvertices(s)
         @test nfacesofdim(s, 1) == ne(graph(s))
         @test nfacesofdim(s, 4) == nfacets(s)
         @test nfacesofdim(s, 5) == 1
