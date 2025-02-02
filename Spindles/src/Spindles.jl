@@ -61,7 +61,17 @@ nvertices(s::Spindle) = Polyhedra.npoints(s.P)
 
 inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
-    s.inc = [isapprox.(s.A * v, s.b) for v in vertices(s)]
+    s.inc = Vector{BitVector}(undef, nvertices(s))
+
+    nf = Polyhedra.nhalfspaces(s.P)
+    @assert nf == nfacets(s)  # assuming no redundancy
+
+    for v in eachindex(vertices(s))
+        s.inc[v.value] = falses(nf)
+        for f in Polyhedra.incidenthalfspaceindices(s.P, v)  # assuming they are numbered as in s.A
+            s.inc[v.value][f.value] = true
+        end
+    end
 end
 
 """
