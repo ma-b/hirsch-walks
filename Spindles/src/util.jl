@@ -5,6 +5,9 @@ using DelimitedFiles
 function str2rat(str::AbstractString, ::Type{T}) where T<:Integer 
     Rational(reduce(//, parse.(T, split(str, '/'))))
 end
+function rat2str(x::Rational)
+    x.den == 1 ? string(x.num) : @sprintf("%d/%d", x.num, x.den)
+end
 
 """
     readrational(filename, T)
@@ -67,10 +70,47 @@ julia> labels
 julia> rm("ineq.txt")
 ```
 """
-function readineq(filename::AbstractString, ::Type{T}) where T<:Integer
-    arr = readdlm(filename, ' ', String, comments=true, comment_char='#')
-    rowlabels = arr[:,1]
+function readineq(filename::AbstractString, ::Type{T}; comment_char::AbstractChar='#') where T<:Integer
+    arr = readdlm(filename, ' ', String, comments=true, comment_char=comment_char)
+    labels = arr[:,1]
     
     b, A = str2rat.(arr[:,2], T), -str2rat.(arr[:,3:end], T)
-    return A, b, rowlabels
+    return A, b, labels
+end
+
+
+"""
+    writeineq(filename, outfilename [, plusminus])
+
+Create file with inequality description in the form [b -A]. First column contains row/facet labels.
+
+Write to `outfilename`.
+"""
+function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
+    labels::Union{Nothing, Vector{<:AbstractString}}=nothing, labels_plusminus::Bool=false,
+    comments::Vector{<:AbstractString}=AbstractString[], comment_char::AbstractChar='#')
+    
+    size(A,1) == length(b) || throw(DimensionMismatch("...")) # TODO
+    
+    if labels === nothing
+        if labels_plusminus && iseven(size(A,1))
+            # TODO warning if plusminus is set and odd number of rows
+            labels = vcat([[string(Int(i))*"+", string(Int(i))*"-"] for i=1:size(A,1)//2]...)
+        else
+            labels = string.(1:size(A,1))
+        end
+    else
+        length(labels) == size(A,1) || throw(DimensionMismatch("got $(length(rowlabels)) labels for $(size(A,1)) rows"))
+    end    
+
+    arr = [labels rat2str.([b -A])]
+
+    # write comment lines
+    # TODO remove '\n'
+    write(outfilename, join([@sprintf("%s %s\n", comment_char, c) for c in comments]))
+    
+    # write matrix
+    open(outfilename, "a") do io  # append to file
+        writedlm(io, arr, ' ')
+    end
 end
