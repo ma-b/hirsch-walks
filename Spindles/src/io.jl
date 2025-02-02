@@ -107,7 +107,7 @@ function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
 
     # write comment lines
     # TODO remove '\n'
-    write(outfilename, join([@sprintf("%s %s\n", comment_char, c) for c in comments]))
+    write(outfilename, join(["$(comment_char) $(c)\n" for c in comments]))
     
     # write matrix
     open(outfilename, "a") do io  # append to file
