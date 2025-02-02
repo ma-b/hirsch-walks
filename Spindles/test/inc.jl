@@ -3,8 +3,7 @@ using Graphs: degree
 
 @testset "Tests for incidence/graph computations" begin
 
-    A = readrational("../examples/s-25-5.txt", BigInt)  # TODO for others too
-    b = ones(Rational{BigInt}, size(A, 1))
+    A, b, _ = readineq("../examples/s-25-5.txt", BigInt)  # TODO for others too
     sp = Spindle(A, b)
 
     Spindles.computeinc!(sp)
@@ -23,6 +22,15 @@ using Graphs: degree
     end
 
     @testset "Incidence matrix" begin
+        # computeinc! << 2 < 3 (10x memory allocations)
+        function inc2(s::Spindle)
+            [s.A * v .== s.b for v in vertices(s)]
+        end
+        function inc3(s::Spindle)
+            [isapprox.(s.A * v, s.b) for v in vertices(s)]
+        end
+
+        #=
         # alternative computation of vertex-facet incidences using Polyhedra.Indices
         function inctest(s::Spindle)
             inc = Vector(undef, nvertices(s))
@@ -39,8 +47,9 @@ using Graphs: degree
 
             return inc
         end
+        =#
 
-        @test sp.inc == inctest(sp)
+        @test sp.inc == inc2(sp) == inc3(sp)
     end
 end
 

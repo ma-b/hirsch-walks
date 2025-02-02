@@ -3,8 +3,7 @@ using Graphs: nv, ne
 
 @testset "Tests for faceenum.jl" begin
 
-    A = readrational("../examples/s-25-5.txt", BigInt)
-    b = ones(Rational{BigInt}, size(A, 1))
+    A, b, _ = readineq("../examples/s-25-5.txt", BigInt)
     s = Spindle(A, b)
 
     @testset "Test against polymake" begin

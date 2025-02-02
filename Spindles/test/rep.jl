@@ -1,8 +1,7 @@
 using Polyhedra: hrep
 
 @testset "Tests for representations" begin
-    A = readrational("../examples/s-25-5.txt", BigInt)
-    b = ones(Rational{BigInt}, size(A, 1))
+    A, b, _ = readineq("../examples/s-25-5.txt", BigInt)
     s1 = Spindle(A, b)
     s2 = Spindle(s1.P)
     s3 = Spindle(s2.A, s2.b)

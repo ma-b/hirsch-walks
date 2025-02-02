@@ -1,7 +1,6 @@
 @testset "Verify graphs from paper" begin
     
-    A = readrational("../examples/s-25-5.txt", BigInt)
-    b = ones(Rational{BigInt}, size(A,1))
+    A, b, _ = readineq("../examples/s-25-5.txt", BigInt)
     s = Spindle(A, b)
 
     gfs = [f for f in facesofdim(s, 2) if isgood2face(s, f).good]
