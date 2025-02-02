@@ -22,6 +22,9 @@ end
     readineq(filename, T)
 
 File format: labels b -A
+Return `A, b, labels` where `A` is a matrix of type `Rational{T}`.
+
+Lines starting with a `#` character and all characters on a line following `#` are ignored.
 
 # Examples
 ```jldoctest
