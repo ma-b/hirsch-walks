@@ -20,6 +20,49 @@ end
 
 """
     readineq(filename, T)
+
+File format: labels b -A
+
+# Examples
+```jldoctest
+julia> str = "# unit square\na 1 -1 0\nb 1 0 -1\nc 1 1 0\nd 1 0 1";
+
+julia> println(str)
+# unit square
+a 1 -1 0
+b 1 0 -1
+c 1 1 0
+d 1 0 1
+
+julia> open("ineq.txt", "w") do io
+           write(io, str)
+       end;
+
+julia> A, b, labels = readineq("ineq.txt", Int);
+
+julia> A
+4×2 Matrix{Rational{Int64}}:
+  1   0
+  0   1
+ -1   0
+  0  -1
+
+julia> b
+4-element Vector{Rational{Int64}}:
+ 1
+ 1
+ 1
+ 1
+
+julia> labels
+4-element Vector{String}:
+ "a"
+ "b"
+ "c"
+ "d"
+
+julia> rm("ineq.txt")
+```
 """
 function readineq(filename::AbstractString, ::Type{T}) where T<:Integer
     arr = readdlm(filename, ' ', String, comments=true, comment_char='#')
