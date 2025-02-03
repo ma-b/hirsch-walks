@@ -1,6 +1,9 @@
 export facesofdim, nfacesofdim, graph
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
+"""
+    graph(s)
+"""
 function graph(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     if !graphiscomputed(s)
         computegraph!(s, stopatvertex)
@@ -126,7 +129,8 @@ Enumerate all faces of dimension `k` of the spindle `s`, given by their sets of 
 Return a vector of vectors, one for each face. Results are stored/cached in `s`(?)
 Recursive, bottom-up / starting from vertices.
 stores list of all facets (more memory eff, near-simple polytopes have few inc facets) 
-# containing the face instead of vertex sets of faces
+
+containing the face instead of vertex sets of faces
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     if !(-1 <= k <= size(s.A, 2))
@@ -145,7 +149,7 @@ end
 """
     nfacesofdim(s, k)
 
-Count the `k`-dimensional faces of the spindle `s`. Shorthand for `length(facesofdim(s, k))`.
+Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(facesofdim(s, k))` if not nothing.
 Uses the convention that the dimension of the empty face is -1.
 """
 nfacesofdim(s::Spindle, k::Int) = facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0

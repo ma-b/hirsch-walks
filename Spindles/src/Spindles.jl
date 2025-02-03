@@ -56,7 +56,18 @@ end
 nfacets(s::Spindle) = size(s.A, 1)  # TODO
 dim(s::Spindle) = size(s.A, 2) #Polyhedra.dim(s.P)  # TODO
 
-vertices(s::Spindle) = Polyhedra.points(s.P)  # returns an iterator
+"""
+    vertices(s)
+
+Compute the vertices of the spindle `s`. Return an iterator.
+"""
+vertices(s::Spindle) = Polyhedra.points(s.P)
+
+"""
+    nvertices(s)
+
+Equivalent with `length(vertices(s))`.
+"""
 nvertices(s::Spindle) = Polyhedra.npoints(s.P)
 
 inciscomputed(s::Spindle) = s.inc !== nothing
@@ -129,6 +140,11 @@ Compute a pair of vertices (the **apices**) such that each facet of `s` is incid
 an error if no such pair exists.
 
 If `apex` is specified, find a second vertex for an apex pair.
+
+!!! note
+    Recomputed when?
+
+# Examples
 """
 function apices(s::Spindle, apex::Union{Nothing, Int}=nothing)
     if !apicescomputed(s) || (apex !== nothing && !(apex in s.apices))

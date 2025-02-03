@@ -31,7 +31,7 @@ Lines starting with a `#` character and all characters on a line following `#` a
 
 # Examples
 ```jldoctest
-julia> str = "# unit square\na 1 -1 0\nb 1 0 -1\nc 1 1 0\nd 1 0 1";
+julia> str = "# unit square\\na 1 -1 0\\nb 1 0 -1\\nc 1 1 0\\nd 1 0 1";
 
 julia> println(str)
 # unit square

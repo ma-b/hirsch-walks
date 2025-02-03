@@ -1,6 +1,9 @@
-export isgood2face, dist_toapex
+export isgood2face, dist_toapex #, FaceState
 
 # TODO incorporate direction of shortcuts
+"""
+    FaceState
+"""
 struct FaceState
     good::Bool
     facets::Union{Nothing, Vector{Int}}
@@ -64,7 +67,7 @@ end
 """
     isgood2face(s, facets)
 
-Returns a `FaceState` object.
+Returns a [`Spindles.FaceState`](@ref).
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
