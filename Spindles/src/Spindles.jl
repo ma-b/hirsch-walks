@@ -142,6 +142,7 @@ an error if no such pair exists.
 If `apex` is specified, find a second vertex for an apex pair.
 
 !!! note
+
     Recomputed when?
 
 # Examples

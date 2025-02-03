@@ -3,6 +3,12 @@ export isgood2face, dist_toapex #, FaceState
 # TODO incorporate direction of shortcuts
 """
     FaceState
+
+# Fields
+* `good::Bool`
+* `facets`: all incident facets
+* `edges`
+* `vsets`
 """
 struct FaceState
     good::Bool
