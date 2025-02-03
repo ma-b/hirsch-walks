@@ -20,13 +20,13 @@ end
 
 """
 function dist_toapex(s::Spindle, apex::Int, v::Int)
-    if !distscomputed(s)
-        computedistances!(s)
-    end
-    
     apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
     1 <= v <= nvertices(s) || throw(ArgumentError("index $(v) out of bounds for $(nvertices(s)) vertices"))
     
+    if !distscomputed(s) || !haskey(s.dists, apex)  # recompute distances also when apices have changed in the meantime
+        computedistances!(s)
+    end
+
     return s.dists[apex][v]
 end
 
