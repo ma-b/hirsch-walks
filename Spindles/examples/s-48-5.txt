@@ -1,6 +1,5 @@
 # 5-dimensional spindle with 48 facets and length 6
-
-# due to Santos
+# due to Santos (see https://arxiv.org/pdf/1006.2814)
 1+ 1 -1 -18 0 0 0
 1- 1 -1 18 0 0 0
 2+ 1 -1 0 -18 0 0

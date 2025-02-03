@@ -85,6 +85,8 @@ end
 Create file with inequality description in the form [b -A]. First column contains row/facet labels.
 
 Write to `outfilename`.
+
+Each element in `comments` is a single line. Possible line breaks are ignored.
 """
 function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
     labels::Union{Nothing, Vector{<:AbstractString}}=nothing, labels_plusminus::Bool=false,
@@ -106,7 +108,7 @@ function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
     arr = [labels rat2str.([b -A])]
 
     # write comment lines
-    # TODO remove '\n'
+    comments = map(x -> replace(x, r"\r|\n" => ""), comments)  # remove line breaks
     write(outfilename, join(["$(comment_char) $(c)\n" for c in comments]))
     
     # write matrix
