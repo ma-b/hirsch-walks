@@ -1,6 +1,6 @@
-# Tutorial
+# A simple spindle
 
-*Spindles.jl*
+This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
 
 ```@meta
 DocTestSetup = quote
@@ -8,9 +8,10 @@ DocTestSetup = quote
     #using Spindles
 end
 ```
-
+## What is a spindle?
 A **spindle** is a polytope that has two distinguished vertices such that each facet is incident to exactly one of them. These two vertices are called the **apices** of the spindle.
 
+## Creating a spindle
 A simple example of a spindle is a cube. For example, take the unit cube in 3D. It is given by all points $x$ in 3D that satisfy $Ax \le b$, where
 ```@example
 A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]
@@ -62,6 +63,7 @@ cube = Spindle(A, b) # hide
 apices(cube, 3)
 ```
 
+## Working with the graph
 We may even compute the distance between those two apices in the graph of `cube`:
 
 ```@example
@@ -86,6 +88,7 @@ using Graphs: degree
 all(degree(graph(cube)) .== 3)
 ```
 
+## Counting and enumerating faces
 *Spindles.jl* also provides functions to count and enumerate the faces of `cube`. The following call to [`Spindles.facesofdim`](@ref) returns a list of all two-dimensional faces, each one given by the indices of its incident facets.
 
 !!! note
