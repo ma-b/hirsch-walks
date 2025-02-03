@@ -23,7 +23,8 @@ The Julia code for `Spindles` is located in [Spindles/src/](Spindles/src/) and u
 
 See [here](Spindles/examples/Demo.ipynb) for a demo. 
 
-> [!NOTE] To run the demo in your own Julia environment, the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required in addition to the packages listed above.
+> [!NOTE] 
+> To run the demo in your own Julia environment, the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required in addition to the packages listed above.
 > It can be installed by entering [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode in the Julia REPL (type `]`) and running
 >
 > ```
