@@ -3,6 +3,8 @@ export facesofdim, nfacesofdim, graph
 graphiscomputed(s::Spindle) = s.graph !== nothing
 """
     graph(s)
+
+Return a [`Graphs.SimpleGraphs.SimpleGraph`](https://juliagraphs.org/Graphs.jl/stable/core_functions/simplegraphs/#Graphs.SimpleGraphs.SimpleGraph)
 """
 function graph(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     if !graphiscomputed(s)
