@@ -1,32 +1,24 @@
 # First steps
 This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
 
-```@meta
-DocTestSetup = quote
-    #push!(LOAD_PATH, "../../src")  # no effect?
-    #using Spindles
-end
-```
 ## What is a spindle?
 A **spindle** is a polytope with two special vertices such that each facet is incident to exactly one of them. The two special vertices are called the **apices** of the spindle.
 
 ## Creating a spindle
 A simple example of a spindle is a cube. For example, take the unit cube in 3D. It is given by all points $x$ in 3D that satisfy $Ax \le b$, where
-```@example
+```@example cube
 A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]
 ```
 and
-```@example
+```@example cube
 b = [1, 1, 1, 1, 1, 1]
 ```
 
 *Spindles.jl* provides a data type for representing and analyzing spindles: [`Spindles.Spindle`](@ref). We may create an object of this type from our data `A` and `b` as follows:
 
-```@example
+```@example cube
 push!(LOAD_PATH, "../../src") # hide
 using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
 cube = Spindle(A, b)
 ```
 
@@ -36,62 +28,37 @@ cube = Spindle(A, b)
 
 Even though `cube` is of type [`Spindles.Spindle`](@ref), this does not automatically mean that it is indeed a spindle in the mathematical sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 vertices(cube)
 ```
 
 !!! note
 
-    By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each vertex returned by [`Spindles.vertices`](@ref) are of type `Rational` with numerators and denominators of type `BigInt` (see also the [Julia documentation](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers)).
+    By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each vertex returned by [`Spindles.vertices`](@ref) are of type `Rational` with numerators and denominators of type `BigInt` to avoid integer overflows (see the Julia documentation pages on [rational numbers](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers) and [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)).
 
 The existence of two apices may be checked using the function [`Spindles.apices`](@ref), which returns the indices of two vertices of `cube` that act as apices:
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 apices(cube)
 ```
 
 So the first and last vertex in the list above can take the role of apices. However, these two are not unique. In fact, for a cube there are many possible pairs of apices: take an arbitrary vertex and its antipodal one, i.e., the vertex obtained by flipping the sign of each component. If we want to prescribe an apex, we can tell [`Spindles.apices`](@ref) to use a given vertex as the first apex and try to find a matching second one:
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 apices(cube, 3)
 ```
 
 ## Working with the graph
 We may even compute the distance between those two apices in the graph of `cube`:
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 dist_toapex(cube, apices(cube)...)
 ```
 
 Behind the scenes, the call to [`Spindles.dist_toapex`](@ref) first computes the graph of `cube`. The graph can also be accessed directly using [`Spindles.graph`](@ref), which returns a graph of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
 For instance, we may verify the well-known fact that cubes are simple by using the function [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 using Graphs: degree
 all(degree(graph(cube)) .== 3)
 ```
@@ -103,12 +70,7 @@ all(degree(graph(cube)) .== 3)
 
     Facet indices refer to the corresponding rows of the coefficient matrix `A`. 
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 facesofdim(cube, 2)
 ```
 
@@ -120,12 +82,7 @@ Given that the two-dimensional faces of `cube` are precisely the six facets, thi
 
 Let us list all vertices contained in the first facet.
 
-```@example
-push!(LOAD_PATH, "../../src") # hide
-using Spindles # hide
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1] # hide
-b = [1, 1, 1, 1, 1, 1] # hide
-cube = Spindle(A, b) # hide
+```@example cube
 for v in Spindles.incidentvertices(cube, [1])
     println(collect(vertices(cube))[v])
 end

@@ -8,7 +8,7 @@ DocMeta.setdocmeta!(Spindles, :DocTestSetup, :(using Spindles); recursive=true)
 
 makedocs(
     sitename = "Spindles.jl",
-    doctest = :only, #false,  # :only for debugging doctests
+    doctest = true, #:only, #false,  # :only for debugging doctests
     modules = [Spindles],
     pages = [
         "Home" => "index.md",
