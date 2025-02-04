@@ -20,7 +20,8 @@ and
 b = [1, 1, 1, 1, 1, 1]
 ```
 
-*Spindles.jl* provides a data type for representing and analyzing spindles: [`Spindles.Spindle`](@ref). We can create an object of this type from our data `A` and `b` as follows:
+*Spindles.jl* provides a data type for representing and analyzing spindles: [`Spindles.Spindle`](@ref). We may create an object of this type from our data `A` and `b` as follows:
+
 ```@example
 push!(LOAD_PATH, "../../src") # hide
 using Spindles # hide
@@ -29,7 +30,11 @@ b = [1, 1, 1, 1, 1, 1] # hide
 cube = Spindle(A, b)
 ```
 
-Even though `cube` is of type [`Spindles.Spindle`](@ref), this does not mean that it is indeed a spindle in the mathematical sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
+!!! warning
+
+    Currently, [`Spindles.Spindle`](@ref) only supports **full-dimensional polytopes** given by **irredundant** inequality descriptions.
+
+Even though `cube` is of type [`Spindles.Spindle`](@ref), this does not automatically mean that it is indeed a spindle in the mathematical sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
 
 ```@example
 push!(LOAD_PATH, "../../src") # hide
@@ -130,4 +135,4 @@ As expected, we obtain precisely those four vertices whose first component is eq
 
 !!! note
 
-    Note that both [`Spindles.vertices`](@ref) and [`Spindles.incidentvertices`](@ref) return iterators. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
+    Both [`Spindles.vertices`](@ref) and [`Spindles.incidentvertices`](@ref) return iterators. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
