@@ -25,4 +25,5 @@ jobs:
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REF: 'test'
         run: julia --project=Spindles/docs/ Spindles/docs/make.jl
