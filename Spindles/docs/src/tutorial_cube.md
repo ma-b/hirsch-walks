@@ -1,5 +1,4 @@
-# A simple spindle
-
+# First steps
 This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
 
 ```@meta
@@ -9,7 +8,7 @@ DocTestSetup = quote
 end
 ```
 ## What is a spindle?
-A **spindle** is a polytope that has two distinguished vertices such that each facet is incident to exactly one of them. These two vertices are called the **apices** of the spindle.
+A **spindle** is a polytope with two special vertices such that each facet is incident to exactly one of them. The two special vertices are called the **apices** of the spindle.
 
 ## Creating a spindle
 A simple example of a spindle is a cube. For example, take the unit cube in 3D. It is given by all points $x$ in 3D that satisfy $Ax \le b$, where
@@ -40,6 +39,10 @@ b = [1, 1, 1, 1, 1, 1] # hide
 cube = Spindle(A, b) # hide
 vertices(cube)
 ```
+
+!!! note
+
+    By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each vertex returned by [`Spindles.vertices`](@ref) are of type `Rational` with numerators and denominators of type `BigInt` (see also the [Julia documentation](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers)).
 
 The existence of two apices may be checked using the function [`Spindles.apices`](@ref), which returns the indices of two vertices of `cube` that act as apices:
 
@@ -124,3 +127,7 @@ end
 ```
 
 As expected, we obtain precisely those four vertices whose first component is equal to one.
+
+!!! note
+
+    Note that both [`Spindles.vertices`](@ref) and [`Spindles.incidentvertices`](@ref) return iterators. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
