@@ -101,7 +101,7 @@ Now the output is this:
 
 ![](s48_geom.svg)
 
-We may also enumerate all good 2-faces of `s48`.
+We may also enumerate all good 2-faces of `s48` as follows.
 ```@example s48
 for f in sort(facesofdim(s48, 2))
     if isgood2face(s48, f).good
