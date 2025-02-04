@@ -17,5 +17,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/ma-b/hirsch-walks.git",
-    devbranch = test,
+    devbranch = "test",
 )
