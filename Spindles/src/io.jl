@@ -6,7 +6,7 @@ function str2rat(str::AbstractString, ::Type{T}) where T<:Integer
     Rational(reduce(//, parse.(T, split(str, '/'))))
 end
 function rat2str(x::Rational)
-    x.den == 1 ? string(x.num) : @sprintf("%d/%d", x.num, x.den)
+    x.den == 1 ? string(numerator(x)) : @sprintf("%d/%d", numerator(x), denominator(x))
 end
 
 """

@@ -162,4 +162,4 @@ include("goodfaces.jl")
 include("plots.jl")
 include("io.jl")
 
-end
+end # module Spindles
