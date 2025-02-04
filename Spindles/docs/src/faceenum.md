@@ -1,5 +1,5 @@
 # Enumerating faces
-*Spindles.jl* implements an algorithm for enumerating all faces of a given dimension. This algorithm works best for near-simple spindles (with few degenerate vertices).
+*Spindles.jl* implements an algorithm for enumerating all faces of a given dimension. On large inputs, this algorithm works best for near-simple spindles (with few degenerate vertices).
 
 ```@docs
 facesofdim
