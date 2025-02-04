@@ -70,11 +70,12 @@ apices(s48)
 
 Edges are labeled by their incident facets, where the three facets that define the face are omitted.
 
+## Good 2-faces
 Note that for each vertex in the plot above, the sum of both distances must be at least 6 because we know that there is no shorter path between the apices. In fact, there are two such shortest paths that traverse parts of the face: Starting at the first apex `1`, we may take 3 steps to either `56` or `80`. Both vertices are at distance 3 from the second apex, as their labels tell us. 
 The only two vertices that are not visited on either of those two paths are `155` and `156`, and they are also at distance 3 from the second apex. 
 
 So among the vertices of the face `15+ 19+ 21+`, there are two special subsets:
-One subset of vertices, let us call it $V_1$, is "close" to the first apex (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$ (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the first one, and each vertex in $V_2$ is "close" to second apex . Here, "close" means that if we pick two arbitrary vertices, one from each subset, then the sum of their distances to their closest apex is at most 3, which is 2 less than the dimension of `s48`.
+One subset of vertices, let us call it $V_1$, is "close" to the first apex (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$ (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the first one, and each vertex in $V_2$ is "close" to second apex . Here, "close" means that if we pick two arbitrary vertices, one from each subset, then the sum of their distances to the respectively closest apex is at most 3, which is 2 less than the dimension of `s48`.
 
 Let us call 2-faces with this property **good**. Good 2-faces play an important role for analyzing `s48` in the setting of the so-called **circuit diameter conjecture**, a relaxation of the Hirsch conjecture. *Spindles.jl* provides a function [`Spindles.isgood2face`](@ref) that tests a face for being good.
 
@@ -82,7 +83,12 @@ Let us call 2-faces with this property **good**. Good 2-faces play an important 
 isgood2face(s48, face)
 ```
 
+The result is wrapped in a bespoke data type defined by *Spindles.jl* called [`Spindles.FaceState`](@ref). The field `good` indicates whether or not the tested face is good, and the two vertex sets $V_1$ and $V_2$ are stored in the field `vsets` (see also the documentation on the [`Spindles.FaceState`](@ref) type):
 
+```@example s48
+fstate = isgood2face(s48, face)
+fstate.good, fstate.vsets
+```
 
 
 
@@ -95,8 +101,12 @@ Now the output is this:
 
 ![](s48_geom.svg)
 
-
+We may also enumerate all good 2-faces of `s48`.
 ```@example s48
-[(f, labels[f]) for f in sort(facesofdim(s48, 2)) if isgood2face(s48, f).good]
+for f in sort(facesofdim(s48, 2))
+    if isgood2face(s48, f).good
+        println(join(labels[f], " "))
+    end
+end
 ```
 
