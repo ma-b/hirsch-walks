@@ -40,11 +40,11 @@ b 1 0 -1
 c 1 1 0
 d 1 0 1
 
-julia> open("ineq.txt", "w") do io
+julia> open("square.txt", "w") do io
            write(io, str)
        end;
 
-julia> A, b, labels = readineq("ineq.txt", Int);
+julia> A, b, labels = readineq("square.txt", Int);
 
 julia> A
 4×2 Matrix{Rational{Int64}}:
@@ -67,7 +67,7 @@ julia> labels
  "c"
  "d"
 
-julia> rm("ineq.txt")
+julia> rm("square.txt");
 ```
 """
 function readineq(filename::AbstractString, ::Type{T}; comment_char::AbstractChar='#') where T<:Integer
