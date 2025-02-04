@@ -30,6 +30,31 @@ Return `A, b, labels` where `A` is a matrix of type `Rational{T}`.
 Lines starting with a `#` character and all characters on a line following `#` are ignored.
 
 # Examples
+```
+julia> str = "# unit square\\na 1 -1 0\\nb 1 0 -1\\nc 1 1 0\\nd 1 0 1";
+
+julia> println(str)
+# unit square
+a 1 -1 0
+b 1 0 -1
+c 1 1 0
+d 1 0 1
+
+julia> open("square.txt", "w") do io
+           write(io, str)
+       end;
+
+julia> A, b, labels = readineq("square.txt", Int)
+
+julia> A
+4×2 Matrix{Rational{Int64}}:
+  1   0
+  0   1
+ -1   0
+  0  -1
+```
+
+
 ```jldoctest
 julia> str = "# unit square\\na 1 -1 0\\nb 1 0 -1\\nc 1 1 0\\nd 1 0 1";
 
@@ -67,7 +92,7 @@ julia> labels
  "c"
  "d"
 
-julia> rm("square.txt");
+julia> rm("square.txt")
 ```
 """
 function readineq(filename::AbstractString, ::Type{T}; comment_char::AbstractChar='#') where T<:Integer
