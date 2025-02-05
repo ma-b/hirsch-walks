@@ -18,7 +18,7 @@ Ready to use *Spindles.jl* by typing
 julia> using Spindles
 ```
 
-## Getting Started
+## Getting started
 
 
 

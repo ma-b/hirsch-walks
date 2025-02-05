@@ -8,16 +8,22 @@ using Documenter, Spindles
 DocMeta.setdocmeta!(Spindles, :DocTestSetup, :(using Spindles); recursive=true)
 
 makedocs(
+    modules = [Spindles],
     sitename = "Spindles.jl",
     doctest = false, #:only, #false,  # :only for debugging doctests
-    modules = [Spindles],
+    format=Documenter.HTML(;
+        #prettyurls=get(ENV, "CI", "false") == "true",
+        #assets=String[],
+        collapselevel=1,
+        #canonical="https://ma-b.github.io/hirsch-walks",
+    ),
     pages = [
         "Home" => "index.md",
         "Tutorials" => [
             "tutorials/first-steps.md",
             "tutorials/spindles-and-the-hirsch-conjecture.md",
         ],
-        "API reference" => [
+        "API Reference" => [
             "Enumerating faces" => "man/faceenum.md",
             "Plotting faces" => "man/plots.md",
             "File I/O" => "man/io.md",
