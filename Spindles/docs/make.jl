@@ -13,8 +13,8 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Tutorials" => [
-            "tutorial-cube.md",
-            "tutorial-hirsch.md"
+            "tutorials/first-steps.md",
+            "tutorials/spindles-and-the-hirsch-conjecture.md",
         ],
         "API reference" => [
             "Enumerating faces" => "faceenum.md",

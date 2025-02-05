@@ -17,7 +17,7 @@ b = [1, 1, 1, 1, 1, 1]
 *Spindles.jl* provides a data type for representing and analyzing spindles: [`Spindles.Spindle`](@ref). We may create an object of this type from our data `A` and `b` as follows:
 
 ```@example cube
-push!(LOAD_PATH, "../../src") # hide
+push!(LOAD_PATH, "../../../src") # hide
 using Spindles # hide
 cube = Spindle(A, b)
 ```

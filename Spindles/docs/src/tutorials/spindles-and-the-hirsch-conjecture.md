@@ -9,9 +9,9 @@ Santos' original counterexample from 2010 is based on a 5-dimensional spindle wi
 ## Reading a spindle from a file
 We read the description from the file as follows.
 ```@example s48
-push!(LOAD_PATH, "../../src") # hide
+push!(LOAD_PATH, "../../../src") # hide
 using Spindles # hide
-A, b, labels = readineq("../../examples/s-48-5.txt", Int);
+A, b, labels = readineq("../../../examples/s-48-5.txt", Int);
 ```
 
 ```@example s48
