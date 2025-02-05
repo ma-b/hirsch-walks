@@ -26,7 +26,40 @@ function computedistances!(s::Spindle)
 end
 
 """
+    dist_toapex(s, apex, v)
 
+Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
+
+!!! note
+
+    Distances are not persistent under recomputing the apices when passing a second argument to [`Spindles.apices`](@ref)
+    that is not one of the previously computed apices.
+
+# Examples
+
+```jldoctest
+julia> A = [1 0; 0 1; -1 0; 0 -1];
+
+julia> b = [1, 1, 1, 1];
+
+julia> square = Spindle(A, b);
+
+julia> apx1, apx2 = apices(square, 1)
+2-element Vector{Int64}:
+ 1
+ 4
+
+julia> dist_toapex(square, apx1, 4)
+2
+
+julia> apx1, apx2 = apices(square, 2)  # recompute the apices
+2-element Vector{Int64}:
+ 2
+ 3
+
+julia> dist_toapex(square, apx1, 4)
+1
+```
 """
 function dist_toapex(s::Spindle, apex::Int, v::Int)
     apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
@@ -73,7 +106,10 @@ end
 """
     isgood2face(s, facets)
 
-Returns a [`Spindles.FaceState`](@ref).
+Test the face defined by `facets` for being a good 2-face of the spindle `s`.
+Return a [`Spindles.FaceState`](@ref).
+
+`(false, nothing, nothing)` if not a good 2-face.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
     verticesinface = collect(incidentvertices(s, facets))  # or collect only below?

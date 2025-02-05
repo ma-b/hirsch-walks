@@ -66,9 +66,8 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
 end
 
-"""
-Lift `Graphs.edges` to `Spindle`. Returns an iterator over all pairs of indices of adjacent vertices.
-"""
+
+# Lift `Graphs.edges` to `Spindle`. Returns an iterator over all pairs of indices of adjacent vertices.
 function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     ([src(e), dst(e)] for e in Graphs.edges(graph(s, stopatvertex)))
 end
