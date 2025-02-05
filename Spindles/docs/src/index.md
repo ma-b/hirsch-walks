@@ -1,19 +1,25 @@
 # Spindles.jl
 
-```@meta
-DocTestSetup = quote
-    push!(LOAD_PATH, "../../src")
-    using Spindles
-end
+*Spindles.jl* is a package ...
+
+## Installation
+### Julia
+Download files and detailed instructions are available on the [Julia website](https://julialang.org/).
+
+### Package
+Currently not available via Julia's in-built package manager [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/). Clone the GitHub repo or download ... and run the following in the command line:
+
+```
+    ...
 ```
 
-!!! warning
-
-    Currently only full-dimensional spindles given by irredundant inequality descriptions are supported.
-
-```@autodocs
-Modules = [Spindles]
-Pages = [
-    "Spindles.jl"
-]
+Ready to use *Spindles.jl* by typing
+```jldoctest
+julia> using Spindles
 ```
+
+## Getting Started
+
+
+
+
