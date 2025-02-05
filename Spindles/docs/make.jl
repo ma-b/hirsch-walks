@@ -1,4 +1,5 @@
-joinpath("..", "src") in LOAD_PATH || push!(LOAD_PATH, joinpath("..", "src"))
+push!(LOAD_PATH, joinpath("..", "src"))
+#joinpath("..", "src") in LOAD_PATH || push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter, Spindles
 
@@ -8,7 +9,7 @@ DocMeta.setdocmeta!(Spindles, :DocTestSetup, :(using Spindles); recursive=true)
 
 makedocs(
     sitename = "Spindles.jl",
-    doctest = true, #:only, #false,  # :only for debugging doctests
+    doctest = false, #:only, #false,  # :only for debugging doctests
     modules = [Spindles],
     pages = [
         "Home" => "index.md",
@@ -17,9 +18,9 @@ makedocs(
             "tutorials/spindles-and-the-hirsch-conjecture.md",
         ],
         "API reference" => [
-            "Enumerating faces" => "faceenum.md",
-            "Plotting faces" => "plots.md",
-            "File I/O" => "io.md",
+            "Enumerating faces" => "man/faceenum.md",
+            "Plotting faces" => "man/plots.md",
+            "File I/O" => "man/io.md",
         ],
     ]
 )
