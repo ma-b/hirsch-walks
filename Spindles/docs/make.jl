@@ -1,11 +1,19 @@
 push!(LOAD_PATH, joinpath("..", "src"))
 #joinpath("..", "src") in LOAD_PATH || push!(LOAD_PATH, joinpath("..", "src"))
 
-using Documenter, Spindles
+using Documenter #, DocumenterInterLinks
+using Spindles
+using Polyhedra
 
 # https://documenter.juliadocs.org/stable/man/doctests/#Module-level-metadata
 # https://stackoverflow.com/questions/57461225/jldoctest-blocks-in-julia-docstrings-included-in-documentation-but-tests-not-run
 DocMeta.setdocmeta!(Spindles, :DocTestSetup, :(using Spindles); recursive=true)
+
+#=
+# https://documenter.juliadocs.org/stable/man/guide/#External-Cross-References
+links = InterLinks(
+    "Graphs" => "https://juliagraphs.org/Graphs.jl/dev/objects.inv"
+)=#
 
 makedocs(
     modules = [Spindles],
@@ -20,12 +28,13 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Tutorials" => [
-            "tutorials/first-steps.md",
-            "tutorials/spindles-and-the-hirsch-conjecture.md",
+            "tutorials/firststeps.md",
+            "tutorials/hirsch.md",
         ],
         "API Reference" => [
-            "Enumerating faces" => "man/faceenum.md",
-            "Plotting faces" => "man/plots.md",
+            "Representation" => "man/representation.md",
+            "Faces" => "man/faces.md",
+            "Plots" => "man/plots.md",
             "File I/O" => "man/io.md",
         ],
     ]

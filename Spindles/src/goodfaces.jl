@@ -30,6 +30,8 @@ end
 
 Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 
+dists are cached
+
 !!! warning
 
     Distances are not persistent under recomputing the apices when passing a second argument to [`Spindles.apices`](@ref)

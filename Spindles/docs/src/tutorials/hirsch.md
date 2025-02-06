@@ -62,7 +62,7 @@ This produces the following output:
 ![](s48.svg)
 
 As one would expect from a 2-face, the graph is a cycle. Each vertex is labeled by its index (on the first line) and the distance to each of the two apices of `s48` (on the second line). For example, `1 | 5` in the label of vertex `25` means that `25` is one edge step away from the first apex `apices(s48)[1]` and five steps away from `apices(s48)[2]`.
-Likewise, the label `0 | 6` for vertex `1` means that `1` is at distance 0 from `apices(s)[1]`. This should not be surprising because, in fact, `1` is the index of the first apex:
+Likewise, the label `0 | 6` for vertex `1` means that `1` is at distance 0 from `apices(s)[1]`. This should not be surprising given that `1` *is* the index of the first apex:
 
 ```@example s48
 apices(s48)

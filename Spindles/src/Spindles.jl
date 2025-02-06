@@ -1,6 +1,3 @@
-"""
-...
-"""
 module Spindles
 
 using Polyhedra
@@ -9,9 +6,7 @@ using Graphs
 export Spindle, vertices, nvertices, nfacets, apices
 
 """
-    Spindle(A, b [,lib])
-
-...
+    Spindle
 """
 mutable struct Spindle #{T}
     const P::Polyhedron #{T}
@@ -23,8 +18,10 @@ mutable struct Spindle #{T}
     faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of incident facets for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
-    """
+    @doc"""
         Spindle(A, b [,lib])
+
+    Create a spindle from its inequality description.
 
     If `lib` is not specified, use the default library implemented in `Polyhedra`, 
     see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/).
@@ -46,6 +43,11 @@ mutable struct Spindle #{T}
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 
+    @doc"""
+        Spindle(P)
+
+    Create from a Polyhedron.
+    """
     function Spindle(P::Polyhedron)
         A, b = hrep(P).A, hrep(P).b
         fdict = Dict(k => nothing for k=0:size(A,2))
@@ -53,6 +55,9 @@ mutable struct Spindle #{T}
     end
 end
 
+"""
+    nfacets(s)
+"""
 nfacets(s::Spindle) = size(s.A, 1)  # TODO
 dim(s::Spindle) = size(s.A, 2) #Polyhedra.dim(s.P)  # TODO
 

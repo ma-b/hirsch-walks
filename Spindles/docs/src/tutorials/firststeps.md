@@ -24,9 +24,9 @@ cube = Spindle(A, b)
 
 !!! warning
 
-    Currently, [`Spindles.Spindle`](@ref) only supports **full-dimensional polytopes** given by **irredundant** inequality descriptions.
+    Currently, [`Spindle`](@ref Spindles.Spindle) only supports **full-dimensional polytopes** given by **irredundant** inequality descriptions.
 
-Even though `cube` is of type [`Spindles.Spindle`](@ref), this does not automatically mean that it is indeed a spindle in the mathematical sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
+Even though `cube` is of type [`Spindle`](@ref Spindles.Spindle), this does not automatically mean that it is indeed a spindle in the polyhedral sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
 
 ```@example cube
 vertices(cube)

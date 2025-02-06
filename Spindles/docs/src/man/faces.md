@@ -1,0 +1,38 @@
+# Faces
+
+```@meta
+DocTestSetup = quote
+    push!(LOAD_PATH, "../../src")
+    using Spindles
+end
+```
+
+## Enumeration
+
+```@docs
+graph
+```
+
+*Spindles.jl* implements an algorithm for enumerating all faces of a given dimension. On large inputs, this algorithm works best for near-simple spindles (with few degenerate vertices).
+
+```@docs
+facesofdim
+```
+
+```@docs
+nfacesofdim
+```
+
+## Distances
+
+```@docs
+dist_toapex
+```
+
+```@docs
+isgood2face
+```
+
+```@docs
+Spindles.FaceState
+```
