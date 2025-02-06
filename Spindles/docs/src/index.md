@@ -5,7 +5,8 @@ The goal of *Spindles.jl* is to provide an interface for analyzing spindles.
 ## FAQ
 ### What is a spindle?
 A **spindle** is a polytope with two special vertices such that each facet contains exactly one of them. These two special vertices are called the **apices** of the spindle. 
-A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ that does not share a facet with $u$ (namely, the "antipodal" one). Any such pair $u$ and $v$ is a valid pair of apices for the cube.
+
+A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ that does not share a facet with $u$ (namely, the vertex that is "antipodal" to $u$). Any such pair $u$ and $v$ is a valid pair of apices for the cube.
 
 ### Why are spindles important?
 Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, analyzing these counterexamples computationally was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture").
@@ -17,17 +18,22 @@ See the [full API reference](@ref "Representation") for more technical details o
 
 
 ## Installation
-### Julia
-Download files and detailed instructions are available on the [Julia website](https://julialang.org/).
+Using *Spindles.jl* requires a working installation of Julia. Download files and detailed instructions are available on the [Julia website](https://julialang.org/).
 
-### Package
+To install *Spindles.jl*, clone the [GitHub repository](https://github.com/ma-b/hirsch-walks) into ... In the `Spindles` subdirectory, run Julia in the command line and enter [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode by typing `]`. Then run
+
+```julia
+pkg> add IJulia
+pkg> build IJulia
+```
+
 Currently not available via Julia's in-built package manager [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/). Clone the GitHub repo or download ... and run the following in the command line:
 
 ```
     ...
 ```
 
-Ready to use *Spindles.jl* by typing
+You are ready to use *Spindles.jl* by typing
 ```jldoctest
 julia> using Spindles
 ```

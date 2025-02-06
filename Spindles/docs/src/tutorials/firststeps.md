@@ -1,13 +1,16 @@
 # First steps
 This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
 
-## What is a spindle?
-A **spindle** is a polytope with two special vertices such that each facet is incident to exactly one of them. The two special vertices are called the **apices** of the spindle.
-
 ## Creating a spindle
-A simple example of a spindle is a cube. For example, take the unit cube in 3D. It is given by all points $x$ in 3D that satisfy $Ax \le b$, where
+Recall that the special property of a spindle is the existence of two vertices (the apices) whose incident facets partition the set of all facets. In this tutorial, we will be working with one of the simplest examples of a spindle: a cube. For example, the unit cube in 3D is given by all points $(x_1,x_2,x_3)$ that satisfy 
+```math
+-1 \le x_1 \le 1, \quad -1 \le x_2 \le 1, \quad -1 \le x_3 \le 1
+```
+
+In matrix notation, this is equivalent to the system $Ax \le b$ where
+
 ```@example cube
-A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]
+A = [1 0 0; -1 0 0; 0 1 0; 0 -1 0; 0 0 1; 0 0 -1]
 ```
 and
 ```@example cube
