@@ -14,7 +14,7 @@ Spindles play an important role in the [construction of counterexamples](https:/
 ### Why develop a package dedicated to spindles?
 The Julia ecosystem offers interfaces to many libraries for polyhedral computations. Most notably, check out the [*Polyhedra.jl*](https://juliapolyhedra.github.io/Polyhedra.jl/) package. In fact, *Spindles.jl* is built on top of *Polyhedra.jl*. The main design choice in the development of *Spindles.jl* was to enable the computational analysis of certain properties of spindles with very few lines of code, while allowing extensions to other use cases. For example, the package implements a general-purpose algorithm to enumerate faces of polytopes (not just spindles) that follows ideas described [here](https://sites.google.com/site/christopheweibel/research/hirsch-conjecture) (see also the [paper](https://arxiv.org/pdf/1202.4701)).
 
-See the [full API reference](@ref "Representation") for more technical details on the package design and its functionalities.
+See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
 
 
 ## Installation
@@ -23,23 +23,13 @@ Using *Spindles.jl* requires a working installation of Julia. Download files and
 To install *Spindles.jl*, clone the [GitHub repository](https://github.com/ma-b/hirsch-walks) into ... In the `Spindles` subdirectory, run Julia in the command line and enter [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode by typing `]`. Then run
 
 ```julia
-pkg> add IJulia
-pkg> build IJulia
+pkg> dev .
 ```
 
-Currently not available via Julia's in-built package manager [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/). Clone the GitHub repo or download ... and run the following in the command line:
-
-```
-    ...
-```
+See also the [Pkg documentation](https://pkgdocs.julialang.org/v1/managing-packages/#developing) on the `dev` (or `develop`) command.
 
 You are ready to use *Spindles.jl* by typing
 ```jldoctest
 julia> using Spindles
 ```
-
-## Getting started
-
-
-
 

@@ -44,9 +44,9 @@ mutable struct Spindle #{T}
     
     !!! warning
 
-        Currently supports only full-dimensional polytopes given by irredundant inequality descriptions.
-        In particular, `A` and `b` are not checked for redundant rows or implicity equations, 
-        let alone whether they define a polytope at all.
+        The current version supports only full-dimensional polytopes given by irredundant inequality descriptions.
+        In particular, `A` and `b` are not checked for the presence of redundant rows or implicity equations, 
+        or whether they define a polytope at all.
     
     ---
 
