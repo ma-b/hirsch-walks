@@ -36,13 +36,23 @@ mutable struct Spindle #{T}
     Create a spindle from its inequality description with coefficient matrix `A` and right-hand side vector `b`.
 
     The optional argument `lib` allows to specify a library for polyhedral computations that implements
-    the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/).
-    If `lib` is not specified, the default library implemented in `Polyhedra` is used 
+    the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/). A list of all supported libraries
+    can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+    
+    If `lib` is not specified, use the default library implemented in `Polyhedra` 
     (see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
+    
+    !!! warning
+
+        Currently supports only full-dimensional polytopes given by irredundant inequality descriptions.
+        In particular, `A` and `b` are not checked for redundant rows or implicity equations, 
+        let alone whether they define a polytope at all.
+    
+    ---
 
         Spindle(P::Polyhedron)
 
-    Create from a Polyhedron.
+    Create a spindle directly from a `Polyhedron` `P`.
     """
     function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
         if size(A,1) != size(b,1)
@@ -61,11 +71,6 @@ mutable struct Spindle #{T}
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 
-    @docs"""
-        Spindle(P)
-
-    Create from a Polyhedron.
-    """
     function Spindle(P::Polyhedron)
         A, b = hrep(P).A, hrep(P).b
         fdict = Dict(k => nothing for k=0:size(A,2))

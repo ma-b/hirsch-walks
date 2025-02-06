@@ -23,16 +23,17 @@ facesofdim
 nfacesofdim
 ```
 
-## Distances
+## Length of paths
 
 ```@docs
 dist_toapex
 ```
-
-```@docs
-isgood2face
-```
+## Good faces
 
 ```@docs
 Spindles.FaceState
+```
+
+```@docs
+isgood2face
 ```
