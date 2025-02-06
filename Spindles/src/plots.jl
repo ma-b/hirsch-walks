@@ -33,9 +33,21 @@ end
 label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(labels[facets], ' ')
 
 """
-    plot2face(s, facets [,...])
+    plot2face(
+        s, facets;
+        facetlabels = nothing,
+        usecoordinates = false,
+        showdist = false,
+        edgepair = nothing,
+        figsize = (300,300)
+    )
 
 2D projection or combinatorial plot (graph)
+
+# Keywords
+*`facetlabels`* 
+*`usecoordinates`* indicates whether the plot shows a 2D projection or the graph of the 2-face.
+*`showdist`* 
 """
 function plot2face(s::Spindle, facets::Vector{Int}; 
     usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,

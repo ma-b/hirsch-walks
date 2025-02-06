@@ -1,3 +1,13 @@
+"""
+Main module in `Spindles.jl`.
+
+# Exports
+* [`Spindle`](@ref Spindles.Spindle)
+* [`apices`](@ref Spindles.apices)
+* [`vertices`](@ref Spindles.vertices)
+* [`nvertices`](@ref Spindles.nvertices)
+* ...
+"""
 module Spindles
 
 using Polyhedra
@@ -7,6 +17,8 @@ export Spindle, vertices, nvertices, nfacets, apices
 
 """
     Spindle
+
+Main type that represents a spindle...
 """
 mutable struct Spindle #{T}
     const P::Polyhedron #{T}
@@ -21,10 +33,16 @@ mutable struct Spindle #{T}
     @doc"""
         Spindle(A, b [,lib])
 
-    Create a spindle from its inequality description.
+    Create a spindle from its inequality description with coefficient matrix `A` and right-hand side vector `b`.
 
-    If `lib` is not specified, use the default library implemented in `Polyhedra`, 
-    see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/).
+    The optional argument `lib` allows to specify a library for polyhedral computations that implements
+    the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/).
+    If `lib` is not specified, the default library implemented in `Polyhedra` is used 
+    (see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
+
+        Spindle(P::Polyhedron)
+
+    Create from a Polyhedron.
     """
     function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
         if size(A,1) != size(b,1)
@@ -43,7 +61,7 @@ mutable struct Spindle #{T}
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 
-    @doc"""
+    @docs"""
         Spindle(P)
 
     Create from a Polyhedron.
@@ -64,14 +82,14 @@ dim(s::Spindle) = size(s.A, 2) #Polyhedra.dim(s.P)  # TODO
 """
     vertices(s)
 
-Compute the vertices of the spindle `s`. Return an iterator.
+Returns an iterator over the vertices of the spindle `s`.
 """
 vertices(s::Spindle) = Polyhedra.points(s.P)
 
 """
     nvertices(s)
 
-Equivalent with `length(vertices(s))`.
+Count the vertices of `s`.
 """
 nvertices(s::Spindle) = Polyhedra.npoints(s.P)
 
@@ -141,16 +159,11 @@ end
 """
     apices(s [,apex])
 
-Compute a pair of vertices (the **apices**) such that each facet of `s` is incident to exactly one of them, or throw
+Compute a pair of vertices (the *apices*) such that each facet of `s` is incident to exactly one of them, or throw
 an error if no such pair exists.
 
-If `apex` is specified, find a second vertex for an apex pair.
-
-!!! note
-
-    Recomputed when?
-
-# Examples
+If additionally given the index of a vertex `apex`, try to find a vertex distinct from `apex` such that the two vertices
+are apices of `s`.
 """
 function apices(s::Spindle, apex::Union{Nothing, Int}=nothing)
     if !apicescomputed(s) || (apex !== nothing && !(apex in s.apices))
