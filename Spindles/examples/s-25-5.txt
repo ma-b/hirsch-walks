@@ -1,5 +1,5 @@
 # 5-dimensional spindle with 25 facets and length 6
-# due to Matschke, Santos, and Weibel (see https://arxiv.org/pdf/1202.4701)
+# due to Matschke, Santos, and Weibel (see Theorem 2.14 in https://arxiv.org/abs/1202.4701)
 1 1 -1 0 0 0 -32
 2 1 -1 0 0 0 32
 3 1 -1 0 0 -21 7

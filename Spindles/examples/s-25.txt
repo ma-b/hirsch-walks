@@ -1,5 +1,5 @@
 # 20-dimensional spindle with 40 facets and length 21
-# due to Matschke, Santos, and Weibel (see https://arxiv.org/pdf/1202.4701)
+# due to Matschke, Santos, and Weibel (see Table 1 in https://arxiv.org/abs/1202.4701)
 3 1 -1 0 0 -21 7 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0 0
 7 1 -1 0 0 -16 15 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0
 2 1 -1 0 0 0 32 0 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0

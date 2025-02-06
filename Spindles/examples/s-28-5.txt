@@ -1,5 +1,5 @@
 # 5-dimensional spindle with 28 facets and length 6
-# due to Matschke, Santos, and Weibel (see https://arxiv.org/pdf/1202.4701)
+# due to Matschke, Santos, and Weibel (see Corollary 2.9 in https://arxiv.org/abs/1202.4701)
 1+ 1 -1 -18 0 0 0
 1- 1 -1 18 0 0 0
 2+ 1 -1 0 0 -30 0
