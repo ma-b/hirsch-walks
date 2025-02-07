@@ -31,7 +31,7 @@ makedocs(
             "tutorials/hirsch.md",
         ],
         "API Reference" => [
-            "Index" => "man/apiref.md",
+            "Index" => "man/api.md",
             "Representation" => "man/representation.md",
             "Faces" => "man/faces.md",
             "Plots" => "man/plots.md",
