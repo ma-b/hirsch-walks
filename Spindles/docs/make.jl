@@ -1,5 +1,4 @@
 push!(LOAD_PATH, joinpath("..", "src"))
-#joinpath("..", "src") in LOAD_PATH || push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter #, DocumenterInterLinks
 using Spindles
@@ -18,7 +17,7 @@ links = InterLinks(
 makedocs(
     modules = [Spindles],
     sitename = "Spindles.jl",
-    doctest = false, #:only, #false,  # :only for debugging doctests
+    doctest = true,
     format=Documenter.HTML(;
         #prettyurls=get(ENV, "CI", "false") == "true",
         #assets=String[],
@@ -39,4 +38,9 @@ makedocs(
             "File I/O" => "man/io.md",
         ],
     ]
+)
+
+deploydocs(
+    repo = "github.com/ma-b/hirsch-walks.git",
+    devbranch = "main",
 )
