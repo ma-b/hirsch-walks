@@ -9,7 +9,7 @@ A **spindle** is a polytope with two special vertices such that each facet conta
 A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ that does not share a facet with $u$ (namely, the vertex that is "antipodal" to $u$). Any such pair $u$ and $v$ is a valid pair of apices for the cube.
 
 ### Why are spindles important?
-Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, analyzing these counterexamples computationally was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture").
+Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, a computational analysis of these counterexamples was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture").
 
 ### Why develop a package dedicated to spindles?
 The Julia ecosystem offers interfaces to many libraries for polyhedral computations. Most notably, check out the [*Polyhedra.jl*](https://juliapolyhedra.github.io/Polyhedra.jl/) package. In fact, *Spindles.jl* is built on top of *Polyhedra.jl*. The main design choice in the development of *Spindles.jl* was to enable the computational analysis of certain properties of spindles with very few lines of code, while allowing extensions to other use cases. For example, the package implements a general-purpose algorithm to enumerate faces of polytopes (not just spindles) that follows ideas described [here](https://sites.google.com/site/christopheweibel/research/hirsch-conjecture) (see also the [paper](https://arxiv.org/pdf/1202.4701)).
@@ -33,3 +33,5 @@ You are ready to use *Spindles.jl* by typing
 julia> using Spindles
 ```
 
+## Getting started
+For a brief tour of the package and its functionality, please read the [tutorials](@ref "First steps"). The full documentation can be found [here](@ref "Index").
