@@ -2,7 +2,7 @@ push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter #, DocumenterInterLinks
 using Spindles
-using Polyhedra
+using Polyhedra, Graphs
 
 # https://documenter.juliadocs.org/stable/man/doctests/#Module-level-metadata
 # https://stackoverflow.com/questions/57461225/jldoctest-blocks-in-julia-docstrings-included-in-documentation-but-tests-not-run

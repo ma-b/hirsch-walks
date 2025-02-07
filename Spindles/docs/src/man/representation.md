@@ -26,7 +26,7 @@ Spindle(::Matrix{T}, ::Vector{T}, ::Union{Nothing, Polyhedra.Library}=nothing) w
 ## Vertices and apices
 
 ```@docs
-vertices
+Spindles.vertices
 ```
 
 ```@docs
