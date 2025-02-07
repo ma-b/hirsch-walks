@@ -1,5 +1,6 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Spindles = "9a708d6d-e1c5-4911-9b93-28ca33b2614e"
 
 [compat]
 Documenter = "1.8"
