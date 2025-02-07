@@ -34,4 +34,16 @@ julia> using Spindles
 ```
 
 ## Getting started
-For a brief tour of the package and its functionality, please read the [tutorials](@ref "First steps"). The full documentation can be found [here](@ref "Index").
+For a brief tour of the package and its functionality, please read the [tutorials](@ref "First steps"). 
+The full documentation can be found [here](@ref "Index").
+
+See also [this Jupyter notebook](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/examples/Demo.ipynb) for a demo.
+
+!!! note
+
+    To run the demo in your own Julia environment, the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required. It can be installed in Pkg mode by running
+
+    ```
+    pkg> add IJulia
+    pkg> build IJulia
+    ```
