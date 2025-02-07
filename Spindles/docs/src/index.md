@@ -2,6 +2,8 @@
 
 The goal of *Spindles.jl* is to provide an interface for analyzing spindles.
 
+----
+
 ## FAQ
 ### What is a spindle?
 A **spindle** is a polytope with two special vertices such that each facet contains exactly one of them. These two special vertices are called the **apices** of the spindle. 
@@ -16,6 +18,7 @@ The Julia ecosystem offers interfaces to many libraries for polyhedral computati
 
 See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
 
+---
 
 ## Installation
 Using *Spindles.jl* requires a working installation of Julia. Download files and detailed instructions are available on the [Julia website](https://julialang.org/).
@@ -32,6 +35,8 @@ You are ready to use *Spindles.jl* by typing
 ```jldoctest
 julia> using Spindles
 ```
+
+---
 
 ## Getting started
 For a brief tour of the package and its functionality, please read the [tutorials](@ref "First steps"). 

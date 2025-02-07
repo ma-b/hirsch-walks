@@ -26,7 +26,8 @@ labels
 
 !!! note
 
-    We will be using facet labels different from Santos' labels in ...
+    Even though we use the same set of labels as Santos in his [paper](https://arxiv.org/pdf/1006.2814),
+    the assignment to the rows of `A` is different.
 
 The apices are
 ```@example s48
@@ -43,7 +44,7 @@ dist_toapex(s48, apices(s48)...)
 The original motivation for developing *Spindles.jl* was the search for special two-dimensional faces (or **2-faces** for short) of the spindle `s48` and similar spindles. Specifically, take the following three facets:
 
 ```@example s48
-face = [29,37,41]
+face = [29, 37, 41]
 labels[face]
 ```
 
@@ -75,7 +76,7 @@ Note that for each vertex in the plot above, the sum of both distances must be a
 The only two vertices that are not visited on either of those two paths are `155` and `156`, and they are also at distance 3 from the second apex. 
 
 So among the vertices of the face `15+ 19+ 21+`, there are two special subsets:
-One subset of vertices, let us call it $V_1$, is "close" to the first apex (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$ (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the first one, and each vertex in $V_2$ is "close" to second apex . Here, "close" means that if we pick two arbitrary vertices, one from each subset, then the sum of their distances to the respectively closest apex is at most 3, which is 2 less than the dimension of `s48`.
+One subset of vertices, let us call it $V_1$, is "close" to the first apex (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$ (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the first one, and each vertex in $V_2$ is "close" to second apex . Here, "close" means that if we pick two arbitrary vertices, one from each subset, then the sum of their distances to the respectively closest apex is at most 3, which is 2 less than the dimension of `s48`. Moreover, each vertex in $V_2$ is at least 3 edge steps away from $V_1$ on the face.
 
 Let us call 2-faces with this property **good**. Good 2-faces play an important role for analyzing `s48` in the setting of the so-called **circuit diameter conjecture**, a relaxation of the Hirsch conjecture. *Spindles.jl* provides a function [`Spindles.isgood2face`](@ref) that tests a face for being good.
 
@@ -83,7 +84,7 @@ Let us call 2-faces with this property **good**. Good 2-faces play an important 
 isgood2face(s48, face)
 ```
 
-The result is wrapped in a bespoke data type defined by *Spindles.jl* called [`Spindles.FaceState`](@ref). The field `good` indicates whether or not the tested face is good, and the two vertex sets $V_1$ and $V_2$ are stored in the field `vsets` (see also the documentation on the [`Spindles.FaceState`](@ref) type):
+The result is wrapped in a bespoke data type defined by *Spindles.jl* called [`Spindles.FaceState`](@ref). The field `good` indicates whether or not the tested face is good, and the two vertex sets $V_1$ and $V_2$ that certify the property of being good are stored in the field `vsets` (see also the documentation on the [`Spindles.FaceState`](@ref) type):
 
 ```@example s48
 fstate = isgood2face(s48, face)
