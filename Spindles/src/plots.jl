@@ -20,7 +20,7 @@ function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
     # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
     if dotproduct == 0
         # parallel
-        return nothing, false
+        return (u,v), false  # arbitrary direction
     elseif dotproduct > 0
         # direction r points 'towards' the halfspace, so needs to be reversed
         return (v,u), true
@@ -177,6 +177,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
             ineq = findfirst(f -> !(f in facets), efacets)
 
             (u,v), uniquedir = directedge(s, edgepair[k], efacets[ineq])
+            # get the indices of the endpoints of the edge as they appear in the cyclic order
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
             plot!(
                 xs[[i,j]], ys[[i,j]], 
