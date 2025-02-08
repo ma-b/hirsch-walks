@@ -23,15 +23,17 @@ See the [full API reference](@ref "Index") for more technical details on the pac
 ## Installation
 Using *Spindles.jl* requires a working installation of Julia. Download files and detailed instructions are available on the [Julia website](https://julialang.org/).
 
-To install *Spindles.jl*, clone the [GitHub repository](https://github.com/ma-b/hirsch-walks) into ... In the `Spindles` subdirectory, run Julia in the command line and enter [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode by typing `]`. Then run
+To install *Spindles.jl*, clone the parent [GitHub repository](https://github.com/ma-b/hirsch-walks). In the `Spindles` subdirectory of your local clone, open the Julia REPL and enter [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode by pressing `]`. Then run
 
 ```julia
 pkg> dev .
 ```
 
-See also the [Pkg documentation](https://pkgdocs.julialang.org/v1/managing-packages/#developing) on the `dev` (or `develop`) command.
+!!! note
+    
+    See also the [Pkg documentation](https://pkgdocs.julialang.org/v1/managing-packages/#developing) on the `dev` (or `develop`) command.
 
-You are ready to use *Spindles.jl* by typing
+You are now ready to use *Spindles.jl* by typing
 ```jldoctest
 julia> using Spindles
 ```
@@ -39,7 +41,7 @@ julia> using Spindles
 ---
 
 ## Getting started
-For a brief tour of the package and its functionality, please read the [tutorials](@ref "First steps"). 
+For a brief tour of the package and its basic usage, please read the [tutorials](@ref "First steps"). 
 The full documentation can be found [here](@ref "Index").
 
 See also [this Jupyter notebook](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/examples/Demo.ipynb) for a demo.

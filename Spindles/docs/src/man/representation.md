@@ -37,10 +37,6 @@ nvertices
 apices
 ```
 
-```@docs
-nfacets
-```
-
 ## Incidence 
 
 ```@docs

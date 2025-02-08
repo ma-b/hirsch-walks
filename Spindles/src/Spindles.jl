@@ -13,7 +13,7 @@ module Spindles
 using Polyhedra
 using Graphs
 
-export Spindle, vertices, nvertices, nfacets, apices
+export Spindle, vertices, nvertices, apices
 
 """
     Spindle
@@ -66,23 +66,24 @@ mutable struct Spindle #{T}
             P = polyhedron(hrep(A, b))
         end
 
+        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))
+
         fdict = Dict(k => nothing for k=0:size(A,2))
 
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 
     function Spindle(P::Polyhedron)
+        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))
+
         A, b = hrep(P).A, hrep(P).b
         fdict = Dict(k => nothing for k=0:size(A,2))
         return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
     end
 end
 
-"""
-    nfacets(s)
-"""
 nfacets(s::Spindle) = size(s.A, 1)  # TODO
-dim(s::Spindle) = size(s.A, 2) #Polyhedra.dim(s.P)  # TODO
+dim(s::Spindle) = Polyhedra.dim(s.P, true)  # TODO
 
 """
     vertices(s)
