@@ -117,3 +117,18 @@ for f in sort(facesofdim(s48, 2))
 end
 ```
 
+In particular, for each good 2-face, there must exist paths from both apices to some vertex on the face of total length at most 3. 
+Interestingly, all 2-faces of `s48` that satisfy this weaker condition are good:
+```@example s48
+for f in sort(facesofdim(s48, 2))
+	min_total_length = sum(
+		minimum(
+			dist_toapex(s48, a, v) for v in Spindles.incidentvertices(s48, f)
+		) for a in apices(s48)
+	)
+	if min_total_length <= 3
+		println(join(labels[f], " "), "\t", isgood2face(s48, f).good)
+	end
+end
+```
+
