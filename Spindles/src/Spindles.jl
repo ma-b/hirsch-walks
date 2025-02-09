@@ -20,69 +20,61 @@ export Spindle, vertices, nvertices, apices
 
 Main type that represents a spindle...
 """
-mutable struct Spindle #{T}
-    const P::Polyhedron #{T}
-    const A::Matrix{T} where T<:Number
-    const b::Vector{T} where T<:Number
-    inc::Union{Nothing, Vector{BitVector}}  # vertex-facet incidences
+mutable struct Spindle
+    const P::Polyhedron
     apices::Union{Nothing, Vector{Int}}
+    inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
     graph::Union{Nothing, SimpleGraph}
-    faces::Dict{Int, Union{Nothing, Vector{Vector{Int}}}}  # maps k to list of incident facets for each face of dim k
+    faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
-    @doc"""
-        Spindle(A, b [,lib])
-
-    Create a spindle from its inequality description with coefficient matrix `A` and right-hand side vector `b`.
-
-    The optional argument `lib` allows to specify a library for polyhedral computations that implements
-    the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/). A list of all supported libraries
-    can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
-    
-    If `lib` is not specified, use the default library implemented in `Polyhedra` 
-    (see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
-    
-    !!! warning
-
-        The current version supports only full-dimensional polytopes given by irredundant inequality descriptions.
-        In particular, `A` and `b` are not checked for the presence of redundant rows or implicity equations, 
-        or whether they define a polytope at all.
-    
-    ---
-
-        Spindle(P::Polyhedron)
-
-    Create a spindle directly from a `Polyhedron` `P`.
-    """
-    function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
-        if size(A,1) != size(b,1)
-            throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
-        end
-    
-        if lib !== nothing
-            P = polyhedron(hrep(A, b), lib)
-        else
-            # use default library
-            P = polyhedron(hrep(A, b))
-        end
-
-        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))
-
-        fdict = Dict(k => nothing for k=0:size(A,2))
-
-        return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
-    end
-
     function Spindle(P::Polyhedron)
-        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))
+        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))  # TODO
 
-        A, b = hrep(P).A, hrep(P).b
-        fdict = Dict(k => nothing for k=0:size(A,2))
-        return new(P, A, b, nothing, nothing, nothing, fdict, nothing)
+        s = new(P, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
+        computeapices!(s)
+        return s
     end
 end
 
-nfacets(s::Spindle) = size(s.A, 1)  # TODO
+@doc"""
+    Spindle(A, b [,lib])
+
+Create a spindle from its inequality description with coefficient matrix `A` and right-hand side vector `b`.
+
+The optional argument `lib` allows to specify a library for polyhedral computations that implements
+the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/). A list of all supported libraries
+can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+
+If `lib` is not specified, use the default library implemented in `Polyhedra` 
+(see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
+
+!!! note
+
+    `A` and `b` are not checked for the presence of redundant rows or implicit equations.
+
+---
+
+    Spindle(P::Polyhedron)
+
+Create a spindle directly from a `Polyhedron` `P`.
+"""
+function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
+    if size(A,1) != size(b,1)
+        throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
+    end
+
+    if lib !== nothing
+        P = polyhedron(hrep(A, b), lib)
+    else
+        # use default library
+        P = polyhedron(hrep(A, b))
+    end
+
+    return Spindle(P)
+end
+
+#nfacets(s::Spindle) = nhalfspaces(s.P) #size(hrep(s.P).A, 1)  # TODO
 dim(s::Spindle) = Polyhedra.dim(s.P, true)  # TODO
 
 """
@@ -104,11 +96,10 @@ function computeinc!(s::Spindle)
     s.inc = Vector{BitVector}(undef, nvertices(s))
 
     nf = Polyhedra.nhalfspaces(s.P)
-    @assert nf == nfacets(s)  # assuming no redundancy
 
     for v in eachindex(vertices(s))
         s.inc[v.value] = falses(nf)
-        for f in Polyhedra.incidenthalfspaceindices(s.P, v)  # assuming they are numbered as in s.A
+        for f in Polyhedra.incidenthalfspaceindices(s.P, v)
             s.inc[v.value][f.value] = true
         end
     end
@@ -145,16 +136,15 @@ function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)
         end
 
         # no apex pair found
-        error("not a spindle")
+        error("not a spindle: could not find two apices")
     else
-        # check index, (assuming fits into Int)
         if apex < 1 || apex > nv
             throw(ArgumentError("not a vertex: $(apex)"))
         end
 
         for i=1:nv
             if i != apex && isapexpair(apex, i)
-                s.apices = [apex, i]
+                s.apices = sort([apex, i])
                 return s.apices
             end
         end

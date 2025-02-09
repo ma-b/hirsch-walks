@@ -1,4 +1,5 @@
 using Graphs: nv, ne
+using Polyhedra: nhalfspaces
 
 @testset "Tests for faceenum.jl" begin
 
@@ -15,7 +16,7 @@ using Graphs: nv, ne
                 return [map(x -> parse(Int, x), split(f)) for f in strlist]
             end
 
-            for k=-1:size(s.A, 2)
+            for k=-1:size(hrep(s.P).A, 2)
                 ps = readpolymake(joinpath("polymake", "$(filename)_f$(k).txt"))
                 # convert 0-based polymake indices to 1-based Julia indices
                 ps = map(x->x.+1, ps)
@@ -28,7 +29,7 @@ using Graphs: nv, ne
             @test nfacesofdim(s, 0) == nvertices(s)
             @test nv(graph(s)) == nvertices(s)
             @test nfacesofdim(s, 1) == ne(graph(s))
-            @test nfacesofdim(s, 4) == nfacets(s)
+            @test nfacesofdim(s, 4) == nhalfspaces(s.P)
             @test nfacesofdim(s, 5) == 1
             @test nfacesofdim(s, 6) == 0
         end

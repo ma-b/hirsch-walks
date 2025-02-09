@@ -13,4 +13,7 @@ using Polyhedra: hrep
     @test s1.P == s2.P
     @test s2.P == s3.P # fails
     #@test s == s2  # TODO
+
+    #using Polyhedra
+    #@test nvertices(s1) == npoints(s1.P)
 end

@@ -66,14 +66,12 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
 end
 
-
-# Lift `Graphs.edges` to `Spindle`. Returns an iterator over all pairs of indices of adjacent vertices.
-function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
+#=function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     ([src(e), dst(e)] for e in Graphs.edges(graph(s, stopatvertex)))
-end
+end=#
 
 
-facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) && s.faces[k] !== nothing
+facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) #&& s.faces[k] !== nothing
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     if !inciscomputed(s)
         computeinc!(s)
@@ -87,7 +85,8 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s)]
+        s.faces[1] = [findall(s.inc[src(e)] .& s.inc[dst(e)]) for e in Graphs.edges(graph(s, stopatvertex))]
+        #s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s)]
     else
         s.faces[k] = Vector{Vector{Int}}()
 
@@ -134,10 +133,12 @@ stores list of all facets (more memory eff, near-simple polytopes have few inc f
 containing the face instead of vertex sets of faces
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    if !(-1 <= k <= size(s.A, 2))
-        return Vector{Int}()  # no face
+    if !(-1 <= k <= size(hrep(s.P).A, 2))
+        # there is no face of dimension less than -1 or greater than the dimension of the ambient space
+        return Vector{Int}()
     elseif k == -1  # empty face
-        return [collect(1:nfacets(s))]  # TODO assuming a polytope
+        # here we use that the intersection of all facets of a polytope is empty
+        return [collect(1:nhalfspaces(s.P))]
     else
         if !facescomputed(s, k)
             computefacesofdim!(s, k, stopatvertex)
@@ -153,4 +154,4 @@ end
 Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(facesofdim(s, k))` if not nothing.
 Uses the convention that the dimension of the empty face is -1.
 """
-nfacesofdim(s::Spindle, k::Int) = facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0
+nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k)) #facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0

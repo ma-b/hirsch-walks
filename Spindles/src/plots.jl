@@ -6,16 +6,15 @@ using Printf
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
 # whether the direction is unique (False if edge and reference_edge are parallel)
 function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
-    u,v = edge
+    u, v = edge
 
     # direction from u to v
     verts = hcat(vertices(s)...)'   # TODO performance
     r = verts[v,:] - verts[u,:]
     # index of first nonzero entry (exists since u and v are distinct)
     i = findfirst(@. !isapprox(r, 0))
-    #@show i
     r ./= abs(r[i]) # normalize
-    dotproduct = s.A[facet,:]' * r
+    dotproduct = collect(halfspaces(s.P))[facet].a' * r
 
     # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
     if dotproduct == 0
@@ -73,25 +72,31 @@ function plot2face(s::Spindle, facets::Vector{Int};
         # the projection is 1-dimensional if the images of all vertices, in particular of the first three 
         # (recall that there are at least three), are collinear.
 
+        function proj_onto_indices(x::Vector{<:Number}, y::Vector{<:Number})
+            # TODO assert nonzero
+
+            # find first nonzero component (must exist since x is nonzero)
+            i = findfirst(@. !isapprox(x, 0))  # TODO abs tol
+
+            # perform one Gauss step to eliminate component i of y (note: no zero division because of choice of i)
+            y_elim = y - x * y[i] / x[i]
+            
+            # find first nonzero component of resulting vector
+            # note that entry i must be zero by construction
+            @assert isapprox(y_elim[i], 0)
+            j = findfirst(@. !isapprox(y_elim, 0))  # TODO
+            # such a j must exist since x and y are linearly independent
+            # now the 2x2 matrix induced by components i and j of x and y_elim is of the form [* *; 0 *] and has rank 2,
+            # so projecting out all but i,j leaves projections of x and y_elim (and therefore y) linearly independent.
+            return (i,j)
+        end
+
         # these two vectors are nonzero (and linearly independent) since they are differences of distinct vertices
         r12 = verts[cyclic[1],:] - verts[cyclic[2],:]
         r13 = verts[cyclic[1],:] - verts[cyclic[3],:]
         # TODO normalize?
 
-        # find first nonzero component (must exist since r12 is nonzero)
-        i = findfirst(@. !isapprox(r12, 0))
-
-        # perform one Gauss step to eliminate component i of r2 (note: no zero division because of choice of i)
-        r13_elim = r13 - r12 * r13[i] / r12[i]
-        
-        # find first nonzero component of resulting vector
-        # note that entry i must be zero by construction
-        @assert isapprox(r13_elim[i], 0)
-        j = findfirst(@. !isapprox(r13_elim, 0))
-        # such a j must exist since r1 and r2 are linearly independent
-        # now the 2x2 matrix induced by components i and j of r1 and r2_ is of the form [* *; 0 *] and has rank 2,
-        # so projecting out all but i,j leaves projections of r1 and r2_ (and therefore r2) linearly independent.
-        
+        i,j = proj_onto_indices(r12, r13)
         xs, ys = verts[cyclic,i], verts[cyclic,j]  # TODO convert to float
     else
         R = 1
@@ -111,7 +116,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # ---- labels ----
 
     if facetlabels === nothing
-        facetlabels = map(string, 1:nfacets(s))
+        facetlabels = map(string, 1:nhalfspaces(s.P))
     end
 
     # vertex and edge labels are unformly shifted outwards from the respective vertex positions and edge midpoints,
