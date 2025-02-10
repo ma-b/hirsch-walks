@@ -4,13 +4,11 @@
     b = [1,1,1,1,1,1]
     cube = Spindle(A, b)
 
-    success = true
     for i=1:nvertices(cube)
-        try
-            setapex!(cube, i)
+        @test try setapex!(cube, i)
+            true
         catch
-            success = false 
+            false
         end
     end
-    @test success
 end
