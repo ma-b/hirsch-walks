@@ -30,24 +30,16 @@ end
 
 Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 
-dists are cached
+!!! note
 
-!!! warning
-
-    Distances are not persistent under recomputing the apices when passing a second argument to [`Spindles.apices`](@ref)
-    that is not one of the previously computed apices.
+    Results are affected by resetting the apices with [`setapex!`](@ref Spindles.setapex!).
 
 # Examples
 
-```
-# TODO
-julia> A = [1 0; 0 1; -1 0; 0 -1];
+```jldoctest
+julia> square = Spindle([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
 
-julia> b = [1, 1, 1, 1];
-
-julia> square = Spindle(A, b);
-
-julia> apx1, apx2 = apices(square, 1)
+julia> apx1, apx2 = setapex!(square, 1)
 2-element Vector{Int64}:
  1
  4
@@ -55,7 +47,7 @@ julia> apx1, apx2 = apices(square, 1)
 julia> dist_toapex(square, apx1, 4)
 2
 
-julia> apx1, apx2 = apices(square, 2)  # recompute the apices
+julia> apx1, apx2 = setapex!(square, 2)
 2-element Vector{Int64}:
  2
  3

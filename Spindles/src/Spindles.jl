@@ -142,13 +142,8 @@ end
 """
     apices(s [,apex])
 
-Return the indices of a pair of vertices (the *apices*) such that each facet of `s` is incident to exactly one of them.
-
-Compute a pair of vertices (the *apices*) such that each facet of `s` is incident to exactly one of them, or throw
-an error if no such pair exists.
-
-If additionally given the index of a vertex `apex`, try to find a vertex distinct from `apex` such that the two vertices
-are apices of `s`.
+Return the indices of a pair of vertices (the *apices*) of `s` for which each facet of `s` 
+is incident to exactly one of them.
 """
 apices(s::Spindle) = s.apices
 
@@ -205,12 +200,20 @@ end
 """   
     setapex!(s, apex)
 
-Find the index `v` of a vertex of `s` such that `v` and `apex` are apices of `s`, or throw an `ArgumentError`
-if there is no such `v`. In the latter case, the precomputed apices of `s` are not overwritten.
+Try to find the index `v` of a vertex of `s` such that `v` and `apex` are apices of `s`.
+If successful, overwrite the apices of `s`, or throw an error otherwise.
 
 # Examples
+
 ```jldoctest
 julia> square = Spindle([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
+
+julia> vertices(square)
+4-element iterator of Vector{Rational{BigInt}}:
+ Rational{BigInt}[-1, -1]
+ Rational{BigInt}[1, -1]
+ Rational{BigInt}[-1, 1]
+ Rational{BigInt}[1, 1]
 
 julia> apices(square)
 2-element Vector{Int64}:

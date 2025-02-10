@@ -124,7 +124,7 @@ end
 """
     facesofdim(s, k, stopatvertex=nothing)
 
-Enumerate all faces of dimension `k` of the spindle `s`, given by their sets of incident facets.
+Enumerate all faces of dimension `k` of the spindle `s`, given by their sets of incident halfspaces/facets.
 
 Return a vector of vectors, one for each face. Results are stored/cached in `s`(?)
 Recursive, bottom-up / starting from vertices.
