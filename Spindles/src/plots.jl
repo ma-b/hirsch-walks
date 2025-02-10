@@ -44,11 +44,9 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(labels[facet
 2D projection or combinatorial plot (graph)
 
 # Keywords
-**`facetlabels`**
-
-**`usecoordinates`** indicates whether the plot shows a 2D projection or the graph of the 2-face.
-
-**`showdist`**
+* `facetlabels`
+* `usecoordinates` indicates whether the plot shows a 2D projection or the graph of the 2-face.
+* `showdist`
 
 ... 
 """
@@ -133,7 +131,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # vertex labels
     for i=1:n
-        dists = [dist_toapex(s, a, cyclic[i]) for a in apices(s)]
+        dists = [dist(s, a, cyclic[i]) for a in apices(s)]
         labeltext = "$(cyclic[i])"
         if showdist
             labeltext *= "\n$(@sprintf("%d | %d", dists...))"

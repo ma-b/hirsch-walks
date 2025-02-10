@@ -14,7 +14,7 @@ using Graphs: degree
     end
 
     # distances must be symmetric
-    @test dist_toapex(sp, apices(sp)...) == dist_toapex(sp, reverse(apices(sp))...)
+    @test dist(sp, apices(sp)...) == dist(sp, reverse(apices(sp))...)
 
     @testset "Count degenerate vertices" begin
         # find all degenerate vertices

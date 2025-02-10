@@ -1,4 +1,4 @@
-export isgood2face, dist_toapex #, FaceState
+export isgood2face, dist #, FaceState
 
 # TODO incorporate direction of shortcuts
 """
@@ -26,7 +26,7 @@ function computedistances!(s::Spindle)
 end
 
 """
-    dist_toapex(s, apex, v)
+    dist(s, apex, v)
 
 Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 
@@ -44,7 +44,7 @@ julia> apx1, apx2 = setapex!(square, 1)
  1
  4
 
-julia> dist_toapex(square, apx1, 4)
+julia> dist(square, apx1, 4)
 2
 
 julia> apx1, apx2 = setapex!(square, 2)
@@ -52,11 +52,11 @@ julia> apx1, apx2 = setapex!(square, 2)
  2
  3
 
-julia> dist_toapex(square, apx1, 4)
+julia> dist(square, apx1, 4)
 1
 ```
 """
-function dist_toapex(s::Spindle, apex::Int, v::Int)
+function dist(s::Spindle, apex::Int, v::Int)
     apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
     1 <= v <= nvertices(s) || throw(ArgumentError("index $(v) out of bounds for $(nvertices(s)) vertices"))
     
@@ -121,7 +121,7 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     cyclic !== nothing || return FaceState(false, nothing, nothing, nothing)
 
     # (3) shortest edge walks to and from the face must have total length <= dim-2
-    dists_by_apex = [[dist_toapex(s, a, v) for v in verticesinface] for a in apices(s)]
+    dists_by_apex = [[dist(s, a, v) for v in verticesinface] for a in apices(s)]
     if sum(map(minimum, dists_by_apex)) > dim(s)-2
         return FaceState(false, nothing, nothing, nothing)
     end
@@ -146,8 +146,8 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             # their distances to opposite apices are at most d-2
 
             # maximum distance of a vertex in _plus (or _minus, resp.) to each apex (lists with 2 entries each)
-            max_dists_plus  = [maximum([dist_toapex(s, a, cyclic[vp]) for vp in vertices_plus]) for a in apices(s)]
-            max_dists_minus = [maximum([dist_toapex(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
+            max_dists_plus  = [maximum([dist(s, a, cyclic[vp]) for vp in vertices_plus]) for a in apices(s)]
+            max_dists_minus = [maximum([dist(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
 
             if min(max_dists_plus[1] + max_dists_minus[2], max_dists_plus[2] + max_dists_minus[1]) <= dim(s)-2
                 fstate = FaceState(

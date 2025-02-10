@@ -37,7 +37,7 @@ collect(vertices(s48))[apices(s48)]
 
 and the distance between them in the graph of `s48` is indeed 6:
 ```@example s48
-dist_toapex(s48, apices(s48)...)
+dist(s48, apices(s48)...)
 ```
 
 Note that both apices are highly degenerate:
@@ -123,7 +123,7 @@ Interestingly, all 2-faces of `s48` that satisfy this weaker condition are good:
 for f in sort(facesofdim(s48, 2))
 	min_total_length = sum(
 		minimum(
-			dist_toapex(s48, a, v) for v in incidentvertices(s48, f)
+			dist(s48, a, v) for v in incidentvertices(s48, f)
 		) for a in apices(s48)
 	)
 	if min_total_length <= 3

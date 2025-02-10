@@ -26,7 +26,7 @@ nfacesofdim
 ## Length of paths
 
 ```@docs
-dist_toapex
+dist
 ```
 ## Good faces
 

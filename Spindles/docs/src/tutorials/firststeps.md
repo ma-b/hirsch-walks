@@ -56,14 +56,14 @@ setapex!(cube, 3)
 We may even compute the distance between those two apices in the graph of `cube`:
 
 ```@example cube
-dist_toapex(cube, apices(cube)...)
+dist(cube, apices(cube)...)
 ```
 
 !!! note
 
-    Calling [`dist_toapex`](@ref Spindles.dist_toapex) always refers to the current apices as returned by [`apices`](@ref Spindles.apices). For example, the above call computes the distance between `3` and `6` (and not between `1` and `8`).
+    Calling [`dist`](@ref Spindles.dist) always refers to the current apices as returned by [`apices`](@ref Spindles.apices). For example, the above call computes the distance between `3` and `6` (and not between `1` and `8`).
 
-Behind the scenes, the call to [`Spindles.dist_toapex`](@ref) first computes the graph of `cube`. The graph can also be accessed directly using [`Spindles.graph`](@ref), which returns a graph of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
+Behind the scenes, the call to [`Spindles.dist`](@ref) first computes the graph of `cube`. The graph can also be accessed directly using [`Spindles.graph`](@ref), which returns a graph of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
 For instance, we may verify the well-known fact that cubes are simple by using the function [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 
 ```@example cube

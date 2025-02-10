@@ -122,15 +122,17 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
 end
 
 """
-    facesofdim(s, k, stopatvertex=nothing)
+    facesofdim(s, k)
 
-Enumerate all faces of dimension `k` of the spindle `s`, given by their sets of incident halfspaces/facets.
+Enumerate all faces of dimension `k` of the spindle `s`, each one given by a vector containing the indices of all 
+incident halfspaces/facets (starting at 1). Return them in one vector.
 
-Return a vector of vectors, one for each face. Results are stored/cached in `s`(?)
-Recursive, bottom-up / starting from vertices.
-stores list of all facets (more memory eff, near-simple polytopes have few inc facets) 
+!!! note
 
-containing the face instead of vertex sets of faces
+    difference from `Polyhedra.Index`
+
+Recursive bottom-up computation. Most (memory-)efficient for near-simple polytopes, for which faces are contained
+in few facets each.
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     if !(-1 <= k <= size(Polyhedra.hrep(s.p).A, 2))
