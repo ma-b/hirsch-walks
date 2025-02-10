@@ -19,7 +19,7 @@ Spindle
 Objects of this type may be created in one of two possible ways:
 
 ```@docs
-Spindle(::Matrix{T}, ::Vector{T}, ::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
+Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library) where T
 ```
 
 

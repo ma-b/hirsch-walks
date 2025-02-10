@@ -16,24 +16,24 @@ using Graphs
 export Spindle, vertices, nvertices, incidentvertices, apices, setapex!
 
 """
-    Spindle
+    Spindle{T}
 
-Main type that represents a spindle...
+Main type that represents a spindle.
 """
-mutable struct Spindle
-    const P::Polyhedra.Polyhedron
+mutable struct Spindle{T}
+    const P::Polyhedra.Polyhedron{T}
     apices::Union{Nothing, Vector{Int}}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
     graph::Union{Nothing, SimpleGraph}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
-    function Spindle(P::Polyhedra.Polyhedron)
+    function Spindle{T}(P::Polyhedra.Polyhedron{T}) where T
         # first check whether P is a polytope
         Polyhedra.nlines(P) + Polyhedra.nrays(P) == 0 || throw(ArgumentError("got an unbounded polyhedron"))  # TODO triggers computation of V-representation
         
         # create a preliminary object with apices not set
-        s = new(P, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
+        s = new{T}(P, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
 
         # try to find two apices
         s.apices = computeapices(s)
@@ -44,6 +44,8 @@ mutable struct Spindle
         return s
     end
 end
+
+Spindle(P::Polyhedra.Polyhedron{T}) where T = Spindle{T}(P)
 
 @doc"""
     Spindle(A, b [,lib])
@@ -57,7 +59,7 @@ can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 If `lib` is not specified, use the default library implemented in `Polyhedra` 
 (see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
 
-Equivalent with
+The above is equivalent to
 ```julia
 using Polyhedra: polyhedron, hrep
 #lib = ...
@@ -73,17 +75,18 @@ Spindle(polyhedron(hrep(A, b), lib))
 
 Create a spindle directly from a `Polyhedron` `P`.
 """
-function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Library}=nothing) where T<:Number
+function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.DefaultLibrary{T}()) where T #<:Number
     if size(A,1) != size(b,1)
         throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
     end
 
-    if lib !== nothing
+    P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
+    #=if lib !== nothing
         P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
     else
         # use default library
         P = Polyhedra.polyhedron(Polyhedra.hrep(A, b))
-    end
+    end=#
 
     return Spindle(P)
 end
