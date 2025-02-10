@@ -21,19 +21,19 @@ export Spindle, vertices, nvertices, incidentvertices, apices, setapex!
 Main type that represents a spindle.
 """
 mutable struct Spindle{T}
-    const P::Polyhedra.Polyhedron{T}
+    const p::Polyhedra.Polyhedron{T}
     apices::Union{Nothing, Vector{Int}}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
-    graph::Union{Nothing, SimpleGraph}
+    graph::Union{Nothing, SimpleGraph{Int}}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
-    function Spindle{T}(P::Polyhedra.Polyhedron{T}) where T
+    function Spindle{T}(p::Polyhedra.Polyhedron{T}) where T
         # first check whether P is a polytope
-        Polyhedra.nlines(P) + Polyhedra.nrays(P) == 0 || throw(ArgumentError("got an unbounded polyhedron"))  # TODO triggers computation of V-representation
+        Polyhedra.nlines(p) + Polyhedra.nrays(p) == 0 || throw(ArgumentError("got an unbounded polyhedron"))  # TODO triggers computation of V-representation
         
         # create a preliminary object with apices not set
-        s = new{T}(P, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
+        s = new{T}(p, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
 
         # try to find two apices
         s.apices = computeapices(s)
@@ -45,7 +45,7 @@ mutable struct Spindle{T}
     end
 end
 
-Spindle(P::Polyhedra.Polyhedron{T}) where T = Spindle{T}(P)
+Spindle(p::Polyhedra.Polyhedron{T}) where T = Spindle{T}(p)
 
 @doc"""
     Spindle(A, b [,lib])
@@ -71,9 +71,10 @@ Spindle(polyhedron(hrep(A, b), lib))
     `A` and `b` are not checked for the presence of redundant rows or implicit equations.
 ---
 
-    Spindle(P::Polyhedron)
+    Spindle{T}(p::Polyhedron{T})
 
-Create a spindle directly from a `Polyhedron` `P`.
+Create a spindle directly from a `Polyhedron` `p`.
+If not specified the element type `T` is the element type of `p`.
 """
 function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.DefaultLibrary{T}()) where T #<:Number
     if size(A,1) != size(b,1)
@@ -91,22 +92,22 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.
     return Spindle(P)
 end
 
-nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.P)
-dim(s::Spindle) = Polyhedra.dim(s.P, true)  # TODO
+nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.p)
+dim(s::Spindle) = Polyhedra.dim(s.p, true)  # TODO
 
 """
     vertices(s)
 
 Returns an iterator over the vertices of the spindle `s`.
 """
-vertices(s::Spindle) = Polyhedra.points(s.P)
+vertices(s::Spindle) = Polyhedra.points(s.p)
 
 """
     nvertices(s)
 
 Count the vertices of `s`.
 """
-nvertices(s::Spindle) = Polyhedra.npoints(s.P)
+nvertices(s::Spindle) = Polyhedra.npoints(s.p)
 
 # --------------------------------
 # vertex-halfspace incidences
@@ -116,11 +117,11 @@ inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
     s.inc = Vector{BitVector}(undef, nvertices(s))
 
-    nf = Polyhedra.nhalfspaces(s.P)
+    nf = Polyhedra.nhalfspaces(s.p)
 
     for v in eachindex(vertices(s))
         s.inc[v.value] = falses(nf)
-        for f in Polyhedra.incidenthalfspaceindices(s.P, v)
+        for f in Polyhedra.incidenthalfspaceindices(s.p, v)
             s.inc[v.value][f.value] = true
         end
     end

@@ -16,7 +16,7 @@ using Polyhedra: hrep
                 return [map(x -> parse(Int, x), split(f)) for f in strlist]
             end
 
-            for k=-1:size(hrep(s.P).A, 2)
+            for k=-1:size(hrep(s.p).A, 2)
                 ps = readpolymake(joinpath("polymake", "$(filename)_f$(k).txt"))
                 # convert 0-based polymake indices to 1-based Julia indices
                 ps = map(x->x.+1, ps)

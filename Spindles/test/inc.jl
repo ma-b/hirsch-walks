@@ -9,7 +9,7 @@ using Graphs: degree
     Spindles.computeinc!(sp)
 
     @testset "Redundancy/dimension" begin
-        @test nhalfspaces(sp.P) == size(A, 1)  # we know that Ax <= b is irredundant
+        @test Spindles.nhalfspaces(sp) == size(A, 1)  # we know that Ax <= b is irredundant
         @test Spindles.dim(sp) == 5
     end
 
@@ -24,29 +24,11 @@ using Graphs: degree
     @testset "Incidence matrix" begin
         # computeinc! << 2 < 3 (10x memory allocations)
         function inc2(s::Spindle)
-            [hrep(s.P).A * v .== hrep(s.P).b for v in vertices(s)]
+            [hrep(s.p).A * v .== hrep(s.p).b for v in vertices(s)]
         end
         function inc3(s::Spindle)
-            [isapprox.(hrep(s.P).A * v, hrep(s.P).b) for v in vertices(s)]
+            [isapprox.(hrep(s.p).A * v, hrep(s.p).b) for v in vertices(s)]
         end
-
-        #=
-        # alternative computation of vertex-facet incidences using Polyhedra.Indices
-        function inctest(s::Spindle)
-            inc = Vector(undef, nvertices(s))
-
-            nf = Polyhedra.nhalfspaces(s.P)
-
-            for v in eachindex(vertices(s))
-                inc[v.value] = falses(nf)
-                for f in Polyhedra.incidenthalfspaceindices(s.P, v)  # assuming they are numbered as in s.A
-                    inc[v.value][f.value] = true
-                end
-            end
-
-            return inc
-        end
-        =#
 
         @test sp.inc == inc2(sp) == inc3(sp)
     end
