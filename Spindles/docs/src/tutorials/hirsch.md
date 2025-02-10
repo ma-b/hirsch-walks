@@ -123,7 +123,7 @@ Interestingly, all 2-faces of `s48` that satisfy this weaker condition are good:
 for f in sort(facesofdim(s48, 2))
 	min_total_length = sum(
 		minimum(
-			dist_toapex(s48, a, v) for v in Spindles.incidentvertices(s48, f)
+			dist_toapex(s48, a, v) for v in incidentvertices(s48, f)
 		) for a in apices(s48)
 	)
 	if min_total_length <= 3

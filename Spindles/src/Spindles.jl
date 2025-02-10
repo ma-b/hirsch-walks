@@ -13,7 +13,7 @@ module Spindles
 import Polyhedra
 using Graphs
 
-export Spindle, vertices, nvertices, apices, setapex!
+export Spindle, vertices, nvertices, incidentvertices, apices, setapex!
 
 """
     Spindle

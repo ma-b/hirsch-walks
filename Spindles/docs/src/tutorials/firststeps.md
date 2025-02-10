@@ -91,7 +91,7 @@ Given that the two-dimensional faces of `cube` are precisely the six facets, thi
 Let us list all vertices contained in the first facet.
 
 ```@example cube
-for v in Spindles.incidentvertices(cube, [1])
+for v in incidentvertices(cube, [1])
     println(collect(vertices(cube))[v])
 end
 ```

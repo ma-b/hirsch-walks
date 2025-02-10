@@ -44,5 +44,5 @@ setapex!
 ## Incidence 
 
 ```@docs
-Spindles.incidentvertices
+incidentvertices
 ```
