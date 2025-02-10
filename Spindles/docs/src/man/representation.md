@@ -37,6 +37,10 @@ nvertices
 apices
 ```
 
+```@docs
+setapex!
+```
+
 ## Incidence 
 
 ```@docs

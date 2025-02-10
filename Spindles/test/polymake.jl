@@ -1,5 +1,5 @@
 using Graphs: nv, ne
-using Polyhedra: nhalfspaces
+using Polyhedra: hrep
 
 @testset "Tests for faceenum.jl" begin
 
@@ -29,7 +29,7 @@ using Polyhedra: nhalfspaces
             @test nfacesofdim(s, 0) == nvertices(s)
             @test nv(graph(s)) == nvertices(s)
             @test nfacesofdim(s, 1) == ne(graph(s))
-            @test nfacesofdim(s, 4) == nhalfspaces(s.P)
+            @test nfacesofdim(s, 4) == Spindles.nhalfspaces(s)
             @test nfacesofdim(s, 5) == 1
             @test nfacesofdim(s, 6) == 0
         end

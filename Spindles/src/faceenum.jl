@@ -133,12 +133,12 @@ stores list of all facets (more memory eff, near-simple polytopes have few inc f
 containing the face instead of vertex sets of faces
 """
 function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
-    if !(-1 <= k <= size(hrep(s.P).A, 2))
+    if !(-1 <= k <= size(Polyhedra.hrep(s.P).A, 2))
         # there is no face of dimension less than -1 or greater than the dimension of the ambient space
         return Vector{Int}()
     elseif k == -1  # empty face
         # here we use that the intersection of all facets of a polytope is empty
-        return [collect(1:nhalfspaces(s.P))]
+        return [collect(1:nhalfspaces(s))]
     else
         if !facescomputed(s, k)
             computefacesofdim!(s, k, stopatvertex)

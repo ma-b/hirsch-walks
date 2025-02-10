@@ -40,7 +40,7 @@ and the distance between them in the graph of `s48` is indeed 6:
 dist_toapex(s48, apices(s48)...)
 ```
 
-Both apices are highly degenerate:
+Note that both apices are highly degenerate:
 ```@example s48
 using Graphs: degree
 degree(graph(s48), apices(s48))

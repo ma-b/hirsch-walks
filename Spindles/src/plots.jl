@@ -116,7 +116,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     # ---- labels ----
 
     if facetlabels === nothing
-        facetlabels = map(string, 1:nhalfspaces(s.P))
+        facetlabels = map(string, 1:nhalfspaces(s))
     end
 
     # vertex and edge labels are unformly shifted outwards from the respective vertex positions and edge midpoints,

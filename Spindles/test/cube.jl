@@ -7,7 +7,7 @@
     success = true
     for i=1:nvertices(cube)
         try
-            apices(cube, i)
+            setapex!(cube, i)
         catch
             success = false 
         end

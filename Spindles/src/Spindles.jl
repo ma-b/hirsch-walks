@@ -10,10 +10,10 @@ Main module in `Spindles.jl`.
 """
 module Spindles
 
-using Polyhedra
+import Polyhedra
 using Graphs
 
-export Spindle, vertices, nvertices, apices
+export Spindle, vertices, nvertices, apices, setapex!
 
 """
     Spindle
@@ -21,18 +21,26 @@ export Spindle, vertices, nvertices, apices
 Main type that represents a spindle...
 """
 mutable struct Spindle
-    const P::Polyhedron
+    const P::Polyhedra.Polyhedron
     apices::Union{Nothing, Vector{Int}}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
     graph::Union{Nothing, SimpleGraph}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
-    function Spindle(P::Polyhedron)
-        nlines(P) + nrays(P) == 0 || throw(ArgumentError("not a polytope"))  # TODO
-
+    function Spindle(P::Polyhedra.Polyhedron)
+        # first check whether P is a polytope
+        Polyhedra.nlines(P) + Polyhedra.nrays(P) == 0 || throw(ArgumentError("got an unbounded polyhedron"))  # TODO triggers computation of V-representation
+        
+        # create a preliminary object with apices not set
         s = new(P, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
-        computeapices!(s)
+
+        # try to find two apices
+        s.apices = computeapices(s)
+        if s.apices === nothing
+            throw(ArgumentError("not a spindle: cannot find two apices"))
+        end
+
         return s
     end
 end
@@ -49,10 +57,16 @@ can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 If `lib` is not specified, use the default library implemented in `Polyhedra` 
 (see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
 
+Equivalent with
+```julia
+using Polyhedra: polyhedron, hrep
+#lib = ...
+Spindle(polyhedron(hrep(A, b), lib))
+```
+
 !!! note
 
     `A` and `b` are not checked for the presence of redundant rows or implicit equations.
-
 ---
 
     Spindle(P::Polyhedron)
@@ -65,16 +79,16 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Union{Nothing, Polyhedra.Libra
     end
 
     if lib !== nothing
-        P = polyhedron(hrep(A, b), lib)
+        P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
     else
         # use default library
-        P = polyhedron(hrep(A, b))
+        P = Polyhedra.polyhedron(Polyhedra.hrep(A, b))
     end
 
     return Spindle(P)
 end
 
-#nfacets(s::Spindle) = nhalfspaces(s.P) #size(hrep(s.P).A, 1)  # TODO
+nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.P)
 dim(s::Spindle) = Polyhedra.dim(s.P, true)  # TODO
 
 """
@@ -90,6 +104,10 @@ vertices(s::Spindle) = Polyhedra.points(s.P)
 Count the vertices of `s`.
 """
 nvertices(s::Spindle) = Polyhedra.npoints(s.P)
+
+# --------------------------------
+# vertex-halfspace incidences
+# --------------------------------
 
 inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
@@ -117,43 +135,14 @@ function incidentvertices(s::Spindle, facets::Vector{Int})
     return (v for v=1:nvertices(s) if all(s.inc[v][facets]))
 end
 
-
-apicescomputed(s::Spindle) = s.apices !== nothing
-function computeapices!(s::Spindle, apex::Union{Nothing, Int}=nothing)
-    nv = nvertices(s)  # triggers vertex enumeration if necessary
-    if !inciscomputed(s)
-        computeinc!(s)
-    end
-
-    isapexpair(i,j) = all(s.inc[i] .⊻ s.inc[j])  # bitwise XOR
-
-    if apex === nothing
-        for i=1:nv, j=i+1:nv
-            if isapexpair(i,j)
-                s.apices = [i,j]
-                return s.apices
-            end
-        end
-
-        # no apex pair found
-        error("not a spindle: could not find two apices")
-    else
-        if apex < 1 || apex > nv
-            throw(ArgumentError("not a vertex: $(apex)"))
-        end
-
-        for i=1:nv
-            if i != apex && isapexpair(apex, i)
-                s.apices = sort([apex, i])
-                return s.apices
-            end
-        end
-        error("not a spindle with $(apex) as an apex")
-    end
-end
+# --------------------------------
+# apices
+# --------------------------------
 
 """
     apices(s [,apex])
+
+Return the indices of a pair of vertices (the *apices*) such that each facet of `s` is incident to exactly one of them.
 
 Compute a pair of vertices (the *apices*) such that each facet of `s` is incident to exactly one of them, or throw
 an error if no such pair exists.
@@ -161,15 +150,95 @@ an error if no such pair exists.
 If additionally given the index of a vertex `apex`, try to find a vertex distinct from `apex` such that the two vertices
 are apices of `s`.
 """
-function apices(s::Spindle, apex::Union{Nothing, Int}=nothing)
-    if !apicescomputed(s) || (apex !== nothing && !(apex in s.apices))
-        computeapices!(s, apex)
+apices(s::Spindle) = s.apices
+
+# actually needs computeapices! because inc is computed
+function computeapices(s::Spindle, apex::Union{Nothing, Int}=nothing)
+    nv = nvertices(s)  # triggers vertex enumeration if necessary
+    nf = nhalfspaces(s)
+
+    if !inciscomputed(s)
+        computeinc!(s)
     end
-    return s.apices
+
+    # assuming that i and j are the indices of the apices that we want to find, their incidenct 
+    # halfspaces/facets partition the set of all halfspaces, so this predicate must evaluate to true:
+    isapexpair(i,j) = all(s.inc[i] .⊻ s.inc[j])  # bitwise XOR
+
+    # in particular, the number of incident facets of j must be at least 
+    # nf - sum(s.inc[i]) >= nf - maxinc, 
+    # where maxinc is the maximum number of incident halfspaces across all vertices:
+    maxinc = maximum(sum, s.inc)
+
+    # we use this fact to perform a pre-check in the following algorithm
+    # and discard vertices with too few incident facets
+
+    # given i, finds j such that (i,j) are a valid pair of apices
+    # if onlygreater is set to `true`, then consider j > i only
+    function findsecondapex(i::Int, onlygreater::Bool)
+        issecondapex(j) = (!onlygreater || j > i) && i != j && 
+            sum(s.inc[j]) + maxinc >= nf && isapexpair(i,j)
+        findfirst(issecondapex, 1:nv)
+    end
+
+    # brute-force all possible apex pairs and stop on finding the first valid pair
+
+    if apex !== nothing
+        j = findsecondapex(apex, false)
+        if j !== nothing
+            return sort([apex,j])
+        end
+    else
+        for i=1:nv
+            sum(s.inc[i]) + maxinc >= nf || continue
+            j = findsecondapex(i, true)
+            if j !== nothing
+                return [i,j]
+            end
+        end
+    end
+
+    # no apex pair found
+    return nothing
 end
 
+"""   
+    setapex!(s, apex)
 
-# 
+Find the index `v` of a vertex of `s` such that `v` and `apex` are apices of `s`, or throw an `ArgumentError`
+if there is no such `v`. In the latter case, the precomputed apices of `s` are not overwritten.
+
+# Examples
+```jldoctest
+julia> square = Spindle([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
+
+julia> apices(square)
+2-element Vector{Int64}:
+ 1
+ 4
+
+julia> setapex!(square, 2);
+
+julia> apices(square)
+2-element Vector{Int64}:
+ 2
+ 3
+```
+"""
+function setapex!(s::Spindle, apex::Int)
+    1 <= apex <= nvertices(s) || throw(ArgumentError("no vertex at index $(apex): index must be between 1 and $(nvertices(s))"))
+
+    apices = computeapices(s, apex)
+    if apices !== nothing
+        s.apices = apices
+    else
+        throw(ArgumentError("cannot find a matching second apex"))        
+    end
+end
+
+# --------------------------------
+# face enumeration, plotting, io:
+# --------------------------------
 
 include("faceenum.jl")
 include("goodfaces.jl")

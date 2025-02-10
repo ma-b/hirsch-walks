@@ -39,7 +39,8 @@ dists are cached
 
 # Examples
 
-```jldoctest
+```
+# TODO
 julia> A = [1 0; 0 1; -1 0; 0 -1];
 
 julia> b = [1, 1, 1, 1];

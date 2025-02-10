@@ -25,12 +25,12 @@ using Spindles # hide
 cube = Spindle(A, b)
 ```
 
-!!! warning
+The [`Spindle`](@ref Spindles.Spindle) constructor already computes two apices. They may be inspected by running
+```@example cube
+apices(cube)
+```
 
-    Currently, [`Spindle`](@ref Spindles.Spindle) only supports **full-dimensional polytopes** given by **irredundant** inequality descriptions.
-
-Even though `cube` is of type [`Spindle`](@ref Spindles.Spindle), this does not automatically mean that it is indeed a spindle in the polyhedral sense. For this, it must have two apices. To see whether it does, let us first list all (eight) vertices of `cube`.
-
+This returns the two indices of the apices as they appear in the list of all (eight) vertices of `cube`. We may list the vertices explicitly as follows:
 ```@example cube
 vertices(cube)
 ```
@@ -39,17 +39,18 @@ vertices(cube)
 
     By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each vertex returned by [`Spindles.vertices`](@ref) are of type `Rational` with numerators and denominators of type `BigInt` to avoid integer overflows (see the Julia documentation pages on [rational numbers](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers) and [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)).
 
-The existence of two apices may be checked using the function [`Spindles.apices`](@ref), which returns the indices of two vertices of `cube` that act as apices:
+So the first and last vertex in the list above can take the role of the apices `cube`. However, these two are not unique. In fact, for a cube there are many possible pairs of apices: take an arbitrary vertex and its antipodal one, i.e., the vertex obtained by flipping the sign of each component. If we want to prescribe an apex, we can use the function [`Spindles.setapex!`](@ref) that takes as input the index of a vertex of our choice and tries to find a matching second one for a pair of apices:
 
 ```@example cube
-apices(cube)
+setapex!(cube, 3)
 ```
 
-So the first and last vertex in the list above can take the role of apices. However, these two are not unique. In fact, for a cube there are many possible pairs of apices: take an arbitrary vertex and its antipodal one, i.e., the vertex obtained by flipping the sign of each component. If we want to prescribe an apex, we can tell [`Spindles.apices`](@ref) to use a given vertex as the first apex and try to find a matching second one:
+!!! warning
 
-```@example cube
-apices(cube, 3)
-```
+    Calling [`setapex!`](@ref Spindles.setapex!) overwrites the previously computed apices. Calling the function [`apices`](@ref Spindles.apices) again now returns
+    ```@example cube
+    apices(cube)
+    ```
 
 ## Working with the graph
 We may even compute the distance between those two apices in the graph of `cube`:
@@ -57,6 +58,10 @@ We may even compute the distance between those two apices in the graph of `cube`
 ```@example cube
 dist_toapex(cube, apices(cube)...)
 ```
+
+!!! note
+
+    Calling [`dist_toapex`](@ref Spindles.dist_toapex) always refers to the current apices as returned by [`apices`](@ref Spindles.apices). For example, the above call computes the distance between `3` and `6` (and not between `1` and `8`).
 
 Behind the scenes, the call to [`Spindles.dist_toapex`](@ref) first computes the graph of `cube`. The graph can also be accessed directly using [`Spindles.graph`](@ref), which returns a graph of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
 For instance, we may verify the well-known fact that cubes are simple by using the function [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
