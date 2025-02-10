@@ -117,12 +117,13 @@ inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
     s.inc = Vector{BitVector}(undef, nvertices(s))
 
-    nf = Polyhedra.nhalfspaces(s.p)
+    nf = Polyhedra.nhalfspaces(s.P)
+    nh = Polyhedra.nhyperplanes(s.P)
 
     for v in eachindex(vertices(s))
         s.inc[v.value] = falses(nf)
         for f in Polyhedra.incidenthalfspaceindices(s.p, v)
-            s.inc[v.value][f.value] = true
+            s.inc[v.value][f.value - nh] = true  # TODO hacky
         end
     end
 end
