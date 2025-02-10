@@ -82,13 +82,6 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.
     end
 
     p = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
-    #=if lib !== nothing
-        P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
-    else
-        # use default library
-        P = Polyhedra.polyhedron(Polyhedra.hrep(A, b))
-    end=#
-
     return Spindle(p)
 end
 
@@ -162,8 +155,10 @@ function computeapices(s::Spindle, apex::Union{Nothing, Int}=nothing)
     end
 
     # assuming that i and j are the indices of the apices that we want to find, their incidenct 
-    # halfspaces/facets partition the set of all halfspaces, so this predicate must evaluate to true:
-    isapexpair(i,j) = all(s.inc[i] .⊻ s.inc[j])  # bitwise XOR
+    # halfspaces/facets partition the set of all halfspaces excluding those that correspond to
+    # implicit equations; so this predicate must evaluate to true:
+    impliciteq = reduce(.&, s.inc)
+    isapexpair(i,j) = all(s.inc[i] .⊻ s.inc[j] .⊻ impliciteq)  # bitwise XOR
 
     # in particular, the number of incident facets of j must be at least 
     # nf - sum(s.inc[i]) >= nf - maxinc, 

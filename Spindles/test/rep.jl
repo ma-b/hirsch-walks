@@ -1,18 +1,33 @@
 using Polyhedra: polyhedron, vrep, hrep
 
 @testset "Tests for constructors" begin
-    # TODO 1-dimensional
-    p = polyhedron(vrep([1 0; 0 1]))
-    Spindle(p)
-end
+    @testset "Line segment" begin
+        p = polyhedron(vrep([1 0; 0 1]))
 
-#=
-@testset "Tests for representations" begin
-    A, b, _ = readineq("../examples/s-25-5.txt", BigInt)
-    s1 = Spindle(A, b)
-    s2 = Spindle(s1.p)
-    s3 = Spindle(hrep(s2.p).A, hrep(s2.p).b)
+        @test try Spindle(p)
+            true
+        catch
+            false
+        end
+    end
 
-    #@test nvertices(s1) == npoints(s1.p)
+    @testset "Implicit equations" begin
+        A = [-1 0;1 1;0 -1; -1 -1]
+        b = [0,1,0,-1]
+        p = polyhedron(hrep(A, b))
+
+        @test try s = Spindle(p)
+            true
+        catch
+            false
+        end
+
+        @test apices(s) == [1,2]  # the only two vertices
+
+        @test try Spindle(A, b)
+            true
+        catch
+            false
+        end
+    end
 end
-=#
