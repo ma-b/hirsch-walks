@@ -81,7 +81,7 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.
         throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
     end
 
-    P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
+    p = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
     #=if lib !== nothing
         P = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
     else
@@ -89,7 +89,7 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.
         P = Polyhedra.polyhedron(Polyhedra.hrep(A, b))
     end=#
 
-    return Spindle(P)
+    return Spindle(p)
 end
 
 nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.p)
@@ -117,8 +117,8 @@ inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
     s.inc = Vector{BitVector}(undef, nvertices(s))
 
-    nf = Polyhedra.nhalfspaces(s.P)
-    nh = Polyhedra.nhyperplanes(s.P)
+    nf = Polyhedra.nhalfspaces(s.p)
+    nh = Polyhedra.nhyperplanes(s.p)
 
     for v in eachindex(vertices(s))
         s.inc[v.value] = falses(nf)
