@@ -5,6 +5,7 @@ using Spindles
 
 include("rep.jl")
 include("inc.jl")
-include("polymake.jl")
 include("cube.jl")
+include("polymake.jl")
+include("poset.jl")
 include("paper.jl")
