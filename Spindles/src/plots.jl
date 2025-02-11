@@ -14,7 +14,7 @@ function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
     # index of first nonzero entry (exists since u and v are distinct)
     i = findfirst(@. !isapprox(r, 0))
     r ./= abs(r[i]) # normalize
-    dotproduct = collect(halfspaces(s.p))[facet].a' * r
+    dotproduct = collect(Polyhedra.halfspaces(s.p))[facet].a' * r
 
     # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
     if dotproduct == 0
