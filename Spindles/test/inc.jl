@@ -32,6 +32,10 @@ using Graphs: degree
 
         @test sp.inc == inc2(sp) == inc3(sp)
     end
+
+    # test the two improper faces: sp itself and the empty face
+    @test collect(incidentvertices(sp, Int[])) == collect(1:nvertices(sp))
+    @test isempty(incidentvertices(sp, collect(1:Spindles.nhalfspaces(sp))))
 end
 
 #=

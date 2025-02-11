@@ -16,11 +16,18 @@ The main type defined by *Spindles.jl* is
 Spindle
 ```
 
-Objects of this type may be created in one of two possible ways:
+There are two possible ways to construct objects of this type. The first way explicitly uses `Polyhedra`:
 
 ```@docs
-Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library) where T
+Spindle(p::Polyhedra.Polyhedron)
 ```
+
+To make spindle constructions more convenient, there is a second constructor 
+that accepts the data of an H-representation and does not require any imports from `Polyhedra`:
+```@docs
+Spindle(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Union{Nothing, Polyhedra.Library}=nothing)
+```
+
 
 
 ## Vertices and apices

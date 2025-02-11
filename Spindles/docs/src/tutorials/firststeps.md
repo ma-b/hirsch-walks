@@ -1,11 +1,11 @@
-# First steps
-This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
-
 ```@meta
 DocTestSetup = quote
     using Spindles
 end
 ```
+
+# First steps
+This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles and query basic properties.
 
 ## Creating a spindle
 Recall that the special property of a spindle is the existence of two vertices (the apices) whose incident facets partition the set of all facets. In this tutorial, we will be working with one of the simplest examples of a spindle: a cube. For example, the unit cube in 3D is given by all points $(x_1,x_2,x_3)$ that satisfy 
@@ -26,7 +26,6 @@ b = [1, 1, 1, 1, 1, 1]
 *Spindles.jl* provides a data type for representing and analyzing spindles: [`Spindle`](@ref). We may create an object of this type from our data `A` and `b` as follows:
 
 ```@example cube
-#push!(LOAD_PATH, "../../../src") # hide
 using Spindles # hide
 cube = Spindle(A, b)
 ```
@@ -107,3 +106,8 @@ As expected, we obtain precisely those four vertices whose first component is eq
 !!! note
 
     Both [`vertices`](@ref Spindles.vertices) and [`incidentvertices`](@ref) return iterators. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
+
+
+```@meta
+DocTestSetup = nothing
+```

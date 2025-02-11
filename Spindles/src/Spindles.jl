@@ -46,45 +46,119 @@ mutable struct Spindle{T}
     end
 end
 
+"""
+    Spindle{T}(p::Polyhedra.Polyhedron{T})
+
+Create a spindle from the polyhedron `p`. If `p` is unbounded or there are no two apices among its vertices,
+throw an error. 
+
+If not specified, the element type `T` is the element type of `p`.
+
+See also [`Polyhedra.polyhedron`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.polyhedron).
+
+# Examples
+
+```jldoctest poly
+julia> using Polyhedra: polyhedron, vrep, hrep
+
+julia> p = polyhedron(vrep([0 0; 1 0; 0 1; 1 1]));
+
+julia> Spindle(p)
+Spindle{Rational{BigInt}}
+```
+creates the two-dimensional 0/1 cube whose vertices are ``(0,0),(1,0),(0,1)``, and ``(1,1)``. To construct from 
+such a V-representation a polyhedron that can be passed to the `Spindle` constructor, we used 
+[`Polyhedra.vrep`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/representation/#Polyhedra.vrep). 
+Equivalently, we could have created it from an inequality description (an H-representation), for example from
+the system of inequalities
+```math
+\begin{aligned}
+0 \\le x_1 &\\le 1 \\\\
+0 \\le x_2 &\\le 1.
+\end{aligned}
+```
+Using [`Polyhedra.hrep`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/representation/#Polyhedra.hrep), 
+this translates to
+```jldoctest poly
+julia> p = polyhedron(hrep([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1]));
+
+julia> Spindle(p)
+Spindle{Rational{BigInt}}
+```
+
+Note that the 0/1 cube is a spindle. However, if we drop one of its vertices, this property is lost:
+```jldoctest poly
+julia> p = polyhedron(vrep([0 0; 1 0; 0 1]));
+
+julia> Spindle(p)
+ERROR: ArgumentError: not a spindle: cannot find two apices
+[...]
+```
+
+Similarly, trying to create a spindle from a strict subset of the inequalities in the H-representation above
+results in an error:
+
+```jldoctest poly
+julia> p = polyhedron(hrep([-1 0; 1 0; 0 -1], [0, 1, 0]));
+
+julia> Spindle(p)
+ERROR: ArgumentError: got an unbounded polyhedron
+[...]
+```
+"""
 Spindle(p::Polyhedra.Polyhedron{T}) where T = Spindle{T}(p)
 
-@doc"""
-    Spindle(A, b [,lib])
 
-Create a spindle from its inequality description with coefficient matrix `A` and right-hand side vector `b`.
 
-The optional argument `lib` allows to specify a library for polyhedral computations that implements
-the interface of [`Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/). A list of all supported libraries
-can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+"""
+    Spindle(A::AbstractMatrix, b::AbstractVector [, lib::Polyhedra.Library])
 
-If `lib` is not specified, use the default library implemented in `Polyhedra` 
-(see the [`Polyhedra` documentation](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/)).
+Create a spindle from its H-representation ``Ax \\le b``.
+The optional argument `lib` specifies a library for polyhedral computations (the "backend" of Polyhedra.jl)
+and is passed to [`Polyhedra.hrep`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/representation/#Polyhedra.hrep).
+If unspecified, use the default library implemented in `Polyhedra`.
 
-The above is equivalent to
+!!! note "Info"
+
+    `Spindle(A, b, lib)` is equivalent to `Spindle(polyhedron(hrep(A, b), lib))`.
+
+See also the [Polyhedra.jl documentation on libraries](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Default-libraries).
+A list of all supported libraries can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+
+# Examples
+To use [`CDDLib`](https://github.com/JuliaPolyhedra/CDDLib.jl) with exact rational arithmetic, do
 ```julia
-using Polyhedra: polyhedron, hrep
-#lib = ...
-Spindle(polyhedron(hrep(A, b), lib))
+import CDDLib
+Spindle(A, b, CDDLib.Library(:exact))
 ```
 
 !!! note
 
-    `A` and `b` are not checked for the presence of redundant rows or implicit equations.
----
+    If the `lib` argument is not specified, `Spindle` will infer the type of arithmetic used from the input data.
+    This behaviour is inherited from the default library in `Polyhedra`. For example, changing some of the entries
+    of the coefficient matrix in the examples above to floats produces
+    ```jldoctest
+    julia> Spindle([-1.0 0.0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
+    Spindle{Float64}
+    ```
+    as opposed to `Spindle{Rational{BigInt}}`.
 
-    Spindle{T}(p::Polyhedron{T})
-
-Create a spindle directly from a `Polyhedron` `p`.
-If not specified the element type `T` is the element type of `p`.
 """
-function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.DefaultLibrary{T}()) where T #<:Number
+function Spindle(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Union{Nothing, Polyhedra.Library}=nothing)
     if size(A,1) != size(b,1)
         throw(DimensionMismatch("matrix A has dimensions $(size(A)), right-hand side vector b has length $(length(b))"))
     end
 
-    p = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
+    if lib === nothing
+        p = Polyhedra.polyhedron(Polyhedra.hrep(A, b))  # let polyhedron do the type promotion if necessary
+    else
+        p = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
+    end
     return Spindle(p)
 end
+
+
+Base.show(io::IO, s::Spindle) = print(io, typeof(s))
 
 nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.p)
 
@@ -127,6 +201,10 @@ end
     incidentvertices(s, facets)
 
 List the indices of all vertices of the spindle `s` that are incident with `facets`. Returns an iterator.
+
+!!! note
+
+    `incidentvertices(s, Int[])` is equivalent to `vertices(s)`.
 """
 function incidentvertices(s::Spindle, facets::Vector{Int})
     if !inciscomputed(s)
@@ -140,7 +218,7 @@ end
 # --------------------------------
 
 """
-    apices(s [,apex])
+    apices(s) 
 
 Return the indices of a pair of vertices (the *apices*) of `s` for which each facet of `s` 
 is incident to exactly one of them.

@@ -93,7 +93,6 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
         s.faces[1] = [findall(s.inc[src(e)] .& s.inc[dst(e)]) for e in Graphs.edges(graph(s, stopatvertex))]
-        #s.faces[1] = [findall(reduce(.&, s.inc[e])) for e in edges(s)]
     else
         s.faces[k] = Vector{Vector{Int}}()
 

@@ -4,14 +4,13 @@ This tutorial showcases more advanced use cases of *Spindles.jl*. For its basic 
 ## The Hirsch conjecture
 The [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture) for polytopes stated that any two vertices of a $d$-dimensional polytope with $f$ facets can be connected by a path of at most $f-d$ edges. It was disproved in 2010 when Francisco Santos found a [construction](https://arxiv.org/abs/1006.2814) that produces counterexamples from spindles with a special property: the length of a shortest path between their apices must be strictly greater than the dimension.
 
-Santos' original counterexample from 2010 is based on a 5-dimensional spindle with 48 facets, for which the shortest path between the apices is of length 6. The minimal inequality description of this spindle (see Table 1 in Santos' [paper](https://arxiv.org/pdf/1006.2814)) can be found in the file `s-48-5.txt` located in the `examples` folder.
+Santos' original counterexample from 2010 is based on a 5-dimensional spindle with 48 facets, for which the shortest path between the apices is of length 6. The minimal inequality description of this spindle (see Table 1 in Santos' [paper](https://arxiv.org/pdf/1006.2814)) can be found in the file `s-48-5.txt` located in the `examples` folder beneath the package root.
 
 ## Reading a spindle from a file
-We read the description from the file as follows.
+We may read the description from the file as follows.
 ```@example s48
-push!(LOAD_PATH, "../../../src") # hide
 using Spindles # hide
-A, b, labels = readineq("../../../examples/s-48-5.txt", Int);
+A, b, labels = readineq(joinpath("..", "..", "..", "examples", "s-48-5.txt"), Int);
 ```
 
 ```@example s48
@@ -131,4 +130,3 @@ for f in sort(facesofdim(s48, 2))
 	end
 end
 ```
-
