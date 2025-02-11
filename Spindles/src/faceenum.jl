@@ -1,4 +1,12 @@
+# ================================
+# Faces
+# ================================
+
 export facesofdim, nfacesofdim, graph, dim
+
+# --------------------------------
+# graph
+# --------------------------------
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
 """
@@ -66,6 +74,9 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
 end
 
+# --------------------------------
+# complete face enumeration
+# --------------------------------
 
 facescomputed(s::Spindle, k::Int) = haskey(s.faces, k)
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
@@ -165,14 +176,15 @@ nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k)) #facesofdim(s, k) !==
 function maxchain(s::Spindle, f::Vector{Int})
     nv = nvertices(s)
 
-    # enumerate all faces that strictly contain the current face `f`:
-    # they must contain all vertices of the current face plus (at least) one additional vertex 
+    # enumerate all faces that properly contain the current face `f`: since we have a polytope,
+    # each such face must contain all vertices of the current face plus (at least) one additional vertex 
     # which is not incident to some of the incident halfspaces of `f`
     containing_faces = [
         f[s.inc[v][f]] for v=1:nv if !all(s.inc[v][f])
     ]
 
-    if length(containing_faces) == 0  # we arrived at the (unique) maximal face `s`
+    if isempty(containing_faces)
+        # if all vertices are incident with `f`, we arrived at the (unique) maximal face, the polytope itself
         return [f]
     else
         # pick any subset of maximum cardinality (which must therefore also be inclusion-maximal) among all subsets found
@@ -193,9 +205,9 @@ end
 
 Compute the dimension of the spindle `s`.
 
-This is done by computing the length of a maximal chain in the face poset of `s`. Thus, the algorithm is
-purely combinatorial. See also the function [`dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim)
-from Polyhedra.jl.
+This is done in an entirely combinatorial way by computing the length of a maximal chain in the face poset of `s`. 
+See also the function [`dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim) 
+implemented in Polyhedra.jl.
 """
 function dim(s::Spindle)
     if !dimiscomputed(s)

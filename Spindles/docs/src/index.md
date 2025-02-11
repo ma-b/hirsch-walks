@@ -6,7 +6,7 @@ The goal of *Spindles.jl* is to provide an interface for analyzing spindles.
 
 ## FAQ
 ### What is a spindle?
-A **spindle** is a polytope with two special vertices such that each facet contains exactly one of them. These two special vertices are called the **apices** of the spindle. 
+A *spindle* is a polytope with two special vertices such that each facet contains exactly one of them. These two special vertices are called the *apices* of the spindle. 
 
 A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ that does not share a facet with $u$ (namely, the vertex that is "antipodal" to $u$). Any such pair $u$ and $v$ is a valid pair of apices for the cube.
 

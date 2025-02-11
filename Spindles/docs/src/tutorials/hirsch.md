@@ -17,7 +17,7 @@ A, b, labels = readineq("../../../examples/s-48-5.txt", Int);
 ```@example s48
 [A b]
 ```
-The function [`Spindles.readineq`](@ref) does not only return the data in the inequality description $Ax \le b$ from the source but also the attached labels, one for each inequality.
+The function [`readineq`](@ref) does not only return the data in the inequality description $Ax \le b$ from the source but also the attached labels, one for each inequality.
 
 ```@example s48
 labels
@@ -59,7 +59,7 @@ They indeed define a 2-face of `s48`:
 face in facesofdim(s48, 2)
 ```
 
-We may use the function [`Spindles.plot2face`](@ref) provided by *Spindles.jl* to plot the graph of this face.
+We may use the function [`plot2face`](@ref) provided by *Spindles.jl* to plot the graph of this face.
 ```julia
 plot2face(s48, face, facetlabels=labels, showdist=true, figsize=(400,400))
 ```
@@ -84,13 +84,13 @@ The only two vertices that are not visited on either of those two paths are `155
 So among the vertices of the face `15+ 19+ 21+`, there are two special subsets:
 One subset of vertices, let us call it $V_1$, is "close" to the first apex (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$ (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the first one, and each vertex in $V_2$ is "close" to second apex . Here, "close" means that if we pick two arbitrary vertices, one from each subset, then the sum of their distances to the respectively closest apex is at most 3, which is 2 less than the dimension of `s48`. Moreover, each vertex in $V_2$ is at least 3 edge steps away from $V_1$ on the face.
 
-Let us call 2-faces with this property **good**. Good 2-faces play an important role for analyzing `s48` in the setting of the so-called **circuit diameter conjecture**, a relaxation of the Hirsch conjecture. *Spindles.jl* provides a function [`Spindles.isgood2face`](@ref) that tests a face for being good.
+Let us call 2-faces with this property **good**. Good 2-faces play an important role for analyzing `s48` in the setting of the so-called **circuit diameter conjecture**, a relaxation of the Hirsch conjecture. *Spindles.jl* provides a function [`isgood2face`](@ref) that tests a face for being good.
 
 ```@example s48
 isgood2face(s48, face)
 ```
 
-The result is wrapped in a bespoke data type defined by *Spindles.jl* called [`Spindles.FaceState`](@ref). The field `good` indicates whether or not the tested face is good, and the two vertex sets $V_1$ and $V_2$ that certify the property of being good are stored in the field `vsets` (see also the documentation on the [`Spindles.FaceState`](@ref) type):
+The result is wrapped in a bespoke data type defined by *Spindles.jl* called [`FaceState`](@ref Spindles.FaceState). The field `good` indicates whether or not the tested face is good, and the two vertex sets $V_1$ and $V_2$ that certify the property of being good are stored in the field `vsets` (see also the documentation on the [`FaceState`](@ref Spindles.FaceState) type):
 
 ```@example s48
 fstate = isgood2face(s48, face)

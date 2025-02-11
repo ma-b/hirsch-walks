@@ -32,7 +32,7 @@ Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 
 !!! note
 
-    Results are affected by resetting the apices with [`setapex!`](@ref Spindles.setapex!).
+    Results are affected by resetting the apices with [`setapex!`](@ref).
 
 # Examples
 
@@ -102,7 +102,7 @@ end
     isgood2face(s, facets)
 
 Test the face defined by `facets` for being a [good 2-face](@ref "Good 2-faces") of the spindle `s`.
-Return a [`Spindles.FaceState`](@ref).
+Return a [`FaceState`](@ref).
 
 `(false, nothing, nothing)` if not a good 2-face.
 """
@@ -140,7 +140,7 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             vertices_minus = [j+2:n; max(1,j+2-n):i-1]
             
             # both sets of vertices are connected, and they must be nonempty:
-            @assert length(vertices_plus) * length(vertices_minus) > 0
+            @assert !isempty(vertices_plus) && !isempty(vertices_minus)
 
             # vertices_plus and _minus witness being 'good' if for each vertex in _plus and each vertex in _minus,
             # their distances to opposite apices are at most d-2
