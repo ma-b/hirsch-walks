@@ -1,7 +1,7 @@
 using Graphs: nv, ne
 using Polyhedra: hrep
 
-@testset "Tests for faceenum.jl" begin
+@testset "Tests for face enumeration" begin
 
     for filename in ["s-25-5", "s-28-5", "s-48-5"]
         A, b, _ = readineq(joinpath("..", "examples", filename*".txt"), BigInt)
@@ -32,6 +32,27 @@ using Polyhedra: hrep
             @test nfacesofdim(s, 4) == Spindles.nhalfspaces(s)
             @test nfacesofdim(s, 5) == 1
             @test nfacesofdim(s, 6) == 0
+        end
+
+        @testset "Test combinatorial dim" begin
+            # pick a non-apex and start maximal chain from there
+            v = findfirst(i -> !(i in apices(s)), 1:nvertices(s))
+            @test dim(s) == length(Spindles.maxchain(s, findall(s.inc[v]))) - 1
+
+            mc = Spindles.maxchain(s, collect(1:Spindles.nhalfspaces(s)))
+            for (i,f) in enumerate(mc)
+                # the i-th chain element is a face of dimension i-2 (since we start counting dimensions at -1)
+                # so it must consist of at least dim-(i-2) halfspace indices
+                @test length(f) >= dim(s)-i+2
+
+                # reverse-engineer face from incident vertices
+                vs = collect(incidentvertices(s, f))
+
+                # do not reduce over empty `vs`
+                @test isempty(vs) || sort(f) == findall(reduce(.&, s.inc[vs]))
+                # `vs` can only be empty for the empty face at i=1
+                @test !isempty(vs) || i == 1
+            end
         end
     end
 end

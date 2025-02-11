@@ -46,3 +46,9 @@ setapex!
 ```@docs
 incidentvertices
 ```
+
+## Dimension
+
+```@docs
+Spindles.dim
+```

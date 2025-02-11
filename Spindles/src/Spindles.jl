@@ -26,14 +26,15 @@ mutable struct Spindle{T}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
     graph::Union{Nothing, SimpleGraph{Int}}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
+    dim::Union{Nothing, Int}
     dists::Union{Nothing, Dict{Int, Vector{Int}}}
 
     function Spindle{T}(p::Polyhedra.Polyhedron{T}) where T
-        # first check whether P is a polytope
-        Polyhedra.nlines(p) + Polyhedra.nrays(p) == 0 || throw(ArgumentError("got an unbounded polyhedron"))  # TODO triggers computation of V-representation
+        # first check whether P is a polytope (triggers computation of V-representation)
+        Polyhedra.nlines(p) + Polyhedra.nrays(p) == 0 || throw(ArgumentError("got an unbounded polyhedron"))
         
         # create a preliminary object with apices not set
-        s = new{T}(p, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing)
+        s = new{T}(p, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing, nothing)
 
         # try to find two apices
         s.apices = computeapices(s)
@@ -86,7 +87,6 @@ function Spindle(A::Matrix{T}, b::Vector{T}, lib::Polyhedra.Library = Polyhedra.
 end
 
 nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.p)
-dim(s::Spindle) = Polyhedra.dim(s.p, true)  # TODO
 
 """
     vertices(s)
@@ -110,13 +110,15 @@ inciscomputed(s::Spindle) = s.inc !== nothing
 function computeinc!(s::Spindle)
     s.inc = Vector{BitVector}(undef, nvertices(s))
 
-    nf = Polyhedra.nhalfspaces(s.p)
     nh = Polyhedra.nhyperplanes(s.p)
+    nf = Polyhedra.nhalfspaces(s.p)
 
     for v in eachindex(vertices(s))
         s.inc[v.value] = falses(nf)
         for f in Polyhedra.incidenthalfspaceindices(s.p, v)
-            s.inc[v.value][f.value - nh] = true  # TODO hacky
+            # the hyperplanes and halfspaces of s.p are numbered consecutively (in this order),
+            # so we use the number of hyperplanes as a hacky offset here
+            s.inc[v.value][f.value - nh] = true
         end
     end
 end

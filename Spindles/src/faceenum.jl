@@ -1,4 +1,4 @@
-export facesofdim, nfacesofdim, graph
+export facesofdim, nfacesofdim, graph, dim
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
 """
@@ -95,7 +95,8 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
 
         # TODO rename pairs
         pairs = unique(
-            # face of dimension one less plus a vertex not contained in it such that both are still contained in sufficiently many facets
+            # face of dimension one less plus a vertex not contained in it such that 
+            # both are still contained in sufficiently many facets
             f[s.inc[v][f]] for v=1:nv, f in lowerfaces
             if !all(s.inc[v][f]) && sum(s.inc[v][f]) >= dim(s)-k  
         )
@@ -157,3 +158,52 @@ Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(
 Uses the convention that the dimension of the empty face is -1.
 """
 nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k)) #facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0
+
+
+# compute a maximal chain in the face poset of `s`, starting from `f`
+# implementation follows same idea as face enumeration
+function maxchain(s::Spindle, f::Vector{Int})
+    nv = nvertices(s)
+
+    # plus one vertex not contained in the current face
+    containing_faces = [
+        f[s.inc[v][f]] for v=1:nv if !all(s.inc[v][f])
+    ]
+
+    if length(containing_faces) == 0
+        return [f]
+    else
+        # pick any subset that has maximum cardinality (and must therefore be inclusion-maximal) 
+        # among the subsets
+        nextf = containing_faces[findfirst(length.(containing_faces) .== maximum(length, containing_faces))]
+        return pushfirst!(maxchain(s, nextf), f)
+    end
+end
+
+# --------------------------------
+# dimension
+# --------------------------------
+
+dimiscomputed(s::Spindle) = s.dim !== nothing
+# combinatorial implementation
+# this crucially relies on `s` being a polytope, so the intersection of all facets is the empty face
+# substract 2 for dim -1 and 0
+function computedim!(s::Spindle)
+    s.dim = length(maxchain(s, collect(1:nhalfspaces(s)))) - 2
+end
+
+"""
+    dim(s)
+
+Compute the dimension of the spindle `s`.
+
+This is done by computing the length of a maximal chain in the face poset of `s`. Thus, the algorithm is
+purely combinatorial. See also the function [`dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim)
+from Polyhedra.jl.
+"""
+function dim(s::Spindle)
+    if !dimiscomputed(s)
+        computedim!(s)
+    end
+    return s.dim
+end

@@ -1,4 +1,4 @@
-using Polyhedra
+using Polyhedra: hrep
 using Graphs: degree
 
 @testset "Tests for incidence/graph computations" begin
