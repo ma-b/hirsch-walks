@@ -66,12 +66,8 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
 end
 
-#=function edges(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
-    ([src(e), dst(e)] for e in Graphs.edges(graph(s, stopatvertex)))
-end=#
 
-
-facescomputed(s::Spindle, k::Int) = haskey(s.faces, k) #&& s.faces[k] !== nothing
+facescomputed(s::Spindle, k::Int) = haskey(s.faces, k)
 function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
     if !inciscomputed(s)
         computeinc!(s)
@@ -160,35 +156,35 @@ Uses the convention that the dimension of the empty face is -1.
 nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k)) #facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0
 
 
+# --------------------------------
+# dimension
+# --------------------------------
+
 # compute a maximal chain in the face poset of `s`, starting from `f`
-# implementation follows same idea as face enumeration
+# our implementation follows the same idea as the face enumeration routine
 function maxchain(s::Spindle, f::Vector{Int})
     nv = nvertices(s)
 
-    # plus one vertex not contained in the current face
+    # enumerate all faces that strictly contain the current face `f`:
+    # they must contain all vertices of the current face plus (at least) one additional vertex 
+    # which is not incident to some of the incident halfspaces of `f`
     containing_faces = [
         f[s.inc[v][f]] for v=1:nv if !all(s.inc[v][f])
     ]
 
-    if length(containing_faces) == 0
+    if length(containing_faces) == 0  # we arrived at the (unique) maximal face `s`
         return [f]
     else
-        # pick any subset that has maximum cardinality (and must therefore be inclusion-maximal) 
-        # among the subsets
+        # pick any subset of maximum cardinality (which must therefore also be inclusion-maximal) among all subsets found
         nextf = containing_faces[findfirst(length.(containing_faces) .== maximum(length, containing_faces))]
         return pushfirst!(maxchain(s, nextf), f)
     end
 end
 
-# --------------------------------
-# dimension
-# --------------------------------
-
 dimiscomputed(s::Spindle) = s.dim !== nothing
-# combinatorial implementation
-# this crucially relies on `s` being a polytope, so the intersection of all facets is the empty face
-# substract 2 for dim -1 and 0
 function computedim!(s::Spindle)
+    # since `s` is a polytope, the intersection of all facets is the empty face (of dim -1)
+    # the maximal face in the chain will have the desired dimension, so subtract 2 for the empty and 0-dim faces
     s.dim = length(maxchain(s, collect(1:nhalfspaces(s)))) - 2
 end
 
