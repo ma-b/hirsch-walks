@@ -29,7 +29,7 @@ function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
     end
 end
 
-label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(labels[facets], ' ')
+label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(labels[facets]), ' ')
 
 """
     plot2face(

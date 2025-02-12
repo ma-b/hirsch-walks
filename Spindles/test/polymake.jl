@@ -7,6 +7,10 @@ using Polyhedra: hrep
         A, b, _ = readineq(joinpath("..", "examples", filename*".txt"), BigInt)
         s = Spindle(A, b)
 
+        apx = collect(vertices(s))[apices(s)]
+        @test [1,0,0,0,0] in apx
+        @test [-1,0,0,0,0] in apx
+
         @testset "Test $(filename) against polymake" begin
             # parse polymake output from Hasse diagram command and return list of incident facets for each face
             function readpolymake(filename::AbstractString)
