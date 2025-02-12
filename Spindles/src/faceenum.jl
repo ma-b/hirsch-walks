@@ -10,23 +10,24 @@ export facesofdim, nfacesofdim, graph, dim
 
 graphiscomputed(s::Spindle) = s.graph !== nothing
 """
-    graph(s)
+    graph(s::Spindle)
 
-Return a [`Graphs.SimpleGraphs.SimpleGraph`](https://juliagraphs.org/Graphs.jl/stable/core_functions/simplegraphs/#Graphs.SimpleGraphs.SimpleGraph)
+Return the graph (aka *1-skeleton*) of `s`, which is a simple undirected graph of type 
+[`Graphs.SimpleGraphs.SimpleGraph`](https://juliagraphs.org/Graphs.jl/stable/core_functions/simplegraphs/#Graphs.SimpleGraphs.SimpleGraph).
 """
-function graph(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
+function graph(s::Spindle)
     if !graphiscomputed(s)
-        computegraph!(s, stopatvertex)
+        computegraph!(s)
     end
     return s.graph
 end
 
-function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
+function computegraph!(s::Spindle)
     if !inciscomputed(s)
         computeinc!(s)
     end
     
-    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
+    nv = nvertices(s)
     s.graph = SimpleGraph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
@@ -80,12 +81,12 @@ end
 # --------------------------------
 
 facescomputed(s::Spindle, k::Int) = haskey(s.faces, k)
-function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
+function computefacesofdim!(s::Spindle, k::Int)
     if !inciscomputed(s)
         computeinc!(s)
     end
     
-    nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))    
+    nv = nvertices(s)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
@@ -93,12 +94,12 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[1] = [findall(s.inc[src(e)] .& s.inc[dst(e)]) for e in Graphs.edges(graph(s, stopatvertex))]
+        s.faces[1] = [findall(s.inc[src(e)] .& s.inc[dst(e)]) for e in Graphs.edges(graph(s))]
     else
         s.faces[k] = Vector{Vector{Int}}()
 
         # recurse and enumerate faces of one dimension lower
-        lowerfaces = facesofdim(s, k-1, nv)
+        lowerfaces = facesofdim(s, k-1)
 
         # TODO rename pairs
         pairs = unique(
@@ -130,7 +131,7 @@ function computefacesofdim!(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int
 end
 
 """
-    facesofdim(s, k)
+    facesofdim(s::Spindle, k::Int)
 
 Enumerate all faces of dimension `k` of the spindle `s`, each one given by a vector containing the indices of all 
 incident halfspaces/facets (starting at 1). Return them in one vector.
@@ -142,7 +143,7 @@ incident halfspaces/facets (starting at 1). Return them in one vector.
 Recursive bottom-up computation. Most (memory-)efficient for near-simple polytopes, for which faces are contained
 in few facets each.
 """
-function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothing)
+function facesofdim(s::Spindle, k::Int)
     if !(-1 <= k <= size(Polyhedra.hrep(s.p).A, 2))
         # there is no face of dimension less than -1 or greater than the dimension of the ambient space
         return Vector{Int}()
@@ -151,7 +152,7 @@ function facesofdim(s::Spindle, k::Int, stopatvertex::Union{Nothing, Int}=nothin
         return [collect(1:nhalfspaces(s))]
     else
         if !facescomputed(s, k)
-            computefacesofdim!(s, k, stopatvertex)
+            computefacesofdim!(s, k)
         end
         return s.faces[k]
     end
@@ -159,7 +160,7 @@ end
 
 
 """
-    nfacesofdim(s, k)
+    nfacesofdim(s::Spindle, k::Int)
 
 Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(facesofdim(s, k))` if not nothing.
 Uses the convention that the dimension of the empty face is -1.
@@ -203,7 +204,7 @@ function computedim!(s::Spindle)
 end
 
 """
-    dim(s)
+    dim(s::Spindle)
 
 Compute the dimension of the spindle `s`.
 
