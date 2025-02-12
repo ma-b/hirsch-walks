@@ -90,11 +90,11 @@ function computefacesofdim!(s::Spindle, k::Int)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
-        s.faces[0] = [findall(s.inc[v]) for v=1:nv]
+        s.faces[0] = [incidentfacets(s, [v]) for v=1:nv]
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[1] = [findall(s.inc[src(e)] .& s.inc[dst(e)]) for e in Graphs.edges(graph(s))]
+        s.faces[1] = [incidentfacets(s, [src(e), dst(e)]) for e in Graphs.edges(graph(s))]
     else
         s.faces[k] = Vector{Vector{Int}}()
 
