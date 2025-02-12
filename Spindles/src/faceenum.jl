@@ -163,7 +163,7 @@ end
 Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(facesofdim(s, k))` if not nothing.
 Uses the convention that the dimension of the empty face is -1.
 """
-nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k)) #facesofdim(s, k) !== nothing ? length(facesofdim(s, k)) : 0
+nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k))
 
 
 # --------------------------------
@@ -204,9 +204,14 @@ end
 
 Compute the dimension of the spindle `s`.
 
-This is done in an entirely combinatorial way by computing the length of a maximal chain in the face poset of `s`. 
-See also the function [`dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim) 
-implemented in Polyhedra.jl.
+This is done by computing the length of a maximal chain in the face poset of `s`,
+i.e., a finite sequence of faces 
+```math
+\\emptyset = F_{-1} \\subsetneq F_0 \\subsetneq F_1 \\subsetneq \\dots \\subsetneq F_d
+```
+for which `d` is maximal among all such sequences. Then ``F_d`` must be `s` itself, and `d` is its dimension.
+
+See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
 """
 function dim(s::Spindle)
     if !dimiscomputed(s)

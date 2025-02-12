@@ -13,8 +13,6 @@ end
     readrational(filename, T)
 
 `T` type of numerator and denominator
-
-eltype(arr) == Rational{T}
 """
 function readrational(filename::AbstractString, ::Type{T}) where T<:Integer
     arr = readdlm(filename, String)

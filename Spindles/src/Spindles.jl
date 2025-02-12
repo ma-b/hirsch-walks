@@ -72,10 +72,10 @@ such a V-representation a polyhedron that can be passed to the `Spindle` constru
 Equivalently, we could have created it from an inequality description (an H-representation), for example from
 the system of inequalities
 ```math
-\begin{aligned}
-0 \\le x_1 &\\le 1 \\\\
+\\begin{aligned}
+0 \\le x_1 &\\le 1, \\\\
 0 \\le x_2 &\\le 1.
-\end{aligned}
+\\end{aligned}
 ```
 Using [`Polyhedra.hrep`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/representation/#Polyhedra.hrep), 
 this translates to
@@ -86,7 +86,7 @@ julia> Spindle(p)
 Spindle{Rational{BigInt}}
 ```
 
-Note that the 0/1 cube is a spindle. However, if we drop one of its vertices, this property is lost:
+Note that the 0/1 cube is a spindle. However, if we drop any of its vertices, this property is lost:
 ```jldoctest poly
 julia> p = polyhedron(vrep([0 0; 1 0; 0 1]));
 
@@ -95,7 +95,7 @@ ERROR: ArgumentError: not a spindle: cannot find two apices
 [...]
 ```
 
-Similarly, trying to create a spindle from a strict subset of the inequalities in the H-representation above
+Similarly, trying to create a spindle from a proper subset of the inequalities in the H-representation above
 results in an error:
 
 ```jldoctest poly
