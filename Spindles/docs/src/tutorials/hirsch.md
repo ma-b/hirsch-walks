@@ -2,7 +2,7 @@
 This tutorial showcases more advanced use cases of *Spindles.jl*. For its basic usage, please read [this tutorial](@ref "First steps") first.
 
 ## The Hirsch conjecture
-The [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture) for polytopes stated that any two vertices of a $d$-dimensional polytope with $f$ facets can be connected by a path of at most $f-d$ edges. It was disproved in 2010 when Francisco Santos found a [construction](https://arxiv.org/abs/1006.2814) that produces counterexamples from spindles with a special property: the length of a shortest path between their apices must be strictly greater than the dimension.
+The [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture) for polytopes stated that any two vertices of a $d$-dimensional polytope with $f$ facets can be connected by a path of at most $f-d$ edges. It was disproved in 2010 when Francisco Santos found a [construction](https://arxiv.org/abs/1006.2814) that produces counterexamples from spindles with a special property: the length of a shortest path between the apices (called the *length* of the spindle) must be strictly greater than the dimension.
 
 Santos' original counterexample from 2010 is based on a 5-dimensional spindle with 48 facets, for which the shortest path between the apices is of length 6. The minimal inequality description of this spindle (see Table 1 in Santos' [paper](https://arxiv.org/pdf/1006.2814)) can be found in the file `s-48-5.txt` located in the `examples` folder beneath the package root.
 
@@ -60,7 +60,7 @@ face in facesofdim(s48, 2)
 
 We may use the function [`plot2face`](@ref) provided by *Spindles.jl* to plot the graph of this face.
 ```julia
-plot2face(s48, face, facetlabels=labels, showdist=true, figsize=(400,400))
+plot2face(s48, face; facetlabels=labels, showdist=true, figsize=(400,400))
 ```
 
 This produces the following output:
@@ -100,7 +100,10 @@ fstate.good, fstate.vsets
 
 Let us plot it again, but this time not as a graph but as a two-dimensional projection. This is achieved by setting the option `usecoordinates` to `true`:
 ```julia
-plot2face(s48, face, facetlabels=labels, showdist=true, usecoordinates=true, figsize=(400,400))
+plot2face(
+	s48, face; facetlabels=labels, 
+	showdist=true, usecoordinates=true, directed_edges=fstate.edges, figsize=(400,400)
+)
 ```
 
 Now the output is this:
@@ -130,3 +133,6 @@ for f in sort(facesofdim(s48, 2))
 	end
 end
 ```
+
+If you would like to explore one of the actual counterexamples to the Hirsch conjecture
+that was built from a spindle like `s48`, please read on [here](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/docs/src/notebooks/hirsch-part-ii.ipynb).

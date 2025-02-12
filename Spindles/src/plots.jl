@@ -37,22 +37,23 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(label
         facetlabels = nothing,
         usecoordinates = false,
         showdist = false,
-        edgepair = nothing,
+        directed_edges = nothing,
         figsize = (300,300)
     )
 
-2D projection or combinatorial plot (graph)
+Plot the 2-face of `s` specified by `facets`.
 
 # Keywords
-* `facetlabels`
-* `usecoordinates` indicates whether the plot shows a 2D projection or the graph of the 2-face.
-* `showdist`
-
-... 
+* `facetlabels`: A list of strings to be used as facet labels.
+* `usecoordinates`: If `true`, plot a 2-dimensional projection of the face. Otherwise draw its graph.
+* `showdist`: Annotate vertices with their respective distance to each apex of `s`.
+* `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
+* `figsize`: ...
 """
 function plot2face(s::Spindle, facets::Vector{Int}; 
-    usecoordinates::Bool=false, edgepair::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
-    showdist::Bool=false, facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing,
+    usecoordinates::Bool=false, showdist::Bool=false,
+    facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing,
+    directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
     figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
 )
     verticesinface = collect(incidentvertices(s, facets))
@@ -169,17 +170,17 @@ function plot2face(s::Spindle, facets::Vector{Int};
     )
 
     # ---- mark up edges ----
-    if edgepair !== nothing
-        if !all(@. length(edgepair) == 2) || !all(Graphs.has_edge(graph(s), e...) for e in edgepair)
+    if directed_edges !== nothing
+        if !all(@. length(directed_edges) == 2) || !all(Graphs.has_edge(graph(s), e...) for e in directed_edges)
             throw(ArgumentError("invalid edges"))
         end
 
         for k=1:2
             # get edge-defining inequality for reference edge
-            efacets = findall(reduce(.&, s.inc[edgepair[k==1 ? 2 : 1]]))
+            efacets = findall(reduce(.&, s.inc[directed_edges[k==1 ? 2 : 1]]))
             ineq = findfirst(f -> !(f in facets), efacets)
 
-            (u,v), uniquedir = directedge(s, edgepair[k], efacets[ineq])
+            (u,v), uniquedir = directedge(s, directed_edges[k], efacets[ineq])
             # get the indices of the endpoints of the edge as they appear in the cyclic order
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
             plot!(
