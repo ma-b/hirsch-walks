@@ -27,7 +27,7 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     end
     
     nv = stopatvertex === nothing ? nvertices(s) : min(stopatvertex, nvertices(s))
-    s.graph = Graph(nv)  # TODO SimpleGraph(nv)
+    s.graph = SimpleGraph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
     # https://sites.google.com/site/christopheweibel/research/hirsch-conjecture    
@@ -191,12 +191,14 @@ function maxchain(s::Spindle, f::Vector{Int})
         return pushfirst!(maxchain(s, nextf), f)
     end
 end
+# same as above except that the initial face is the empty face (of dim -1), 
+# which for a polytope is the intersection of all facets
+maxchain(s::Spindle) = maxchain(s, collect(1:nhalfspaces(s)))
 
 dimiscomputed(s::Spindle) = s.dim !== nothing
 function computedim!(s::Spindle)
-    # since `s` is a polytope, the intersection of all facets is the empty face (of dim -1)
-    # the maximal face in the chain will have the desired dimension, so subtract 2 for the empty and 0-dim faces
-    s.dim = length(maxchain(s, collect(1:nhalfspaces(s)))) - 2
+    # the maximal face in the chain will have the desired dimension, so subtract 2 for the (-1)-dim and 0-dim faces
+    s.dim = length(maxchain(s)) - 2
 end
 
 """
