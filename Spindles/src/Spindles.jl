@@ -3,9 +3,6 @@ Main module in `Spindles.jl`.
 
 # Exports
 * [`Spindle`](@ref Spindles.Spindle)
-* [`apices`](@ref Spindles.apices)
-* [`vertices`](@ref Spindles.vertices)
-* [`nvertices`](@ref Spindles.nvertices)
 * ...
 """
 module Spindles
@@ -13,7 +10,7 @@ module Spindles
 import Polyhedra
 using Graphs
 
-export Spindle, vertices, nvertices, incidentvertices, apices, setapex!
+export Spindle, vertices, nvertices, incidentvertices, incidentfacets, apices, setapex!
 
 """
     Spindle{T}
@@ -41,7 +38,6 @@ mutable struct Spindle{T}
         if s.apices === nothing
             throw(ArgumentError("not a spindle: cannot find two apices"))
         end
-
         return s
     end
 end
@@ -154,7 +150,7 @@ function Spindle(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Unio
     else
         p = Polyhedra.polyhedron(Polyhedra.hrep(A, b), lib)
     end
-    return Spindle(p)
+    Spindle(p)
 end
 
 
@@ -204,13 +200,26 @@ List the indices of all vertices of the spindle `s` that are incident with `face
 
 !!! note
 
-    `incidentvertices(s, Int[])` is equivalent to `vertices(s)`.
+    `incidentvertices(s, Int[])` is equivalent to `1:nvertices(s)`.
 """
 function incidentvertices(s::Spindle, facets::Vector{Int})
     if !inciscomputed(s)
         computeinc!(s)
     end
-    return (v for v=1:nvertices(s) if all(s.inc[v][facets]))
+
+    (v for v=1:nvertices(s) if all(s.inc[v][facets]))
+end
+
+function incidentfacets(s::Spindle, indices::Vector{Int})
+    if minimum(indices) < 1 || maximum(indices) > nvertices(s)
+        throw(ArgumentError("all vertex indices must be between 1 and $(nvertices(s))"))
+    end
+    
+    if !isempty(indices)
+        return findall(reduce(.&, s.inc[indices]))
+    else
+        return Int[]
+    end
 end
 
 # --------------------------------

@@ -49,10 +49,11 @@ function computegraph!(s::Spindle, stopatvertex::Union{Nothing, Int}=nothing)
     # But then this face has an edge, which is contained in at least one additional facet. So for i,j to be adjacent, 
     # their set of common facets must be inclusion-maximal among all such sets.
 
-    # For near-simple polytopes, the task of checking for inclusion-maximality can be sped up be splitting the list of possibly
-    # adjacent pairs i,j into those that are contained in exactly dimension minus 1 facets and those that are contained in more:
-    # most pairs will be of the first type, and inclusion among their sets of common facets does not have to be checked 
-    # because they are all distinct and of the same size.
+    # For near-simple polytopes, the task of checking for inclusion-maximality can be sped up be splitting 
+    # the list of possibly adjacent pairs i,j into those that are contained in exactly dimension minus 1 facets 
+    # and those that are contained in more:
+    # most pairs will be of the first type, and inclusion among their sets of common facets does not have to 
+    # be checked because they are all distinct and of the same size.
 
     nondegenerate_pairs = [e for (e,m) in pairs if m == dim(s)-1]
     degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(s)-1]

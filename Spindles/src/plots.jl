@@ -177,7 +177,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
         for k=1:2
             # get edge-defining inequality for reference edge
-            efacets = findall(reduce(.&, s.inc[directed_edges[k==1 ? 2 : 1]]))
+            efacets = incidentfacets(s, directed_edges[k==1 ? 2 : 1])
             ineq = findfirst(f -> !(f in facets), efacets)
 
             (u,v), uniquedir = directedge(s, directed_edges[k], efacets[ineq])
