@@ -149,12 +149,20 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             max_dists_plus  = [maximum([dist(s, a, cyclic[vp]) for vp in vertices_plus]) for a in apices(s)]
             max_dists_minus = [maximum([dist(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
 
-            if min(max_dists_plus[1] + max_dists_minus[2], max_dists_plus[2] + max_dists_minus[1]) <= dim(s)-2
-                fstate = FaceState(
-                    true, facets, (cyclic[i:i+1], cyclic[[j,mod(j,n)+1]]), 
-                    (cyclic[vertices_plus], cyclic[vertices_minus])  
+            # translate the cyclic indices of the endpoints of the two edges back to their actual vertex indices
+            # note here that [j,j+1] may wrap around
+            edges = (cyclic[i:i+1], cyclic[[j, mod(j,n)+1]])
+
+            if max_dists_plus[1] + max_dists_minus[2] <= dim(s)-2
+                return FaceState(
+                    true, facets, edges, 
+                    (cyclic[vertices_plus], cyclic[vertices_minus])  # "plus" is closer to 1
                 )
-                return fstate
+            elseif max_dists_minus[1] + max_dists_plus[2] <= dim(s)-2
+                return FaceState(
+                    true, facets, edges, 
+                    (cyclic[vertices_minus], cyclic[vertices_plus])   # "minus" is closer to 1
+                )
             end
         end
     end
