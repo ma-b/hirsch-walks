@@ -56,7 +56,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
     figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
 )
-    verticesinface = collect(incidentvertices(s, facets))
+    verticesinface = incidentvertices(s, facets)
     n = length(verticesinface)
     
     # list the vertices in cyclic order around the polygon

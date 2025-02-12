@@ -105,7 +105,7 @@ As expected, we obtain precisely those four vertices whose first component is eq
 
 !!! note
 
-    Both [`vertices`](@ref Spindles.vertices) and [`incidentvertices`](@ref) return iterators. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
+    [`vertices`](@ref Spindles.vertices) returns an iterator. To access a specific element, use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) as in the code above.
 
 
 ```@meta

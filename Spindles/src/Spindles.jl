@@ -200,14 +200,14 @@ List the indices of all vertices of the spindle `s` that are incident with `face
 
 !!! note
 
-    `incidentvertices(s, Int[])` is equivalent to `1:nvertices(s)`.
+    `incidentvertices(s, Int[])` is equivalent to `collect(1:nvertices(s))`.
 """
 function incidentvertices(s::Spindle, facets::Vector{Int})
     if !inciscomputed(s)
         computeinc!(s)
     end
 
-    (v for v=1:nvertices(s) if all(s.inc[v][facets]))
+    [v for v=1:nvertices(s) if all(s.inc[v][facets])]
 end
 
 function incidentfacets(s::Spindle, indices::Vector{Int})

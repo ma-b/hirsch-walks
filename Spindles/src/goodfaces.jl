@@ -107,7 +107,7 @@ Return a [`FaceState`](@ref).
 `(false, nothing, nothing)` if not a good 2-face.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
-    verticesinface = collect(incidentvertices(s, facets))  # or collect only below?
+    verticesinface = incidentvertices(s, facets)
     n = length(verticesinface)
 
     # first, check simple necessary conditions to speed up computations:
