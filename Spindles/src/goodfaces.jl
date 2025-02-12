@@ -14,7 +14,7 @@ struct FaceState
     good::Bool
     facets::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}  # TODO create abstracttype for edge?
-    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} # TODO
+    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}  # TODO
 
     # TODO perform checks on construction
 end
@@ -26,7 +26,7 @@ function computedistances!(s::Spindle)
 end
 
 """
-    dist(s, apex, v)
+    dist(s::Spindle, apex::Int, v::Int)
 
 Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 
@@ -99,7 +99,7 @@ end
 
 
 """
-    isgood2face(s, facets)
+    isgood2face(s::Spindle, facets)
 
 Test the face defined by `facets` for being a [good 2-face](@ref "Good 2-faces") of the spindle `s`.
 Return a [`FaceState`](@ref).
