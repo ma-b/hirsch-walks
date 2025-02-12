@@ -159,14 +159,14 @@ Base.show(io::IO, s::Spindle) = print(io, typeof(s))
 nhalfspaces(s::Spindle) = Polyhedra.nhalfspaces(s.p)
 
 """
-    vertices(s)
+    vertices(s::Spindle)
 
 Returns an iterator over the vertices of the spindle `s`.
 """
 vertices(s::Spindle) = Polyhedra.points(s.p)
 
 """
-    nvertices(s)
+    nvertices(s::Spindle)
 
 Count the vertices of `s`.
 """
@@ -194,9 +194,9 @@ function computeinc!(s::Spindle)
 end
 
 """
-    incidentvertices(s, facets)
+    incidentvertices(s::Spindle, facets)
 
-List the indices of all vertices of the spindle `s` that are incident with `facets`. Returns an iterator.
+List the indices of all vertices of the spindle `s` that are incident with `facets`.
 
 !!! note
 
@@ -227,7 +227,7 @@ end
 # --------------------------------
 
 """
-    apices(s) 
+    apices(s::Spindle) 
 
 Return the indices of a pair of vertices (the *apices*) of `s` for which each facet of `s` 
 is incident to exactly one of them.
@@ -287,7 +287,7 @@ function computeapices(s::Spindle, apex::Union{Nothing, Int}=nothing)
 end
 
 """   
-    setapex!(s, apex)
+    setapex!(s::Spindle, apex::Int)
 
 Try to find the index `v` of a vertex of `s` such that `v` and `apex` are apices of `s`.
 If successful, overwrite the apices of `s`, or throw an error otherwise.

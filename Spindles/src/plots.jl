@@ -33,7 +33,7 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(label
 
 """
     plot2face(
-        s, facets;
+        s::Spindle, facets;
         facetlabels = nothing,
         usecoordinates = false,
         showdist = false,
