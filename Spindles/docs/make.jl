@@ -29,7 +29,7 @@ for (example, name) in EXAMPLES
     Literate.notebook(
         joinpath(EXAMPLE_DIR, example * ".jl"), OUTPUT_DIR; 
         name=name, execute=true,
-        #preprocess = replace_nbviewer_url
+        preprocess = replace_paths #replace_nbviewer_url
     )
 end
 
