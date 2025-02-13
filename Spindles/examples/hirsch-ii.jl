@@ -1,4 +1,4 @@
-# # Spindles and the Hirsch Conjecture II
+# # Spindles and the Hirsch conjecture II
 
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/tutorials/Spindles and the Hirsch conjecture II.ipynb)
 
@@ -132,7 +132,7 @@ sum(labels .== "11"), sum(labels .== "25")
 
 # So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
 # Let us "validate" this rule on `face`.
-blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in one of the two blocks
+blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in either of the two blocks
 face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
 join(unique(labels[face20]), " ")
 
