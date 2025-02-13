@@ -6,7 +6,7 @@
 # Hirsch conjecture known to date. It is a spindle with 40 facets in dimension 20 that is
 # constructed from a 5-dimensional "base" spindle found by
 # [Matschke, Santos, and Weibel](https://arxiv.org/abs/1202.4701). Following the terminology
-# of [Part I]() of this tutorial, our goal is to find *good 2-faces*.
+# of [part I](@ref "Spindles and the Hirsch conjecture I") of this tutorial, our goal is to find *good 2-faces*.
 
 #md # !!! note
 #md #     This example is also available as a Jupyter notebook. 
@@ -23,7 +23,7 @@ s = Spindle(A, b)
 
 # !!! note
 #     We created the spindle `s` from rational data with numerators and denominators of type `BigInt` 
-#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [Part I]() 
+#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [part I](@ref "Spindles and the Hirsch conjecture I") 
 #     of this tutorial) would have produced an integer overflow error. See also the section on 
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)
 #     in the Julia language documentation.
@@ -78,7 +78,7 @@ print(read("s-25.txt", String))
 # and the corresponding rows of `A` are
 A[[3, 7, 2],:]
 
-# If you inspect those row labels closely, you will notice a pattern. Two labels appear multiple times,
+# If you inspect those row labels closely, you may notice a pattern. Two labels appear multiple times,
 # namely  `11` and `25`. The corresponding rows of `A` have been "replicated" a number of times.
 # Each time, a new nonzero entry is added to the right whose order of magnitude is much larger than
 # that of all other coefficients. At the polyhedral level, this "replication" of rows is reflected by
