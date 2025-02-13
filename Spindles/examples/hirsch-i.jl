@@ -1,4 +1,4 @@
-# # Spindles and the Hirsch conjecture
+# # Spindles and the Hirsch conjecture I
 
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/Spindles and the Hirsch conjecture I.ipynb)
 
@@ -153,5 +153,4 @@ for f in sort(facesofdim(s48, 2))
 end
 
 # If you would like to explore one of the actual counterexamples to the Hirsch conjecture
-# that was built from a spindle like `s48`, please read on [here]().
-#src [here]("Spindles and the Hirsch conjecture II").
+# that was built from a spindle like `s48`, please read on [here]("Spindles and the Hirsch conjecture II").
