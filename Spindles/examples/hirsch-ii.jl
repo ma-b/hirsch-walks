@@ -1,6 +1,6 @@
 # # Spindles and the Hirsch Conjecture II
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/Spindles and the Hirsch conjecture II.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/Spindles and the Hirsch conjecture II.ipynb)
 
 # In this tutorial, we will be analyzing the lowest-dimensional counterexample to the (bounded)
 # Hirsch conjecture known to date. It is a spindle with 40 facets in dimension 20 that is
@@ -132,9 +132,11 @@ sum(labels .== "11"), sum(labels .== "25")
 
 # So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
 # Let us "validate" this rule on `face`.
-blocks = [findall(labels .== ref) for ref in ["11", "25"]]
+blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in one of the two blocks
 face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
-println(join(unique(labels[face20]), " "))
+join(unique(labels[face20]), " ")
+
+# This is the face we would expect to be a good 2-face. Let us check whether it is:
 isgood2face(s20, face20).good
 
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.

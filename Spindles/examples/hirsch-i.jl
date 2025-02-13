@@ -1,6 +1,6 @@
 # # Spindles and the Hirsch conjecture I
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/Spindles and the Hirsch conjecture I.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/Spindles and the Hirsch conjecture I.ipynb)
 
 # This tutorial showcases more advanced use cases of *Spindles.jl*. 
 # For its basic usage, please read [this tutorial](@ref "First steps") first.
