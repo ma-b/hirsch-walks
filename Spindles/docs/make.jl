@@ -5,8 +5,8 @@ using Polyhedra, Graphs  # TODO
 # generate example files using Literate.jl
 const EXAMPLES = [
     ("firststeps", "First steps"),
-    ("hirsch", "Spindles and the Hirsch conjecture I"),
-    #("hirsch2", "Spindles and the Hirsch conjecture II"),
+    ("hirsch-i", "Spindles and the Hirsch conjecture I"),
+    ("hirsch-ii", "Spindles and the Hirsch conjecture II"),
 ]
 EXAMPLE_DIR = joinpath(@__DIR__, "..", "examples")
 OUTPUT_DIR = joinpath(@__DIR__, "src", "tutorials")

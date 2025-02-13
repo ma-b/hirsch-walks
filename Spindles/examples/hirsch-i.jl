@@ -19,7 +19,10 @@
 # with a special property: the length of a shortest path between the apices
 # (called the *length* of the spindle) must be strictly greater than the dimension.
 
-# Santos' original counterexample from 2010 is based on a 5-dimensional spindle with 48 facets, for which the shortest path between the apices is of length 6. The minimal inequality description of this spindle (see Table 1 in Santos' [paper](https://arxiv.org/pdf/1006.2814)) can be found in the file `s-48-5.txt` located in the `examples` folder beneath the package root.
+# Santos' original counterexample from 2010 is based on a 5-dimensional spindle with 48 facets, 
+# for which the shortest path between the apices is of length 6. The minimal inequality description
+# of this spindle (see Table 1 in Santos' [paper](https://arxiv.org/pdf/1006.2814)) can be found
+# in the file `s-48-5.txt` located in the `examples` folder beneath the package root directory `Spindles`.
 
 #src ==========================
 # ## Reading a spindle from a file
