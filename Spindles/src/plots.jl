@@ -71,7 +71,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
         # the projection is 1-dimensional if the images of all vertices, in particular of the first three 
         # (recall that there are at least three), are collinear.
 
-        function proj_onto_indices(x::Vector{<:Number}, y::Vector{<:Number})
+        function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
             # TODO assert nonzero
 
             # find first nonzero component (must exist since x is nonzero)

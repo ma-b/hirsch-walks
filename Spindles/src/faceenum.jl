@@ -133,15 +133,26 @@ end
 """
     facesofdim(s::Spindle, k::Int)
 
-Enumerate all faces of dimension `k` of the spindle `s`, each one given by a vector containing the indices of all 
-incident halfspaces/facets (starting at 1). Return them in one vector.
+Enumerate all faces of dimension `k` of the spindle `s`. Each face is given by a list of the indices of its
+incident halfspaces/facets.
 
 !!! note
+    The empty face ``\\emptyset`` (which is the unique face of dimension -1 by convention)
+    is given by the list of *all* facet/halfspace indices, as the intersection of all facets of a polytope is empty.
 
-    difference from `Polyhedra.Index`
+!!! warning "Difference to Polyhedra.jl"
+    The index of a halfspace/facet is its index in the collection of halfspaces of the polyhedron underlying `s`,
+    where hyperplanes are ignored. This is different from 
+    [the way that indices are treated in `Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Incidence),
+    where hyperplanes and halfspaces share the same set of indices.
 
-Recursive bottom-up computation. Most (memory-)efficient for near-simple polytopes, for which faces are contained
-in few facets each.
+The algorithm proceeds recursively and computes faces bottom-up, starting from the vertices.
+
+!!! note
+    Results are cached internally in the `Spindle` object `s`. Therefore, subsequent calls to `facesofdim(s, l)`
+    for any ``l \\le k`` do not cost anything.
+
+See also [`nfacesofdim`](@ref).
 """
 function facesofdim(s::Spindle, k::Int)
     if !(-1 <= k <= size(Polyhedra.hrep(s.p).A, 2))
@@ -162,8 +173,10 @@ end
 """
     nfacesofdim(s::Spindle, k::Int)
 
-Count the `k`-dimensional faces of the spindle `s`. ... Equivalent with `length(facesofdim(s, k))` if not nothing.
-Uses the convention that the dimension of the empty face is -1.
+Count the `k`-dimensional faces of the spindle `s`. 
+Shorthand for `length(facesofdim(s, k))`.
+
+See also [`facesofdim`](@ref).
 """
 nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k))
 

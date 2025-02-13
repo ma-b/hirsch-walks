@@ -59,3 +59,8 @@ incidentvertices
 ```@docs
 Spindles.dim
 ```
+
+
+```@meta
+DocTestSetup = nothing
+```

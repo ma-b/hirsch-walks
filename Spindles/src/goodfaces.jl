@@ -1,4 +1,4 @@
-export isgood2face, dist #, FaceState
+export isgood2face, dist
 
 # TODO incorporate direction of shortcuts
 """
@@ -13,15 +13,16 @@ export isgood2face, dist #, FaceState
 struct FaceState
     good::Bool
     facets::Union{Nothing, Vector{Int}}
-    edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}  # TODO create abstracttype for edge?
-    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}  # TODO
+    edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
+    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
 
     # TODO perform checks on construction
 end
 
 distscomputed(s::Spindle) = s.dists !== nothing
 function computedistances!(s::Spindle)
-    # for each apex, use the Bellman-Ford algorithm to compute the length of shortest edge walks to all vertices
+    # use the Bellman-Ford algorithm implemented in Graphs.jl
+    # to compute the length of shortest edge walks between the apices and all other vertices
     s.dists = Dict(a => bellman_ford_shortest_paths(graph(s), a).dists for a in apices(s))
 end
 
@@ -67,7 +68,7 @@ function dist(s::Spindle, apex::Int, v::Int)
     return s.dists[apex][v]
 end
 
-# arguments as returned by induced subgraph; return nothing of not a cycle
+# arguments as returned by induced subgraph; return nothing if not a cycle
 function cyclicorder(g::SimpleGraph, vmap::Vector{Int})
     # pick an arbitrary starting vertex and traverse the graph g depth-first
     start = first(Graphs.vertices(g))
@@ -101,10 +102,11 @@ end
 """
     isgood2face(s::Spindle, facets)
 
-Test the face defined by `facets` for being a [good 2-face](@ref "Good 2-faces") of the spindle `s`.
+Test the face defined by `facets` for being a *good* 2-face of the spindle `s`.
 Return a [`FaceState`](@ref).
 
-`(false, nothing, nothing)` if not a good 2-face.
+See [this tutorial](@ref "Good 2-faces") for an informal explanation of what
+it means for a 2-face to be good.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})
     verticesinface = incidentvertices(s, facets)
