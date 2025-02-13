@@ -1,6 +1,6 @@
 # # First steps
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/First steps.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/tutorials/First steps.ipynb)
 
 # This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles 
 # and query basic properties.

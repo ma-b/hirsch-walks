@@ -1,6 +1,6 @@
 # # Spindles and the Hirsch conjecture I
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/Spindles and the Hirsch conjecture I.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/tutorials/Spindles and the Hirsch conjecture I.ipynb)
 
 # This tutorial showcases more advanced use cases of *Spindles.jl*. 
 # For its basic usage, please read [this tutorial](@ref "First steps") first.
@@ -153,5 +153,4 @@ for f in sort(facesofdim(s, 2))
 end
 
 # If you would like to explore one of the actual counterexamples to the Hirsch conjecture
-# that was built from a spindle like `s`, please read on 
-#src [here]("Spindles and the Hirsch conjecture II").
+# that was built from a spindle like `s`, please read on [here](@ref "Spindles and the Hirsch conjecture II").

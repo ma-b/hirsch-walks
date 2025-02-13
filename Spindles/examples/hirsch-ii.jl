@@ -1,8 +1,8 @@
 # # Spindles and the Hirsch Conjecture II
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/Spindles and the Hirsch conjecture II.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/tutorials/Spindles and the Hirsch conjecture II.ipynb)
 
-# In this tutorial, we will be analyzing the lowest-dimensional counterexample to the (bounded)
+# In the second part of the tutorial, we will be analyzing the lowest-dimensional counterexample to the (bounded)
 # Hirsch conjecture known to date. It is a spindle with 40 facets in dimension 20 that is
 # constructed from a 5-dimensional "base" spindle found by
 # [Matschke, Santos, and Weibel](https://arxiv.org/abs/1202.4701). Following the terminology
@@ -23,7 +23,7 @@ s = Spindle(A, b)
 
 # !!! note
 #     We created the spindle `s` from rational data with numerators and denominators of type `BigInt` 
-#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [part I](@ref "Spindles and the Hirsch conjecture I") 
+#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [part I](@ref "Reading a spindle from a file") 
 #     of this tutorial) would have produced an integer overflow error. See also the section on 
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)
 #     in the Julia language documentation.
@@ -176,7 +176,7 @@ plot(
 # the only change is an additional edge (the one defined by `4`). Most importantly, however,
 # the property of being good is preserved.
 
-# Let us take this one step further and find such a good 2-face in dimension 20 for each of
+# Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
 # the good 2-faces of `s`.
 
 #src TODO
