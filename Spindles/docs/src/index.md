@@ -2,9 +2,6 @@
 
 The goal of *Spindles.jl* is to provide an interface for analyzing spindles.
 
-----
-
-## FAQ
 ### What is a spindle?
 A *spindle* is a polytope with two special vertices such that each facet contains exactly one of them. These two special vertices are called the *apices* of the spindle. 
 
@@ -44,7 +41,7 @@ julia> using Spindles
 For the basic usage of *Spindles.jl*, please read the tutorial on [first steps](@ref "First steps"). 
 The full documentation can be found [here](@ref "Index").
 
-To learn more about how *Spindles.jl* helps analyze counterexamples to the Hirsch conjecture, please check out [this tutorial](@ref "Spindles and the Hirsch conjecture I").
+To learn more about how *Spindles.jl* can help analyze counterexamples to the Hirsch conjecture, please check out [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 
 !!! note
 
