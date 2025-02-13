@@ -1,18 +1,24 @@
-push!(LOAD_PATH, joinpath("..", "src"))
-
-using Documenter #, DocumenterInterLinks
+using Documenter, Literate
 using Spindles
-using Polyhedra, Graphs
+using Polyhedra, Graphs  # TODO
 
-# https://documenter.juliadocs.org/stable/man/doctests/#Module-level-metadata
+# generate example files using Literate.jl
+const EXAMPLES = [
+    ("firststeps", "First steps"),
+    ("hirsch", "Spindles and the Hirsch conjecture I"),
+    ("hirsch2", "Spindles and the Hirsch conjecture II")
+]
+EXAMPLEDIR = joinpath(@__DIR__, "..", "examples")
+OUTPUTDIR = joinpath(@__DIR__, "src", "tutorials")
+
+for (example, name) in EXAMPLES
+    Literate.markdown(joinpath(EXAMPLEDIR, example * ".jl"), OUTPUTDIR; preprocess=replace_path_md)
+    #Literate.notebook(joinpath(EXAMPLEDIR, example * ".jl"), EXAMPLEDIR; name=name, preprocess=replace_path_nb)
+end
+
+# See https://documenter.juliadocs.org/stable/man/doctests/#Setup-Code
 # https://stackoverflow.com/questions/57461225/jldoctest-blocks-in-julia-docstrings-included-in-documentation-but-tests-not-run
 DocMeta.setdocmeta!(Spindles, :DocTestSetup, :(using Spindles); recursive=true)
-
-#=
-# https://documenter.juliadocs.org/stable/man/guide/#External-Cross-References
-links = InterLinks(
-    "Graphs" => "https://juliagraphs.org/Graphs.jl/dev/objects.inv"
-)=#
 
 makedocs(
     modules = [Spindles],
@@ -27,8 +33,8 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Tutorials" => [
-            "tutorials/firststeps.md",
-            "tutorials/hirsch.md",
+            name => "tutorials/$(example).md"
+            for (example, name) in EXAMPLES
         ],
         "API Reference" => [
             "Index" => "man/api.md",
