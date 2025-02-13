@@ -8,7 +8,7 @@
 
 #md # !!! note
 #md #     This example is also available as a Jupyter notebook. 
-#md #     Click [here]() to view it in [nbviewer](https://nbviewer.jupyter.org/).
+#md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
 
 #src ==========================
 # ## The Hirsch conjecture
@@ -68,7 +68,8 @@ plot2face(s48, face; facetlabels=labels, showdist=true, figsize=(400,400))
 #md nothing #hide
 
 #md # This produces the following output:
-#md # ![](./assets/s-48-5.svg)
+
+#md # ![](../assets/s-48-5.svg)
 
 # As one would expect from a 2-face, the graph is a cycle. Each vertex is labeled by its index 
 # (on the first line) and the distance to each of the two apices of `s48` (on the second line).
@@ -125,7 +126,8 @@ plot2face(
 #md nothing #hide
 
 #md # Now the output is this:
-#md # ![](./assets/s-48-5_geom.svg)
+
+#md # ![](../assets/s-48-5_geom.svg)
 
 # We may also enumerate all good 2-faces of `s48` as follows.
 for f in sort(facesofdim(s48, 2))
@@ -150,4 +152,4 @@ end
 
 # If you would like to explore one of the actual counterexamples to the Hirsch conjecture
 # that was built from a spindle like `s48`, please read on 
-# [here](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/docs/src/notebooks/hirsch-part-ii.ipynb).
+#src [here]("Spindles and the Hirsch conjecture II").

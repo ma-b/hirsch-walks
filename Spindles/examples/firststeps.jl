@@ -2,6 +2,10 @@
 # This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles 
 # and query basic properties.
 
+#md # !!! note
+#md #     This example is also available as a Jupyter notebook. 
+#md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
+
 # ## Creating a spindle
 # Recall that the special property of a spindle is the existence of two vertices 
 # (the apices) whose incident facets partition the set of all facets. In this tutorial, 
