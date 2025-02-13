@@ -6,14 +6,14 @@ using Polyhedra, Graphs  # TODO
 const EXAMPLES = [
     ("firststeps", "First steps"),
     ("hirsch", "Spindles and the Hirsch conjecture I"),
-    ("hirsch2", "Spindles and the Hirsch conjecture II")
+    #("hirsch2", "Spindles and the Hirsch conjecture II"),
 ]
 EXAMPLEDIR = joinpath(@__DIR__, "..", "examples")
 OUTPUTDIR = joinpath(@__DIR__, "src", "tutorials")
 
 for (example, name) in EXAMPLES
-    Literate.markdown(joinpath(EXAMPLEDIR, example * ".jl"), OUTPUTDIR; preprocess=replace_path_md)
-    #Literate.notebook(joinpath(EXAMPLEDIR, example * ".jl"), EXAMPLEDIR; name=name, preprocess=replace_path_nb)
+    Literate.markdown(joinpath(EXAMPLEDIR, example * ".jl"), OUTPUTDIR; ) #preprocess=replace_path_md)
+    Literate.notebook(joinpath(EXAMPLEDIR, example * ".jl"), EXAMPLEDIR; name=name, ) #preprocess=replace_path_nb)
 end
 
 # See https://documenter.juliadocs.org/stable/man/doctests/#Setup-Code

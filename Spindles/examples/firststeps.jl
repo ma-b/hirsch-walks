@@ -1,9 +1,12 @@
 # # First steps
+
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/examples/First steps.ipynb)
+
 # This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles 
 # and query basic properties.
 
 #md # !!! note
-#md #     This example is also available as a Jupyter notebook. 
+#md #     This tutorial is also available as a Jupyter notebook. 
 #md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
 
 # ## Creating a spindle
@@ -68,7 +71,7 @@ dist(cube, apices(cube)...)
 # For instance, we may verify the well-known fact that cubes are simple by using the 
 # function [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 using Graphs: degree
-all(degree(graph(cube)) .== 3)
+all(degree(graph(cube)) .== dim(cube))
 
 # ## Counting and enumerating faces
 # *Spindles.jl* also provides functions to count and enumerate the faces of `cube`. The following call to 

@@ -1,13 +1,12 @@
 # # Spindles and the Hirsch conjecture
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/examples/Spindles and the Hirsch conjecture.ipynb)
-#src (@__NBVIEWER_ROOT_URL__/examples/Spindles and the Hirsch conjecture.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/examples/Spindles and the Hirsch conjecture I.ipynb)
 
 # This tutorial showcases more advanced use cases of *Spindles.jl*. 
 # For its basic usage, please read [this tutorial](@ref "First steps") first.
 
 #md # !!! note
-#md #     This example is also available as a Jupyter notebook. 
+#md #     This tutorial is also available as a Jupyter notebook. 
 #md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
 
 #src ==========================
