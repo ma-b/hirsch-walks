@@ -1,6 +1,6 @@
 # # Spindles and the Hirsch conjecture
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/examples/Spindles and the Hirsch conjecture I.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/Spindles and the Hirsch conjecture I.ipynb)
 
 # This tutorial showcases more advanced use cases of *Spindles.jl*. 
 # For its basic usage, please read [this tutorial](@ref "First steps") first.
@@ -26,7 +26,7 @@
 
 # We may read the description from the file as follows.
 using Spindles
-A, b, labels = readineq(joinpath("@__REPO_ROOT_URL__", "Spindles", "examples", "s-48-5.txt"), Int);
+A, b, labels = readineq("s-48-5.txt", Int);
 #-
 [A b]
 
@@ -54,7 +54,7 @@ degree(graph(s48), apices(s48))
 # ## Inspecting faces
 
 # The original motivation for developing *Spindles.jl* was the search for special two-dimensional faces
-# (or **2-faces** for short) of the spindle `s48` and similar spindles. 
+# (or *2-faces* for short) of the spindle `s48` and similar spindles. 
 # To explain what we mean by "special", let us consider the following three facets:
 face = [29, 37, 41]
 labels[face]
@@ -100,14 +100,14 @@ apices(s48)
 # to the respectively closest apex is at most 3, which is 2 less than the dimension of `s48`.
 # Moreover, each vertex in $V_2$ is at least 3 edge steps away from $V_1$ on the face.
 
-# Let us call 2-faces with this property **good**. Good 2-faces play an important role for
-# analyzing `s48` in the setting of the so-called **circuit diameter conjecture**, a relaxation
+# Let us call 2-faces with this property *good*. Good 2-faces play an important role for
+# analyzing `s48` in the setting of the so-called *circuit diameter conjecture*, a relaxation
 # of the Hirsch conjecture. *Spindles.jl* provides a function [`isgood2face`](@ref) that tests
 # a face for being good.
 
 isgood2face(s48, face)
 
-# The result is wrapped in a bespoke data type defined by *Spindles.jl* called
+# The result is wrapped in a bespoke data type called
 # [`FaceState`](@ref Spindles.FaceState). The field `good` indicates whether or not
 # the tested face is good, and the two vertex sets $V_1$ and $V_2$ that certify the property
 # of being good are stored in the field `vsets` (see also the documentation on the

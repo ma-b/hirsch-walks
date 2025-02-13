@@ -1,6 +1,6 @@
 # # First steps
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/examples/First steps.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/First steps.ipynb)
 
 # This tutorial demonstrates the basic usage of *Spindles.jl* to create spindles 
 # and query basic properties.
@@ -9,7 +9,9 @@
 #md #     This tutorial is also available as a Jupyter notebook. 
 #md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
 
+#src ==========================
 # ## Creating a spindle
+
 # Recall that the special property of a spindle is the existence of two vertices 
 # (the apices) whose incident facets partition the set of all facets. In this tutorial, 
 # we will be working with one of the simplest examples of a spindle: a cube. 
@@ -57,7 +59,9 @@ setapex!(cube, 3)
 # Calling the function [`apices`](@ref) again now returns
 apices(cube)
 
+#src ==========================
 # ## Working with the graph
+
 # We may even compute the distance between those two apices in the graph of `cube`:
 dist(cube, apices(cube)...)
 
@@ -69,11 +73,13 @@ dist(cube, apices(cube)...)
 # The graph can also be accessed directly using [`graph`](@ref), which returns a graph 
 # of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
 # For instance, we may verify the well-known fact that cubes are simple by using the 
-# function [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
+# functions [`dim`](@ref Spindles.dim) and [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 using Graphs: degree
 all(degree(graph(cube)) .== dim(cube))
 
+#src ==========================
 # ## Counting and enumerating faces
+
 # *Spindles.jl* also provides functions to count and enumerate the faces of `cube`. The following call to 
 # [`facesofdim`](@ref) returns a list of all two-dimensional faces, each one given by the indices of its 
 # incident facets.

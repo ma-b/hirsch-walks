@@ -2,7 +2,7 @@
 
 ```@meta
 DocTestSetup = quote
-    using Polyhedra
+    import Polyhedra
 end
 ```
 

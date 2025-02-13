@@ -8,12 +8,29 @@ const EXAMPLES = [
     ("hirsch", "Spindles and the Hirsch conjecture I"),
     #("hirsch2", "Spindles and the Hirsch conjecture II"),
 ]
-EXAMPLEDIR = joinpath(@__DIR__, "..", "examples")
-OUTPUTDIR = joinpath(@__DIR__, "src", "tutorials")
+EXAMPLE_DIR = joinpath(@__DIR__, "..", "examples")
+OUTPUT_DIR = joinpath(@__DIR__, "src", "tutorials")
+
+# replace all input file paths that appear as strings (starting with " ) in function calls 
+function replace_paths(content)
+    input_files = [filename for filename in readdir(EXAMPLE_DIR) if splitext(filename)[2] == ".txt"]
+    content = replace(content, [
+        '\"' * filename => '\"' * replace(joinpath("..", "..", "..", "examples", filename), "\\" => "\\\\") 
+        for filename in input_files
+    ]...)
+    return content
+end
 
 for (example, name) in EXAMPLES
-    Literate.markdown(joinpath(EXAMPLEDIR, example * ".jl"), OUTPUTDIR; ) #preprocess=replace_path_md)
-    Literate.notebook(joinpath(EXAMPLEDIR, example * ".jl"), EXAMPLEDIR; name=name, ) #preprocess=replace_path_nb)
+    Literate.markdown(
+        joinpath(EXAMPLE_DIR, example * ".jl"), OUTPUT_DIR; 
+        preprocess = replace_paths #∘ replace_nbviewer_url
+    )
+    Literate.notebook(
+        joinpath(EXAMPLE_DIR, example * ".jl"), EXAMPLE_DIR; 
+        name=name, execute=true,
+        #preprocess = replace_nbviewer_url
+    )
 end
 
 # See https://documenter.juliadocs.org/stable/man/doctests/#Setup-Code
