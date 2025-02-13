@@ -27,7 +27,7 @@ for (example, name) in EXAMPLES
         preprocess = replace_paths #∘ replace_nbviewer_url
     )
     Literate.notebook(
-        joinpath(EXAMPLE_DIR, example * ".jl"), EXAMPLE_DIR; 
+        joinpath(EXAMPLE_DIR, example * ".jl"), OUTPUT_DIR; 
         name=name, execute=true,
         #preprocess = replace_nbviewer_url
     )

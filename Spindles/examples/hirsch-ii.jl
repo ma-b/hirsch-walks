@@ -1,12 +1,12 @@
 # # Spindles and the Hirsch Conjecture II
 
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/examples/Spindles and the Hirsch conjecture II.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/Spindles/docs/src/tutorials/Spindles and the Hirsch conjecture II.ipynb)
 
 # In this tutorial, we will be analyzing the lowest-dimensional counterexample to the (bounded)
 # Hirsch conjecture known to date. It is a spindle with 40 facets in dimension 20 that is
 # constructed from a 5-dimensional "base" spindle found by
 # [Matschke, Santos, and Weibel](https://arxiv.org/abs/1202.4701). Following the terminology
-# of [Part I]() of this tutorial, our goal is to find *good 2-faces*.
+# of [part I](@ref "Spindles and the Hirsch conjecture I") of this tutorial, our goal is to find *good 2-faces*.
 
 #md # !!! note
 #md #     This example is also available as a Jupyter notebook. 
@@ -23,7 +23,7 @@ s = Spindle(A, b)
 
 # !!! note
 #     We created the spindle `s` from rational data with numerators and denominators of type `BigInt` 
-#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [Part I]() 
+#     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [part I](@ref "Spindles and the Hirsch conjecture I") 
 #     of this tutorial) would have produced an integer overflow error. See also the section on 
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)
 #     in the Julia language documentation.
@@ -78,7 +78,7 @@ print(read("s-25.txt", String))
 # and the corresponding rows of `A` are
 A[[3, 7, 2],:]
 
-# If you inspect those row labels closely, you will notice a pattern. Two labels appear multiple times,
+# If you inspect those row labels closely, you may notice a pattern. Two labels appear multiple times,
 # namely  `11` and `25`. The corresponding rows of `A` have been "replicated" a number of times.
 # Each time, a new nonzero entry is added to the right whose order of magnitude is much larger than
 # that of all other coefficients. At the polyhedral level, this "replication" of rows is reflected by
@@ -132,9 +132,11 @@ sum(labels .== "11"), sum(labels .== "25")
 
 # So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
 # Let us "validate" this rule on `face`.
-blocks = [findall(labels .== ref) for ref in ["11", "25"]]
+blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in one of the two blocks
 face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
-println(join(unique(labels[face20]), " "))
+join(unique(labels[face20]), " ")
+
+# This is the face we would expect to be a good 2-face. Let us check whether it is:
 isgood2face(s20, face20).good
 
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
