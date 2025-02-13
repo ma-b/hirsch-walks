@@ -44,7 +44,7 @@ julia> using Spindles
 For a brief tour of the package and its basic usage, please read the [tutorials](@ref "First steps"). 
 The full documentation can be found [here](@ref "Index").
 
-See also [this Jupyter notebook](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/docs/src/notebooks/hirsch-part-ii.ipynb) for another tutorial that is specifically focused on applications of *Spindles.jl* to known counterexamples to the Hirsch conjecture.
+See also [this Jupyter notebook](https://nbviewer.org/github/ma-b/hirsch-walks/blob/main/Spindles/examples/hirsch-part-ii.ipynb) for another tutorial that is specifically focused on applications of *Spindles.jl* to known counterexamples to the Hirsch conjecture.
 
 !!! note
 
