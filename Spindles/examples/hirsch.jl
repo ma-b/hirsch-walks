@@ -26,7 +26,7 @@
 
 # We may read the description from the file as follows.
 using Spindles
-A, b, labels = readineq(joinpath(@__REPO_ROOT_URL__, "Spindles", "examples", "s-48-5.txt"), Int);
+A, b, labels = readineq(joinpath("@__REPO_ROOT_URL__", "Spindles", "examples", "s-48-5.txt"), Int);
 #-
 [A b]
 

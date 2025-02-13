@@ -16,7 +16,7 @@
 # To begin, let us enumerate the good 2-faces of the 5-dimensional spindle.
 
 using Spindles
-A_5, b_5, _ = readineq(joinpath(@__REPO_ROOT_URL__, "Spindles", "examples", "s-25-5.txt"), BigInt)
+A_5, b_5, _ = readineq(joinpath("@__REPO_ROOT_URL__", "Spindles", "examples", "s-25-5.txt"), BigInt)
 s_5 = Spindle(A_5, b_5)
 
 # !!! note
@@ -62,7 +62,7 @@ plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300));
 # ### Warm-up: Patterns in the inequality description
 # Let us first take a look at the inequality description of the 20-dimensional spindle.
 # A minimal description is provided in the file `s-25.txt`. Its contents are as follows:
-print(read(joinpath(@__REPO_ROOT_URL__, "Spindles", "examples", "s-25.txt"), String))
+print(read(joinpath("@__REPO_ROOT_URL__", "Spindles", "examples", "s-25.txt"), String))
 
 # You may notice that the coefficients in the first couple of columns are very similar to
 # those of `A_5`, the coefficient matrix of the 5-dimensional "base" spindle `s_5`. This
@@ -90,7 +90,7 @@ A_5[[3, 7, 2],:]
 #src ==========================
 # ### Building the spindle
 
-A_20, b_20, labels = readineq(joinpath(@__REPO_ROOT_URL__, "Spindles", "examples", "s-25.txt"), BigInt)
+A_20, b_20, labels = readineq(joinpath("@__REPO_ROOT_URL__", "Spindles", "examples", "s-25.txt"), BigInt)
 s_20 = Spindle(A_20, b_20)
 
 collect(vertices(s_20))[apices(s_20)]
