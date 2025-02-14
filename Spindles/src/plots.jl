@@ -39,11 +39,13 @@ function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
 
     # find first nonzero component (must exist since x is nonzero)
     i = findfirst(@. !isapprox(x, 0))  # TODO abs tol
+    #i !== nothing || # TODO what to return for type stability?
 
-    # perform one Gauss step to eliminate component i of y (note: no zero division because of choice of i)
+    # perform a single Gauss step to eliminate component i of y
+    # (note that the choice of i ensures that we do not divide by zero here)
     y_elim = y - x * y[i] / x[i]
     
-    # find first nonzero component of resulting vector
+    # find the first nonzero component of the resulting vector
     # note that entry i must be zero by construction
     @assert isapprox(y_elim[i], 0)
     j = findfirst(@. !isapprox(y_elim, 0))  # TODO
@@ -55,36 +57,49 @@ end
 
 """
     plot2face(
-        s::Spindle, facets;
-        vertexlabels = :id,
-        ineqlabels = nothing,
-        usecoordinates = false,
-        showdist = false,
+        s::Spindle, indices;
+        usecoordinates = true,
+        vertexlabels = ,
+        ineqlabels = ,
         directed_edges = nothing,
-        figsize = (300,300)
+        # plot kw args
+        kw...
     )
 
-Make a plot of the 2-face of `s` specified by `facets`.
+Make a plot of the 2-face of `s` that is defined by the inequalities in `indices`, 
+either as a 2D projection onto the plane (if `usecoordinates` is set to `true`) or as a
+combinatorial plot of its graph otherwise.
 
 # Keywords
 
-* `usecoordinates`: If `true`, plot a 2-dimensional projection of the face. Otherwise draw its graph.
-* `vertexlabels`: or `nothing` to suppress labels. Default:
+* `usecoordinates`: If `true` (default), plot a 2D projection. Otherwise draw the graph.
+* `vertexlabels`: A list of strings or `nothing` to suppress labels. Default: ... `vertexlabels[i]` for vertex `i`.
 * `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
 
-* `figsize`: ...
-* `aspect_ratio`: passed to `Plots.plot`
+# Notable keywords for `plot`
+
+* `size`: A tuple of `Integer`s. Defaults to `(300,300)`.
+* `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise.
+
+The remaining keyword arguments `kw...` are passed to `Plots.plot`.
+Can be any plot, subplot, or axis attributes. 
+See the [Plots.jl documentation](https://docs.juliaplots.org/latest/attributes/).
+If one of the named arguments above is repeated, the new value takes precedence, 
+except for annotations... (hardcoded)
 """
 function plot2face(s::Spindle, indices::Vector{Int}; 
-    usecoordinates::Bool = false, 
+    # custom keyword arguments:
+    usecoordinates::Bool = true, 
     vertexlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nvertices(s)),
     ineqlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nhalfspaces(s)),
     unique_labels_only::Bool = true,
-
+    # omit_indices::Bool
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
-    figsize::Tuple{Int, Int} = (300,300),
-    aspect_ratio::Union{Real, Symbol} = usecoordinates ? :auto : :equal
+    # keywords arguments taken from `plot` attributes but with custom default values:
+    size::Tuple{Integer, Integer} = (300,300),
+    aspect_ratio::Union{Real, Symbol} = usecoordinates ? :auto : :equal,
+    kw...
 )
     verticesinface = incidentvertices(s, indices)
     n = length(verticesinface)
@@ -115,12 +130,12 @@ function plot2face(s::Spindle, indices::Vector{Int};
     end
 
     # clear plot pane
-    plot(
+    plot(;
         ticks=nothing, legend=false, aspect_ratio=aspect_ratio, #aspect_ratio=usecoordinates ? :auto : :equal, 
-        framestyle=:box, size=figsize
+        framestyle=:box, size=size, kw...
     )
-    plot!(Shape(xs,ys), lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
-    scatter!(xs, ys, markercolor=:steelblue, markersize=5, markerstrokewidth=0)
+    plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
+    scatter!(xs, ys; markercolor=:steelblue, markersize=5, markerstrokewidth=0)
 
 
     # ---- labels ----
@@ -163,6 +178,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
 
     # edge labels
     if ineqlabels !== nothing
+        # helper function to concatenate multiple inequality labels into a single string
         concatlabels(labels::Vector{<:AbstractString}) = join(
             unique_labels_only ? unique(labels) : labels, ' '
         )
@@ -170,6 +186,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
         for i=1:n
             j = mod(i,n)+1  # successor of i on the cycle
             tightfacets = incidentfacets(s, cyclic[[i,j]])
+            # TODO
             @assert incidentfacets(s, cyclic[[i,j]]) == findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
 
             tightfacets = [f for f in tightfacets if !(f in indices)]
@@ -180,9 +197,10 @@ function plot2face(s::Spindle, indices::Vector{Int};
             )
         end
 
+        # figure title
         title!(concatlabels(ineqlabels[indices]))
         # face label
-        annotate!(bx, by, text(concatlabels(ineqlabels[indices]), :center, 10, :steelblue))
+        annotate!(bx, by, text(concatlabels(ineqlabels[indices]), 10, :center, :steelblue))
     end
 
     # set limits
@@ -206,7 +224,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
             # get the indices of the endpoints of the edge as they appear in the cyclic order
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
             plot!(
-                xs[[i,j]], ys[[i,j]], 
+                xs[[i,j]], ys[[i,j]]; 
                 linecolor=:red, linewidth=3, arrow=uniquedir
                 #arrow=arrow(:head, 10, 101)
             )

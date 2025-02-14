@@ -65,20 +65,45 @@ labels[face]
 # They indeed define a 2-face of `s`:
 face in facesofdim(s, 2)
 
-#-
-vlabels = [
-	"$v\n" * join(dist.((s,), apices(s), v), " | ") 
-	for v=1:nvertices(s)
-]
-#src @time vlabels = map(v -> join(dist.((s,), apices(s), v), " | "), 1:nvertices(s))
-
-# We may use the function [`plot2face`](@ref) provided by *Spindles.jl* to plot the graph of this face.
-plot2face(s, face; ineqlabels=labels, vertexlabels=vlabels, figsize=(400,400))
+# To inspect `face`, we may use the function [`plot2face`](@ref) provided by *Spindles.jl* 
+# to make a plot.
+plot2face(s, face; ineqlabels=labels, size=(400,400))
 #md nothing #hide
 
 #md # This produces the following output:
 
 #md # ![](../assets/s-48-5.svg)
+
+# Each vertex is labeled by its index. Edges and the face itself get their labels from the incident facets, 
+# since we passed the `labels` extracted above to the keyword argument `ineqlabels`. Note here that facets
+# that contain `face` are omitted from the edge labels.
+
+# !!! note
+#     (since all ineqs are facet-defining!).
+
+# We may customize the above plot even further. For example, let's add more information to the vertex labels
+# and for each vertex print its distance to the two apices of `s` on a second label line,
+# beneath the vertex index. 
+vlabels = [
+    "$v\n" * join(dist.((s,), apices(s), v), " | ") 
+    for v=1:nvertices(s)
+]
+vlabels = map(1:nvertices(s)) do v
+    "$v\n" * join(dist.((s,), apices(s), v), " | ")
+end
+#src @time vlabels = map(v -> join(dist.((s,), apices(s), v), " | "), 1:nvertices(s))
+# generates the label of each vertex of `s` in the above format.
+
+# !!! note "Julia syntax"
+#     `dist.((s,), apices(s), v)` is a shorthand for ... ("broadcast" over the second argument of dist only)
+
+# With the added information, the plot now looks like this:
+plot2face(s, face; ineqlabels=labels, vertexlabels=vlabels, size=(400,400))
+#md nothing #hide
+
+# TODO plot graph only
+plot2face(s, face; usecoordinates=false)
+#md nothing #hide
 
 # As one would expect from a 2-face, the graph is a cycle. Each vertex is labeled by its index 
 # (on the first line) and the distance to each of the two apices of `s` (on the second line).
@@ -131,7 +156,7 @@ fstate.good, fstate.vsets
 plot2face(
 	s, face; ineqlabels=labels,
 	vertexlabels=vlabels,
-	usecoordinates=true, directed_edges=fstate.edges, figsize=(400,400)
+	usecoordinates=true, directed_edges=fstate.edges, size=(400,400)
 )
 #md nothing #hide
 
