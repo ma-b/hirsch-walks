@@ -34,6 +34,7 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(label
 """
     plot2face(
         s::Spindle, facets;
+        vertexlabels = :id,
         facetlabels = nothing,
         usecoordinates = false,
         showdist = false,
@@ -41,7 +42,7 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(label
         figsize = (300,300)
     )
 
-Plot the 2-face of `s` specified by `facets`.
+Make a plot of the 2-face of `s` specified by `facets`.
 
 # Keywords
 
@@ -52,11 +53,16 @@ Plot the 2-face of `s` specified by `facets`.
 * `figsize`: ...
 """
 function plot2face(s::Spindle, facets::Vector{Int}; 
-    usecoordinates::Bool=false, showdist::Bool=false,
-    facetlabels::Union{Nothing, Vector{<:AbstractString}}=nothing,
-    directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}=nothing,
-    figsize::Tuple{Int, Int}=(300,300), M::Int=15, K::Int=3, L::Int=5
+    usecoordinates::Bool = false, 
+    vertexlabels::Symbol = :id,
+    facetlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nhalfspaces(s)),
+    directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
+    figsize::Tuple{Int, Int} = (300,300),
 )
+    # check valid arguments
+    VERTEXLABELS = [:none, :id, :dist]
+    vertexlabels in VERTEXLABELS || throw(ArgumentError("got unsupported value for \"vertexlabels\"")) #. Supported values are $(VERTEXLABELS)"))
+
     verticesinface = incidentvertices(s, facets)
     n = length(verticesinface)
     
@@ -100,9 +106,8 @@ function plot2face(s::Spindle, facets::Vector{Int};
         i,j = proj_onto_indices(r12, r13)
         xs, ys = verts[cyclic,i], verts[cyclic,j]  # TODO convert to float
     else
-        R = 1
         angles = [2*pi*i/n for i=1:n]
-        xs, ys = R * map(cos, angles), R * map(sin, angles)
+        xs, ys = cos.(angles), sin.(angles)
     end
 
     # clear plot pane
@@ -116,9 +121,14 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # ---- labels ----
 
-    if facetlabels === nothing
+    #=if facetlabels === nothing
         facetlabels = map(string, 1:nhalfspaces(s))
-    end
+    end=#
+
+    # constants for fine-tuning label placement
+    M = 15
+    K = 3
+    L = 5
 
     # vertex and edge labels are unformly shifted outwards from the respective vertex positions and edge midpoints,
     # away from the barycentre of face
@@ -133,39 +143,42 @@ function plot2face(s::Spindle, facets::Vector{Int};
     ys_offset = @. (ys.-by) / lengths * ylabel_offset
 
     # vertex labels
-    for i=1:n
-        dists = [dist(s, a, cyclic[i]) for a in apices(s)]
-        labeltext = "$(cyclic[i])"
-        if showdist
-            labeltext *= "\n$(@sprintf("%d | %d", dists...))"
-        end
+    if vertexlabels !== :none
+        for i=1:n
+            dists = [dist(s, a, cyclic[i]) for a in apices(s)]
+            labeltext = "$(cyclic[i])"
+            if vertexlabels == :dist
+                labeltext *= "\n$(@sprintf("%d | %d", dists...))"
+            end
 
-        annotate!(
-            xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 
-            text(labeltext, 10, :center), 
-            #size=12,   # TODO font size
-            #color=:blue
-        )
+            annotate!(
+                xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 
+                text(labeltext, 10, :center), 
+                #size=12,   # TODO font size
+                #color=:blue
+            )
+        end
     end
 
     # edge labels
-    for i=1:n
-        j = mod(i,n)+1  # successor of i on the cycle
-        tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
-        tightfacets = [f for f in tightfacets if !(f in facets)]
-        annotate!(
-            (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
-            (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
-            text(label(tightfacets, facetlabels), 8, :center)
-        )
+    if facetlabels !== nothing
+        for i=1:n
+            j = mod(i,n)+1  # successor of i on the cycle
+            tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
+            tightfacets = [f for f in tightfacets if !(f in facets)]
+            annotate!(
+                (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
+                (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
+                text(label(tightfacets, facetlabels), 8, :center)
+            )
+        end
+
+        title!(label(facets, facetlabels))
+        # face label
+        annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))
     end
 
-    title!(label(facets, facetlabels))
-    # face label
-    annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))
-
     # set limits
-    #L = 1
     plot!(
         xlim=[minimum(xs) - L*xlabel_offset, maximum(xs) + L*xlabel_offset], 
         ylim=[minimum(ys) - L*ylabel_offset, maximum(ys) + L*ylabel_offset]
@@ -193,5 +206,5 @@ function plot2face(s::Spindle, facets::Vector{Int};
         end
     end
 
-    return current()
+    current()
 end
