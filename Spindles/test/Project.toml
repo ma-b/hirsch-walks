@@ -1,0 +1,5 @@
+[deps]
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
+Spindles = "9a708d6d-e1c5-4911-9b93-28ca33b2614e"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
