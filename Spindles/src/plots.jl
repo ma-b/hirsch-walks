@@ -67,8 +67,8 @@ end
     )
 
 Make a plot of the 2-face of `s` that is defined by the inequalities in `indices`, 
-either as a 2D projection onto the plane (if `usecoordinates` is set to `true`) or as a
-combinatorial plot of its graph otherwise.
+either as a 2D projection onto the plane (if the argument `usecoordinates` is set to `true`) or as a
+(combinatorial) plot of its graph otherwise.
 
 # Keywords
 
@@ -77,16 +77,19 @@ combinatorial plot of its graph otherwise.
 * `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
 
-# Notable keywords for `plot`
+The remaining keyword arguments `kw...` are passed to `Plots.plot` 
+and can be any plot, subplot, or axis attributes.
+See the [Plots documentation pages](https://docs.juliaplots.org/latest/attributes/) 
+for a list of available attributes. Some of them are used by `plot2face` with a 
+different default value than in `Plots`. Notable keyword arguments among those are:
 
-* `size`: A tuple of `Integer`s. Defaults to `(300,300)`.
-* `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise.
+* `size`: A tuple of `Integer`s. Defaults here to `(300,300)`.
+* `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise 
+  (default in `Plots`).
 
-The remaining keyword arguments `kw...` are passed to `Plots.plot`.
-Can be any plot, subplot, or axis attributes. 
-See the [Plots.jl documentation](https://docs.juliaplots.org/latest/attributes/).
-If one of the named arguments above is repeated, the new value takes precedence, 
-except for annotations... (hardcoded)
+The default behaviour can be overwritten by explicitly passing new values as keyword arguments in `kw...`
+to `plot2face`. Anything in `kw...` takes precedence over the default behaviour in `plot2face`, except for (most)
+attributes related to annotations. They are hardcoded in `plot2face`.
 """
 function plot2face(s::Spindle, indices::Vector{Int}; 
     # custom keyword arguments:
