@@ -44,6 +44,7 @@ label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(label
 Plot the 2-face of `s` specified by `facets`.
 
 # Keywords
+
 * `facetlabels`: A list of strings to be used as facet labels.
 * `usecoordinates`: If `true`, plot a 2-dimensional projection of the face. Otherwise draw its graph.
 * `showdist`: Annotate vertices with their respective distance to each apex of `s`.
@@ -61,6 +62,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
     
     # list the vertices in cyclic order around the polygon
     cyclic = cyclicorder(induced_subgraph(graph(s), verticesinface)...)
+    cyclic !== nothing || throw(ArgumentError("the given face is not 2-dimensional"))
 
     # ---- coordinates ----
 
