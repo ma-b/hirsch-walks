@@ -1,6 +1,6 @@
 using Documenter, Literate
 using Spindles
-using Polyhedra, Graphs  # TODO
+using Polyhedra, Graphs
 
 # generate example files using Literate.jl
 const EXAMPLES = [
@@ -24,12 +24,12 @@ end
 for (example, name) in EXAMPLES
     Literate.markdown(
         joinpath(EXAMPLE_DIR, example * ".jl"), OUTPUT_DIR; 
-        preprocess = replace_paths #∘ replace_nbviewer_url
+        preprocess = replace_paths
     )
     Literate.notebook(
         joinpath(EXAMPLE_DIR, example * ".jl"), OUTPUT_DIR; 
         name=name, execute=true,
-        preprocess = replace_paths #replace_nbviewer_url
+        preprocess = replace_paths
     )
 end
 
