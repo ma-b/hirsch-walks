@@ -65,8 +65,15 @@ labels[face]
 # They indeed define a 2-face of `s`:
 face in facesofdim(s, 2)
 
+#-
+vlabels = [
+	"$v\n" * join(dist.((s,), apices(s), v), " | ") 
+	for v=1:nvertices(s)
+]
+#src @time vlabels = map(v -> join(dist.((s,), apices(s), v), " | "), 1:nvertices(s))
+
 # We may use the function [`plot2face`](@ref) provided by *Spindles.jl* to plot the graph of this face.
-plot2face(s, face; facetlabels=labels, showdist=true, figsize=(400,400))
+plot2face(s, face; ineqlabels=labels, vertexlabels=vlabels, figsize=(400,400))
 #md nothing #hide
 
 #md # This produces the following output:
@@ -122,8 +129,9 @@ fstate.good, fstate.vsets
 # Let us plot it again, but this time not as a graph but as a two-dimensional projection.
 # This is achieved by setting the option `usecoordinates` to `true`:
 plot2face(
-	s, face; facetlabels=labels, 
-	showdist=true, usecoordinates=true, directed_edges=fstate.edges, figsize=(400,400)
+	s, face; ineqlabels=labels,
+	vertexlabels=vlabels,
+	usecoordinates=true, directed_edges=fstate.edges, figsize=(400,400)
 )
 #md nothing #hide
 

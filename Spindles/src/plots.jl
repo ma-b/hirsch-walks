@@ -29,13 +29,35 @@ function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
     end
 end
 
-label(facets::Vector{Int}, labels::Vector{<:AbstractString}) = join(unique(labels[facets]), ' ')
+# given two nonzero vectors x and y in dimension at least 2, find two coordinates
+# such that the projections of x and y onto these coordinates
+# are linearly independent if and only if x and y are linearly independent
+function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
+    # implementation strategy: use Gaussian elimination
+
+    # TODO assert nonzero
+
+    # find first nonzero component (must exist since x is nonzero)
+    i = findfirst(@. !isapprox(x, 0))  # TODO abs tol
+
+    # perform one Gauss step to eliminate component i of y (note: no zero division because of choice of i)
+    y_elim = y - x * y[i] / x[i]
+    
+    # find first nonzero component of resulting vector
+    # note that entry i must be zero by construction
+    @assert isapprox(y_elim[i], 0)
+    j = findfirst(@. !isapprox(y_elim, 0))  # TODO
+    # such a j must exist since x and y are linearly independent
+    # now the 2x2 matrix induced by components i and j of x and y_elim is of the form [* *; 0 *] and has rank 2,
+    # so projecting out all but i,j leaves projections of x and y_elim (and therefore y) linearly independent.
+    return (i,j)
+end
 
 """
     plot2face(
         s::Spindle, facets;
         vertexlabels = :id,
-        facetlabels = nothing,
+        ineqlabels = nothing,
         usecoordinates = false,
         showdist = false,
         directed_edges = nothing,
@@ -46,24 +68,25 @@ Make a plot of the 2-face of `s` specified by `facets`.
 
 # Keywords
 
-* `facetlabels`: A list of strings to be used as facet labels.
 * `usecoordinates`: If `true`, plot a 2-dimensional projection of the face. Otherwise draw its graph.
-* `showdist`: Annotate vertices with their respective distance to each apex of `s`.
+* `vertexlabels`: or `nothing` to suppress labels. Default:
+* `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
+
 * `figsize`: ...
+* `aspect_ratio`: passed to `Plots.plot`
 """
-function plot2face(s::Spindle, facets::Vector{Int}; 
+function plot2face(s::Spindle, indices::Vector{Int}; 
     usecoordinates::Bool = false, 
-    vertexlabels::Symbol = :id,
-    facetlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nhalfspaces(s)),
+    vertexlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nvertices(s)),
+    ineqlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nhalfspaces(s)),
+    unique_labels_only::Bool = true,
+
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
     figsize::Tuple{Int, Int} = (300,300),
+    aspect_ratio::Union{Real, Symbol} = usecoordinates ? :auto : :equal
 )
-    # check valid arguments
-    VERTEXLABELS = [:none, :id, :dist]
-    vertexlabels in VERTEXLABELS || throw(ArgumentError("got unsupported value for \"vertexlabels\"")) #. Supported values are $(VERTEXLABELS)"))
-
-    verticesinface = incidentvertices(s, facets)
+    verticesinface = incidentvertices(s, indices)
     n = length(verticesinface)
     
     # list the vertices in cyclic order around the polygon
@@ -79,25 +102,6 @@ function plot2face(s::Spindle, facets::Vector{Int};
         # the projection is 1-dimensional if the images of all vertices, in particular of the first three 
         # (recall that there are at least three), are collinear.
 
-        function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
-            # TODO assert nonzero
-
-            # find first nonzero component (must exist since x is nonzero)
-            i = findfirst(@. !isapprox(x, 0))  # TODO abs tol
-
-            # perform one Gauss step to eliminate component i of y (note: no zero division because of choice of i)
-            y_elim = y - x * y[i] / x[i]
-            
-            # find first nonzero component of resulting vector
-            # note that entry i must be zero by construction
-            @assert isapprox(y_elim[i], 0)
-            j = findfirst(@. !isapprox(y_elim, 0))  # TODO
-            # such a j must exist since x and y are linearly independent
-            # now the 2x2 matrix induced by components i and j of x and y_elim is of the form [* *; 0 *] and has rank 2,
-            # so projecting out all but i,j leaves projections of x and y_elim (and therefore y) linearly independent.
-            return (i,j)
-        end
-
         # these two vectors are nonzero (and linearly independent) since they are differences of distinct vertices
         r12 = verts[cyclic[1],:] - verts[cyclic[2],:]
         r13 = verts[cyclic[1],:] - verts[cyclic[3],:]
@@ -112,7 +116,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # clear plot pane
     plot(
-        ticks=nothing, legend=false, aspect_ratio=usecoordinates ? :auto : :equal, 
+        ticks=nothing, legend=false, aspect_ratio=aspect_ratio, #aspect_ratio=usecoordinates ? :auto : :equal, 
         framestyle=:box, size=figsize
     )
     plot!(Shape(xs,ys), lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
@@ -121,17 +125,13 @@ function plot2face(s::Spindle, facets::Vector{Int};
 
     # ---- labels ----
 
-    #=if facetlabels === nothing
-        facetlabels = map(string, 1:nhalfspaces(s))
-    end=#
-
     # constants for fine-tuning label placement
     M = 15
     K = 3
     L = 5
 
-    # vertex and edge labels are unformly shifted outwards from the respective vertex positions and edge midpoints,
-    # away from the barycentre of face
+    # vertex and edge labels are unformly shifted outwards from the respective vertex positions
+    # and edge midpoints, away from the barycentre of face
 
     # first compute the barycentre
     bx, by = sum(xs)/length(xs), sum(ys)/length(ys)
@@ -143,13 +143,14 @@ function plot2face(s::Spindle, facets::Vector{Int};
     ys_offset = @. (ys.-by) / lengths * ylabel_offset
 
     # vertex labels
-    if vertexlabels !== :none
+    if vertexlabels !== nothing
         for i=1:n
-            dists = [dist(s, a, cyclic[i]) for a in apices(s)]
+            #=dists = [dist(s, a, cyclic[i]) for a in apices(s)]
             labeltext = "$(cyclic[i])"
             if vertexlabels == :dist
                 labeltext *= "\n$(@sprintf("%d | %d", dists...))"
-            end
+            end=#
+            labeltext = vertexlabels[cyclic[i]]
 
             annotate!(
                 xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 
@@ -161,21 +162,27 @@ function plot2face(s::Spindle, facets::Vector{Int};
     end
 
     # edge labels
-    if facetlabels !== nothing
+    if ineqlabels !== nothing
+        concatlabels(labels::Vector{<:AbstractString}) = join(
+            unique_labels_only ? unique(labels) : labels, ' '
+        )
+
         for i=1:n
             j = mod(i,n)+1  # successor of i on the cycle
-            tightfacets = findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
-            tightfacets = [f for f in tightfacets if !(f in facets)]
+            tightfacets = incidentfacets(s, cyclic[[i,j]])
+            @assert incidentfacets(s, cyclic[[i,j]]) == findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
+
+            tightfacets = [f for f in tightfacets if !(f in indices)]
             annotate!(
                 (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
                 (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
-                text(label(tightfacets, facetlabels), 8, :center)
+                text(concatlabels(ineqlabels[tightfacets]), 8, :center)
             )
         end
 
-        title!(label(facets, facetlabels))
+        title!(concatlabels(ineqlabels[indices]))
         # face label
-        annotate!(bx, by, text(label(facets, facetlabels), :center, 10, :steelblue))
+        annotate!(bx, by, text(concatlabels(ineqlabels[indices]), :center, 10, :steelblue))
     end
 
     # set limits
@@ -193,7 +200,7 @@ function plot2face(s::Spindle, facets::Vector{Int};
         for k=1:2
             # get edge-defining inequality for reference edge
             efacets = incidentfacets(s, directed_edges[k==1 ? 2 : 1])
-            ineq = findfirst(f -> !(f in facets), efacets)
+            ineq = findfirst(f -> !(f in indices), efacets)
 
             (u,v), uniquedir = directedge(s, directed_edges[k], efacets[ineq])
             # get the indices of the endpoints of the edge as they appear in the cyclic order

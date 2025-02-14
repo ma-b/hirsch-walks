@@ -15,8 +15,6 @@ struct FaceState
     facets::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
     vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
-
-    # TODO perform checks on construction
 end
 
 distscomputed(s::Spindle) = s.dists !== nothing
@@ -59,9 +57,10 @@ julia> dist(square, apx1, 4)
 """
 function dist(s::Spindle, apex::Int, v::Int)
     apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
-    1 <= v <= nvertices(s) || throw(ArgumentError("index $(v) out of bounds for $(nvertices(s)) vertices"))
+    1 <= v <= nvertices(s) || throw(ArgumentError("vertex indices must be between 1 and $(nvertices(s))"))
     
-    if !distscomputed(s) || !haskey(s.dists, apex)  # recompute distances also when apices have changed in the meantime
+    # recompute distances also when apices have changed in the meantime
+    if !distscomputed(s) || !haskey(s.dists, apex)
         computedistances!(s)
     end
 
