@@ -95,7 +95,7 @@ function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
     if labels === nothing
         if labels_plusminus && iseven(size(A,1))
             # TODO warning if plusminus is set and odd number of rows
-            labels = vcat([[string(Int(i))*"+", string(Int(i))*"-"] for i=1:size(A,1)//2]...)
+            labels = vcat([[string(Int(i))*"⁺", string(Int(i))*"⁻"] for i=1:size(A,1)//2]...)
         else
             labels = string.(1:size(A,1))
         end

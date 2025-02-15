@@ -1,5 +1,5 @@
 """
-Main module. See [here](@ref "Index") for its public API.
+Main module. The public API is listed [here](@ref "Index").
 """
 module Spindles
 
@@ -118,7 +118,7 @@ See also the [Polyhedra.jl documentation on libraries](https://juliapolyhedra.gi
 A list of all supported libraries can be found on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 
 # Examples
-To use [`CDDLib`](https://github.com/JuliaPolyhedra/CDDLib.jl) with exact rational arithmetic, do
+To use [CDDLib](https://github.com/JuliaPolyhedra/CDDLib.jl) with exact rational arithmetic, do
 ```julia
 import CDDLib
 Spindle(A, b, CDDLib.Library(:exact))
