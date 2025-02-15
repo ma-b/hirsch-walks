@@ -20,12 +20,13 @@ function readrational(filename::AbstractString, ::Type{T}) where T<:Integer
 end
 
 """
-    readineq(filename, T)
+    readineq(filename, T [, comment_char])
 
 File format: labels b -A
 Return `A, b, labels` where `A` is a matrix of type `Rational{T}`.
 
-Lines starting with a `#` character and all characters on a line following `#` are ignored.
+Lines starting with a `comment_char` character (default is '#') and all characters on a line following 
+a `comment_char` are ignored.
 
 # Examples
 ```jldoctest
@@ -78,15 +79,20 @@ end
 
 
 """
-    writeineq(filename, outfilename [, plusminus])
+    writeineq(outfilename, A::AbstractMatrix, b::AbstractVector [, labels, labels_plusminus, comments, comment_char])
 
-Create file with inequality description in the form [b -A]. First column contains row/facet labels.
+Write the inequality description ``Ax \\le b`` to `outfilename`.
 
-Write to `outfilename`.
+The file format is [labels b -A]. First column contains inequality labels.
 
-Each element in `comments` is a single line. Possible line breaks are ignored.
+# Keywords
+* `labels`: If not specified, use inequality indices.
+* `labels_plusminus::Bool`: Defaults to `false`
+* `comments`: Each element in `comments` will be printed on its own line, starting with `comment_char` 
+  and a whitespace. Possible internal line breaks are ignored.
+* `comment_char`
 """
-function writeineq(outfilename::AbstractString, A::Matrix, b::Vector;
+function writeineq(outfilename::AbstractString, A::AbstractMatrix, b::AbstractVector;
     labels::Union{Nothing, Vector{<:AbstractString}}=nothing, labels_plusminus::Bool=false,
     comments::Vector{<:AbstractString}=AbstractString[], comment_char::AbstractChar='#')
     
