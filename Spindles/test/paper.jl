@@ -30,6 +30,9 @@
         "1+ 2+ 6+",     "2+ 6+ 10+", "2+ 10+ 11+", "8+ 10+ 11+",
         "3+ 4+ 6+",     "3+ 6+ 9+", "3+ 8+ 9+"
     ]
+    faces = map(faces) do f
+        replace(f, "+" => "⁺")  # use unicode symbol
+    end
     testfaces("../examples/s-28-5.txt", faces)
 
     testfaces("../examples/s-48-5.txt", Vector{Int}[])  # symmetric spindle

@@ -216,7 +216,7 @@ fstate.good, fstate.vsets
 #src ==========================
 # ## Finding all good 2-faces
 
-# Using [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
+# Using the function [`facesofdim`](@ref) and [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
 for f in sort(facesofdim(s, 2))
     if isgood2face(s, f).good
         println(join(labels[f], " "))
