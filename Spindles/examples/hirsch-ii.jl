@@ -57,11 +57,6 @@ end
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
 plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300))
-#src savefig("s-25-5_good.svg")
-
-#src #md # This produces the following figure.
-
-#src #md # ![](../assets/s-25-5_good.svg)
 
 #src ==========================
 # ## Dimension 20
@@ -154,11 +149,6 @@ plot(
     layout=grid(1,2), size=(800,300)
 )
 #src #md nothing #hide
-#src savefig("s-25_two.svg")
-
-#src #md # The output is
-
-#src #md # ![](../assets/s-25_compare.svg)
 
 # Not only do their projections look very similar, they are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
@@ -177,11 +167,6 @@ plot(
     layout=grid(1,2), size=(800,400)
 )
 #src #md nothing #hide
-#src savefig("s-25_two_geom.svg")
-
-#src #md # Now the output is
-
-#src #md # ![](../assets/s-25_compare_geom.svg)
 
 # The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
 # which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,

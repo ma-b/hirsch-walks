@@ -78,10 +78,6 @@ face in facesofdim(s, 2)
 plot2face(s, face; ineqlabels=labels)
 #src #md nothing #hide
 
-#src #md # This produces the following output:
-
-#src #md # ![](../assets/s-48-5.svg)
-
 # Each vertex is labeled by its index. Edges and the face itself get their labels from the incident facets, 
 # since we passed the `labels` extracted above to the keyword argument `ineqlabels`. Note here that the
 # three facets that contain `face` are omitted from the edge labels.
@@ -91,11 +87,6 @@ plot2face(s, face; ineqlabels=labels)
 # beneath the vertex index, we first generate all labels in the desired format. Here, we use the format
 # `"dist1 | dist2"` for the second line of the label, where `dist1` and `dist2` are placeholders for the
 # distances to `apices(s)[1]` and `apices(s)[2]`, respectively.
-
-#src dist_labels = [
-#src     "$v\n" * join(dist.((s,), apices(s), v), " | ") 
-#src     for v=1:nvertices(s)
-#src ]
 dist_labels = map(1:nvertices(s)) do v
     "$v\n" * join(dist.((s,), apices(s), v), " | ")
 end
@@ -120,20 +111,8 @@ plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=f
 # to a (combinatorial) drawing of the graph of the face `15+ 19+ 21+` rather than a planar projection of
 # its true coordinates as above.
 
-#src As one would expect from a 2-face, the graph is a cycle. Each vertex is labeled by its index 
-#src (on the first line) and the distance to each of the two apices of `s` (on the second line).
-#src For example, `1 | 5` in the label of vertex `25` means that `25` is one edge step away from 
-#src the first apex `apices(s)[1]` and five steps away from `apices(s)[2]`.
-#src Likewise, the label `0 | 6` for vertex `1` means that `1` is at distance 0 from `apices(s)[1]`.
-#src This should not be surprising given that `1` *is* the index of the first apex:
-#src apices(s)
-
-#src Edges are labeled by their incident facets, where the three facets that define the face are omitted.
-
 #src ==========================
 # ## A good 2-face
-
-#src # Not surprisingly, the graph of the 2-face given by `face` is a cycle.
 
 # Next, let's take a closer look at our custom labels in the plot that we just generated. 
 # For each vertex of the face, the sum of both distances on the second line of its label must be at least 6,
@@ -197,6 +176,7 @@ plot2face(s, face;
 	directed_edges=([25,57], [33,81]),
     usecoordinates=true, title="V₁ and V₂"
 )
+
 # The geometry of the 2-face tells us that the point on the boundary that we hit must be on one of the
 # two edges incident to the apex `1`. From that point, we walk along the edge and reach `1` within
 # (at most) two steps on the face, rather than three steps along its boundary.
@@ -232,25 +212,6 @@ fstate = isgood2face(s, face)
 fstate.good, fstate.vsets
 
 # Feel free to compare the output with the sets $V_1$ and $V_2$ that we identified above.
-
-#src #-
-#src using Plots
-#src plot(
-#src     plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, 
-#src 	    usecoordinates=false, directed_edges=fstate.edges),
-#src     plot2face(s, face; ineqlabels=labels, directed_edges=fstate.edges),
-#src     layout=grid(1,2), size=(800,300)
-#src )
-#src #md nothing #hide
-
-#src # Let us plot it again, but this time not as a graph but as a two-dimensional projection.
-#src # This is achieved by setting the option `usecoordinates` to `true`:
-#src 
-#src #md nothing #hide
-
-#src #md # Now the output is this:
-
-#src #md # ![](../assets/s-48-5_geom.svg)
 
 #src ==========================
 # ## Finding all good 2-faces
