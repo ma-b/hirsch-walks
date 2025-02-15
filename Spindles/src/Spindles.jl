@@ -1,9 +1,5 @@
 """
-Main module in `Spindles.jl`.
-
-# Exports
-* [`Spindle`](@ref Spindles.Spindle)
-* ...
+Main module. See [here](@ref "Index") for its public API.
 """
 module Spindles
 
@@ -69,8 +65,8 @@ Equivalently, we could have created it from an inequality description (an H-repr
 the system of inequalities
 ```math
 \\begin{aligned}
-0 \\le x_1 &\\le 1, \\\\
-0 \\le x_2 &\\le 1.
+0 \\le x_1 &\\le 1 \\\\
+0 \\le x_2 &\\le 1
 \\end{aligned}
 ```
 Using [`Polyhedra.hrep`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/representation/#Polyhedra.hrep), 

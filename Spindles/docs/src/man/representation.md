@@ -16,7 +16,8 @@ The main type defined by *Spindles.jl* is
 Spindle
 ```
 
-There are two possible ways to construct objects of this type. The first way explicitly uses `Polyhedra`:
+There are two possible ways to construct objects of this type. The first way explicitly uses 
+[Polyhedra](https://juliapolyhedra.github.io/Polyhedra.jl/stable/):
 
 ```@docs
 Spindle(p::Polyhedra.Polyhedron)

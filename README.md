@@ -2,7 +2,7 @@
 
 This repository provides a collection of tools to study paths on polytopes:
 1. a Python script for use in [Sage](https://www.sagemath.org/) that computes the **monotone diameter** of a polytope,
-2. a Julia package *Spindles.jl* that facilitates the computational analysis of so-called **spindles**, a special class of polytopes.
+2. a [Julia](https://julialang.org/) package *Spindles.jl* that facilitates the computational analysis of so-called **spindles**, a special class of polytopes.
 
 These tools have been developed to analyze known counterexamples to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture).
 

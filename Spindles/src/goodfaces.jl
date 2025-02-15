@@ -104,7 +104,7 @@ end
 Test the face defined by `facets` for being a *good* 2-face of the spindle `s`.
 Return a [`FaceState`](@ref).
 
-See [this tutorial](@ref "Good 2-faces") for an informal explanation of what
+See [this tutorial](@ref "Spindles and the Hirsch conjecture I") for an informal explanation of what
 it means for a 2-face to be good.
 """
 function isgood2face(s::Spindle, facets::Vector{Int})

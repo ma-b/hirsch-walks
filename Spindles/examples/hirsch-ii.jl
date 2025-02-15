@@ -18,7 +18,7 @@
 # To begin, let us enumerate the good 2-faces of the 5-dimensional spindle.
 
 using Spindles
-A, b, _ = readineq("s-25-5.txt", BigInt)
+A, b, = readineq("s-25-5.txt", BigInt)
 s = Spindle(A, b)
 
 # !!! note
@@ -41,21 +41,27 @@ length(goodfaces)
 # Next, let's plot the graph of each of those 32 good 2-faces:
 using Plots
 
+dist_labels = map(1:nvertices(s)) do v
+    "$v\n" * join(dist.((s,), apices(s), v), " | ")
+end
+
 plot_arr = []
 for fstate in goodfaces
     push!(plot_arr, 
-        plot2face(s, fstate.facets; showdist=true, directed_edges=fstate.edges)
+        plot2face(s, fstate.facets; 
+            vertexlabels=dist_labels, usecoordinates=false, directed_edges=fstate.edges
+        )
     )
 end
 
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
-plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300));
+plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300))
 #src savefig("s-25-5_good.svg")
 
-#md # This produces the following figure.
+#src #md # This produces the following figure.
 
-#md # ![](../assets/s-25-5_good.svg)
+#src #md # ![](../assets/s-25-5_good.svg)
 
 #src ==========================
 # ## Dimension 20
@@ -143,33 +149,39 @@ isgood2face(s20, face20).good
 # Let us plot this face and the original face `face` side by side.
 
 plot(
-    plot2face(s, face; usecoordinates=true),
-    plot2face(s20, face20; usecoordinates=true, facetlabels=labels),
+    plot2face(s, face; vertexlabels=nothing),
+    plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
     layout=grid(1,2), size=(800,300)
 )
-#md nothing #hide
+#src #md nothing #hide
 #src savefig("s-25_two.svg")
 
-#md # The output is
+#src #md # The output is
 
-#md # ![](../assets/s-25_compare.svg)
+#src #md # ![](../assets/s-25_compare.svg)
 
-# Not only do their projections look very similar, they are also combinatorially almost identical:
+# Not only do their projections look very similar, they are also combinatorially almost identical.
+# To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
+# that we generated for the smaller spindle above:
+dist_labels20 = map(1:nvertices(s20)) do v
+    "$v\n" * join(dist.((s20,), apices(s20), v), " | ")
+end
 
+#-
 edges  = isgood2face(s, face).edges
 edges20 = isgood2face(s20, face20).edges
 
 plot(
-    plot2face(s, face; directed_edges=edges, showdist=true),
-    plot2face(s20, face20; directed_edges=edges20, showdist=true, facetlabels=labels),
+    plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),
+    plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
     layout=grid(1,2), size=(800,400)
 )
-#md nothing #hide
+#src #md nothing #hide
 #src savefig("s-25_two_geom.svg")
 
-#md # Now the output is
+#src #md # Now the output is
 
-#md # ![](../assets/s-25_compare_geom.svg)
+#src #md # ![](../assets/s-25_compare_geom.svg)
 
 # The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
 # which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,

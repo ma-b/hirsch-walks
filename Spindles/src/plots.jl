@@ -83,7 +83,7 @@ See the [Plots documentation pages](https://docs.juliaplots.org/latest/attribute
 for a list of available attributes. Some of them are used by `plot2face` with a 
 different default value than in `Plots`. Notable keyword arguments among those are:
 
-* `size`: A tuple of `Integer`s. Defaults here to `(300,300)`.
+* `size`: A tuple of `Integer`s that determines the plot size. Defaults here to `(300,300)`.
 * `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise 
   (default in `Plots`).
 
@@ -134,7 +134,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
 
     # clear plot pane
     plot(;
-        ticks=nothing, legend=false, aspect_ratio=aspect_ratio, #aspect_ratio=usecoordinates ? :auto : :equal, 
+        ticks=nothing, legend=false, aspect_ratio=aspect_ratio,
         framestyle=:box, size=size, kw...
     )
     plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
@@ -163,11 +163,6 @@ function plot2face(s::Spindle, indices::Vector{Int};
     # vertex labels
     if vertexlabels !== nothing
         for i=1:n
-            #=dists = [dist(s, a, cyclic[i]) for a in apices(s)]
-            labeltext = "$(cyclic[i])"
-            if vertexlabels == :dist
-                labeltext *= "\n$(@sprintf("%d | %d", dists...))"
-            end=#
             labeltext = vertexlabels[cyclic[i]]
 
             annotate!(
@@ -189,9 +184,6 @@ function plot2face(s::Spindle, indices::Vector{Int};
         for i=1:n
             j = mod(i,n)+1  # successor of i on the cycle
             tightfacets = incidentfacets(s, cyclic[[i,j]])
-            # TODO
-            @assert incidentfacets(s, cyclic[[i,j]]) == findall(s.inc[cyclic[i]] .& s.inc[cyclic[j]])
-
             tightfacets = [f for f in tightfacets if !(f in indices)]
             annotate!(
                 (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
