@@ -188,7 +188,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
             annotate!(
                 (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
                 (sum(ys[[i,j]]) + sum(ys_offset[[i,j]])) / 2,
-                text(concatlabels(ineqlabels[tightfacets]), 8, :center)
+                text(concatlabels(ineqlabels[tightfacets]), 8, :center, :steelblue)
             )
         end
 

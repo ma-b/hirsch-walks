@@ -108,7 +108,7 @@ plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=f
 #src #md nothing #hide
 
 # Note here that the (optional) additional argument `usecoordinates=false` changed the plot mode 
-# to a (combinatorial) drawing of the graph of the face `15+ 19+ 21+` rather than a planar projection of
+# to a (combinatorial) drawing of the graph of the face `15⁺ 19⁺ 21⁺` rather than a planar projection of
 # its true coordinates as above.
 
 #src ==========================
@@ -126,7 +126,7 @@ apices(s)
 # The only two vertices that are not visited on either of those two paths are `155` and `156`,
 # and they are also at distance 3 from the second apex. 
 
-# So among the vertices of the face `15+ 19+ 21+`, there are two special subsets:
+# So among the vertices of the face `15⁺ 19⁺ 21⁺`, there are two special subsets:
 # One subset of vertices, let us call it $V_1$, is "close" to the first apex
 # (namely, take $V_1$ to be the apex `1 ` itself). The other subset $V_2$
 # (the subset consisting of `56`, `155`, `156`, and `80`) is disjoint from the
@@ -152,7 +152,7 @@ set_labels = map(1:nvertices(s)) do v
 end
 plot2face(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false, title="V₁ and V₂")
 
-# Note that there are exactly two edges of the face `15+ 19+ 21+` whose endpoints do not belong
+# Note that there are exactly two edges of the face `15⁺ 19⁺ 21⁺` whose endpoints do not belong
 # to neither $V_1$ nor $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
 # between `25` and `57`, and between `33` and `81`.
 # Let's mark them up in the plot using the keyword argument `directed_edges`:
@@ -165,10 +165,10 @@ plot2face(s, face;
 # Not only are the two edges marked up in the plot, they are also drawn as *directed* edges now.
 # To see why (and how this direction is determined by `plot2face`),
 # recall that each of them is contained in a shortest path between the apices of `s`
-# that walks along parts of the face `15+ 19+ 21+`. For example, coming from the second apex
+# that walks along parts of the face `15⁺ 19⁺ 21⁺`. For example, coming from the second apex
 # (the one not contained in the face) and heading towards the first apex `1`,
 # the two red edges are traversed in exactly the direction indicated above. 
-# If we look at the "true" geometry of `15+ 19+ 21+`, though, we could also start from any vertex in $V_2$
+# If we look at the "true" geometry of `15⁺ 19⁺ 21⁺`, though, we could also start from any vertex in $V_2$
 # and follow one of the two red arrows (through the interior of the face!)
 # as far as possible without leaving the face.
 plot2face(s, face; 
@@ -182,17 +182,17 @@ plot2face(s, face;
 # (at most) two steps on the face, rather than three steps along its boundary.
 # So, in a relaxed regime where paths may pass through the interior of a face, one might consider taking
 # three edges steps from the second apex to some vertex in $V_2$, then apply the two-step "shortcut" through
-# the interior of the face `15+ 19+ 21+`, and end up at the first apex `1`. This yields (at most) 5 steps in total.
+# the interior of the face `15⁺ 19⁺ 21⁺`, and end up at the first apex `1`. This yields (at most) 5 steps in total.
 # Recall that in the traditional regime where paths through the interior are forbidden, one cannot do better than 6 steps.
 
 # !!! note
 #     It is important to note here that, unlike paths along edges,
 #     this shortcut has a direction associated to it. The direction
-#     is determined by the geometry of the 2-face `15+ 19+ 21+` and is indicated by the direction of the two
+#     is determined by the geometry of the 2-face `15⁺ 19⁺ 21⁺` and is indicated by the direction of the two
 #     red edges. When making a plot with `plot2face` as above, they are always drawn in such a way that the arrows
 #     "point away" from each other.
 
-# Shortcuts like this are precisely what makes faces such as `15+ 19+ 21+` interesting for analyzing `s`
+# Shortcuts like this are precisely what makes faces such as `15⁺ 19⁺ 21⁺` interesting for analyzing `s`
 # in the setting of the so-called *circuit diameter conjecture*, a relaxation of the Hirsch conjecture
 # that allows for paths through the interior of a polytope.
 
