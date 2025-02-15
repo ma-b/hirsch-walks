@@ -77,9 +77,9 @@ either as a 2D projection onto the plane (if the argument `usecoordinates` is se
 * `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
 
-The remaining keyword arguments `kw...` are passed to `Plots.plot` 
+The remaining keyword arguments `kw...` are passed to [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot)
 and can be any plot, subplot, or axis attributes.
-See the [Plots documentation pages](https://docs.juliaplots.org/latest/attributes/) 
+See also the [Plots documentation pages](https://docs.juliaplots.org/latest/attributes/) 
 for a list of available attributes. Some of them are used by `plot2face` with a 
 different default value than in `Plots`. Notable keyword arguments among those are:
 
@@ -99,9 +99,6 @@ function plot2face(s::Spindle, indices::Vector{Int};
     unique_labels_only::Bool = true,
     # omit_indices::Bool
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
-    # keywords arguments taken from `plot` attributes but with custom default values:
-    size::Tuple{Integer, Integer} = (300,300),
-    aspect_ratio::Union{Real, Symbol} = usecoordinates ? :auto : :equal,
     kw...
 )
     verticesinface = incidentvertices(s, indices)
@@ -134,8 +131,9 @@ function plot2face(s::Spindle, indices::Vector{Int};
 
     # clear plot pane
     plot(;
-        ticks=nothing, legend=false, aspect_ratio=aspect_ratio,
-        framestyle=:box, size=size, kw...
+        ticks=nothing, legend=false, framestyle=:box, size=(300,300),
+        aspect_ratio = usecoordinates ? :auto : :equal,
+        kw...
     )
     plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
     scatter!(xs, ys; markercolor=:steelblue, markersize=5, markerstrokewidth=0)
