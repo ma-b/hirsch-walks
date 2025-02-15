@@ -101,29 +101,28 @@ function computefacesofdim!(s::Spindle, k::Int)
         # recurse and enumerate faces of one dimension lower
         lowerfaces = facesofdim(s, k-1)
 
-        # TODO rename pairs
-        pairs = unique(
+        proper_supsets = unique(
             # face of dimension one less plus a vertex not contained in it such that 
             # both are still contained in sufficiently many facets
             f[s.inc[v][f]] for v=1:nv, f in lowerfaces
             if !all(s.inc[v][f]) && sum(s.inc[v][f]) >= dim(s)-k  
         )
 
-        nondegenerate_pairs = [f for f in pairs if length(f) == dim(s)-k]
-        degenerate_pairs = [f for f in pairs if length(f) > dim(s)-k]
+        nondegenerate_supsets = [f for f in proper_supsets if length(f) == dim(s)-k]
+        degenerate_supsets = [f for f in proper_supsets if length(f) > dim(s)-k]
 
         # find inclusion-maximal subsets among all subsets of facets found 
         # (some may be higher-dim faces contained in more than the minimum number of facets)
         
         iscontained(a::Vector{Int}, b::Vector{Int}) = all(i in b for i in a)
 
-        for e in nondegenerate_pairs
-            if !any(iscontained(e, d) for d in degenerate_pairs)
+        for e in nondegenerate_supsets
+            if !any(iscontained(e, d) for d in degenerate_supsets)
                 push!(s.faces[k], e)
             end
         end
-        for d in degenerate_pairs
-            if !any(iscontained(d, dd) for dd in nondegenerate_pairs if length(dd) > length(d))
+        for d in degenerate_supsets
+            if !any(iscontained(d, dd) for dd in nondegenerate_supsets if length(dd) > length(d))
                 push!(s.faces[k], d)
             end
         end
@@ -146,7 +145,7 @@ incident halfspaces/facets.
     [the way that indices are treated in `Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Incidence),
     where hyperplanes and halfspaces share the same set of indices.
 
-The algorithm proceeds recursively and computes faces bottom-up, starting from the vertices.
+The algorithm proceeds recursively and computes faces bottom-up, starting from the vertices. 
 
 !!! note
     Results are cached internally in the `Spindle` object `s`. Therefore, subsequent calls to `facesofdim(s, l)`
