@@ -17,6 +17,6 @@ To run the Python code in [MonotoneDiameter/](MonotoneDiameter/), you will need 
 [![docs stable](https://img.shields.io/badge/docs-stable-blue)](https://ma-b.github.io/hirsch-walks/stable/)
 [![docs dev](https://img.shields.io/badge/docs-dev-blue)](https://ma-b.github.io/hirsch-walks/dev/)
 
-The Julia code for *Spindles.jl* is located in [Spindles/src/](Spindles/src/) and requires Julia version 1.8 or higher.
+The Julia code for *Spindles.jl* is located in the folder [Spindles/](Spindles/) and requires Julia version 1.8 or higher.
 
 Installation instructions, tutorials, and the full package documentation (under construction) are available [here](https://ma-b.github.io/hirsch-walks/dev/).

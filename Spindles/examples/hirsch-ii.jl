@@ -137,7 +137,7 @@ blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in
 face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
 join(unique(labels[face20]), " ")
 
-# This is the face we would expect to be a good 2-face. Let us check whether it is:
+# This is the face we would expect to be a good 2-face. Let's check whether it really is:
 isgood2face(s20, face20).good
 
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.

@@ -153,7 +153,7 @@ end
 plot2face(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false, title="V₁ and V₂")
 
 # Note that there are exactly two edges of the face `15+ 19+ 21+` whose endpoints do not belong
-# to $V_1$ or $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
+# to neither $V_1$ nor $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
 # between `25` and `57`, and between `33` and `81`.
 # Let's mark them up in the plot using the keyword argument `directed_edges`:
 plot2face(s, face; 
@@ -186,7 +186,7 @@ plot2face(s, face;
 # Recall that in the traditional regime where paths through the interior are forbidden, one cannot do better than 6 steps.
 
 # !!! note
-#     It is important to note here, however, that, unlike paths along edges,
+#     It is important to note here that, unlike paths along edges,
 #     this shortcut has a direction associated to it. The direction
 #     is determined by the geometry of the 2-face `15+ 19+ 21+` and is indicated by the direction of the two
 #     red edges. When making a plot with `plot2face` as above, they are always drawn in such a way that the arrows
@@ -216,7 +216,7 @@ fstate.good, fstate.vsets
 #src ==========================
 # ## Finding all good 2-faces
 
-# We may also enumerate all good 2-faces of `s` as follows.
+# Using [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
 for f in sort(facesofdim(s, 2))
     if isgood2face(s, f).good
         println(join(labels[f], " "))
