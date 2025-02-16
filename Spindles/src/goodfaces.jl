@@ -38,6 +38,13 @@ Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
 ```jldoctest
 julia> square = Spindle([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
 
+julia> vertices(square)
+4-element iterator of Vector{Rational{BigInt}}:
+ Rational{BigInt}[-1, -1]
+ Rational{BigInt}[1, -1]
+ Rational{BigInt}[-1, 1]
+ Rational{BigInt}[1, 1]
+
 julia> apx1, apx2 = setapex!(square, 1)
 2-element Vector{Int64}:
  1

@@ -12,21 +12,20 @@ Spindles play an important role in the [construction of counterexamples](https:/
 
 ### Why develop a package dedicated to spindles?
 There are many great (and free) software packages and libraries for representing and manipulating polyhedra.
-In the Julia ecosystem specifically, there are
-* [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/)
+A few examples, specifically from the Julia ecosystem:
+* [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/): interface to many other libraries, see the [JuliaPolyhedra website](https://juliapolyhedra.github.io/)
 * [Polymake.jl](https://github.com/oscar-system/Polymake.jl): Julia wrapper for [polymake](https://polymake.org/doku.php) and part of the [OSCAR computer algebra system](https://www.oscar-system.org/)
 * [CDDLib.jl](https://github.com/JuliaPolyhedra/CDDLib.jl): Julia wrapper for [cdd](https://people.inf.ethz.ch/fukudak/cdd_home/)
 * [LRSLib.jl](https://github.com/JuliaPolyhedra/LRSLib.jl): Julia wrapper for [lrs](https://cgm.cs.mcgill.ca/~avis/C/lrs.html)
-And this list is by no means exhaustive.
+The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/), as a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 
-Since spindles are polyhedra, they can of course be built and analyzed with any of the packages in the list.
-In fact, *Spindles.jl* relies on [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) to enumerate
-vertices of a polytope, given only an inequality description of it. 
+Since spindles are polyhedra, they may of course be built and analyzed with any of the above packages.
+In fact, *Spindles.jl* relies on [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) to enumerate the
+vertices of a polytope that is only given by an inequality description.
 What drove the development of a separate package specifically for spindles was research in polyhedral theory that required the computational analysis of certain properties of spindles with few lines of code. 
 
 As *Spindles.jl* was born out of a research project,
-we are not sure how useful the package is to the broader community. However, one of the guiding design principles
-of *Spindles.jl* is to implement functions in such a way that they do not only apply to spindles and do not 
+we are not sure how useful the package is beyond its initial purpose. However, one of the package design decisions is to implement functions in such a way that they do not only apply to spindles and do not 
 only serve the initial research purpose. For example, the package implements a general-purpose algorithm to enumerate faces of polytopes (not just spindles) that follows ideas described [here](https://sites.google.com/site/christopheweibel/research/hirsch-conjecture) (see also the [paper](https://arxiv.org/pdf/1202.4701)).
 
 See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
