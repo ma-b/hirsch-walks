@@ -4,7 +4,7 @@ using Polyhedra: polyhedron, vrep, hrep
     @testset "Explicit equation" begin
         p = polyhedron(vrep([1 0; 0 1]))
 
-        @test try Spindle(p)
+        @test try apices(Polytope(p)) !== nothing
             true
         catch
             false
@@ -16,13 +16,13 @@ using Polyhedra: polyhedron, vrep, hrep
         b = [0, 1, 0, -1]
         p = polyhedron(hrep(A, b))
 
-        @test try s = Spindle(p)
+        @test try apices(Polytope(p)) !== nothing
             true
         catch
             false
         end
 
-        @test try Spindle(A, b)
+        @test try apices(Polytope(A, b)) !== nothing
             true
         catch
             false
@@ -32,8 +32,8 @@ using Polyhedra: polyhedron, vrep, hrep
     @testset "Preserve indices" begin
         A = [1 0; 0 1; -1 0; 0 -1]
         b = [1, 1, 1, 1]
-        s = Spindle(A, b)
-        @test hrep(s.p).A == A
-        @test hrep(s.p).b == b
+        s = Polytope(A, b)
+        @test hrep(s.poly).A == A
+        @test hrep(s.poly).b == b
     end
 end

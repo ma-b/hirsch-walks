@@ -2,9 +2,12 @@
 
     function testfaces(filename::AbstractString, faces::Vector{Vector{Int}})
         A, b, _ = readineq(filename, BigInt)
-        s = Spindle(A, b)
+        s = Polytope(A, b)
 
-        gfs = [f for f in facesofdim(s, 2) if isgood2face(s, f).good]
+        apx = apices(s)
+        @test apx !== nothing
+
+        gfs = [f for f in facesofdim(s, 2) if isgood2face(s, f, apx...).good]
         @test length(gfs) == 32
 
         @test all(f in facesofdim(s, 2) for f in faces)

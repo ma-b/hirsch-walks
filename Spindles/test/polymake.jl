@@ -5,11 +5,19 @@ using Polyhedra: hrep
 
     for filename in ["s-25-5", "s-28-5", "s-48-5"]
         A, b, _ = readineq(joinpath("..", "examples", filename*".txt"), BigInt)
-        s = Spindle(A, b)
+        s = Polytope(A, b)
 
-        apx = collect(vertices(s))[apices(s)]
+        # test apices
+        apx = apices(s)
+        @test apx !== nothing
+        apx = collect(vertices(s))[apx]
         @test [1,0,0,0,0] in apx
         @test [-1,0,0,0,0] in apx
+
+        # verify that the given inequality description is minimal
+        isfacet(i::Int) = dim(s, i) == dim(s)-1
+        @test all(isfacet.(1:nhalfspaces(s)))
+        @test isempty(impliciteqs(s))
 
         @testset "Test $(filename) against polymake" begin
             # parse polymake output from Hasse diagram command and return list of incident facets for each face
@@ -20,7 +28,7 @@ using Polyhedra: hrep
                 return [map(x -> parse(Int, x), split(f)) for f in strlist]
             end
 
-            for k=-1:size(hrep(s.p).A, 2)
+            for k=-1:size(hrep(s.poly).A, 2)
                 ps = readpolymake(joinpath("polymake", "$(filename)_f$(k).txt"))
                 # convert 0-based polymake indices to 1-based Julia indices
                 ps = map(x->x.+1, ps)
@@ -32,9 +40,10 @@ using Polyhedra: hrep
             @test nfacesofdim(s, -1) == 1
             @test nfacesofdim(s, 0) == nvertices(s) == nv(graph(s))
             @test nfacesofdim(s, 1) == ne(graph(s))
-            @test nfacesofdim(s, 4) == Spindles.nhalfspaces(s)
+            @test nfacesofdim(s, 4) == nfacets(s) == nhalfspaces(s)
             @test nfacesofdim(s, 5) == 1
             @test nfacesofdim(s, 6) == 0
+            @test dim(s) == 5
         end
     end
 end
