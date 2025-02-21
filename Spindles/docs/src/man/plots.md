@@ -7,8 +7,8 @@ to visualize as much as possible.
 
 !!! note "Implementation note"
 
-    The implementation in *Spindles.jl* heavily relies on [Plots](https://docs.juliaplots.org/stable/).
-    Two-dimensional faces of polytopes may also be visualized using [Polyhedra](https://juliapolyhedra.github.io/Polyhedra.jl/stable/plot/).
+    The implementation in *Spindles.jl* heavily relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
+    Two-dimensional faces of polytopes may also be visualized using [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
 
 The plotting function of *Spindles.jl* is called [`plot2face`](@ref) and is best described using an example. 
 

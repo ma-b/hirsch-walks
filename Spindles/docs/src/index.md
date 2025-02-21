@@ -17,15 +17,15 @@ Even though the package was born out of a research project focused on a special 
 For example, *Spindles.jl* implements lightweight (and mostly combinatorial) algorithms to enumerate and count faces, compute the dimension, or detect redundancy in a given linear description of a polytope.
 
 Of course, there are many great (and free) software packages and libraries for manipulating polyhedra that offer much more than *Spindles.jl* does. A (non-exhaustive) list of examples from the Julia ecosystem is:
-* [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/): Implements the [double description method](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription)
+* [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl): Implements the [double description method](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription)
   for converting representations of polyhedra into each other. Also provides an interface to many other libraries for polyhedral computations, see the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 * [Polymake.jl](https://github.com/oscar-system/Polymake.jl): Julia wrapper for [polymake](https://polymake.org/doku.php) and part of the [OSCAR computer algebra system](https://www.oscar-system.org/).
 * [CDDLib.jl](https://github.com/JuliaPolyhedra/CDDLib.jl): Julia wrapper for [cdd](https://people.inf.ethz.ch/fukudak/cdd_home/).
 * [LRSLib.jl](https://github.com/JuliaPolyhedra/LRSLib.jl): Julia wrapper for [lrs](https://cgm.cs.mcgill.ca/~avis/C/lrs.html).
-The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/), as a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl), as a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 
 !!! note
-    It should be noted that *Spindles.jl* currently relies on [Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/) to convert a polytope given by a system of linear inequalities into a list of its vertices, and vice versa.
+    It should be noted that *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices, and vice versa.
 
 See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
 
