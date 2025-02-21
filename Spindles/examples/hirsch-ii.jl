@@ -57,8 +57,10 @@ end
 
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
-plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300))
-#src , plot_title="Good 2-faces")
+plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
+#md savefig("s-25-5-all.svg"); nothing # hide
+
+#md # ![](s-25-5-all.svg)
 
 #src ==========================
 # ## Dimension 20
@@ -151,7 +153,9 @@ plot(
     plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
     layout=grid(1,2), size=(800,300)
 )
-#src #md nothing #hide
+#md savefig("s-25-geom.svg"); nothing # hide
+
+#md # ![](s-25.svg)
 
 # Not only do their projections look very similar, they are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
@@ -169,7 +173,9 @@ plot(
     plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
     layout=grid(1,2), size=(800,400)
 )
-#src #md nothing #hide
+#md savefig("s-25-comb.svg"); nothing # hide
+
+#md # ![](s-25-comb.svg)
 
 # The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
 # which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,

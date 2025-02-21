@@ -79,13 +79,13 @@ either as a 2D projection onto the plane (if the argument `usecoordinates` is se
 
 The remaining keyword arguments `kw...` are passed to [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot)
 and can be any plot, subplot, or axis attributes.
-See also the [Plots documentation pages](https://docs.juliaplots.org/latest/attributes/) 
+See also the [Plots.jl documentation pages](https://docs.juliaplots.org/latest/attributes/) 
 for a list of available attributes. Some of them are used by `plot2face` with a 
-different default value than in `Plots`. Notable keyword arguments among those are:
+different default value than in Plots.jl. Notable keyword arguments among those are:
 
 * `size`: A tuple of `Integer`s that determines the plot size. Defaults here to `(300,300)`.
 * `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise 
-  (default in `Plots`).
+  (default in Plots.jl).
 
 The default behaviour can be overwritten by explicitly passing new values as keyword arguments in `kw...`
 to `plot2face`. Anything in `kw...` takes precedence over the default behaviour in `plot2face`, except for (most)
