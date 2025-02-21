@@ -18,8 +18,6 @@ end
 
 distscomputed(p::Polytope, src::Int) = haskey(p.dists, src)
 function computedistances!(p::Polytope, src::Int)
-    isvertex(p, src) || throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
-    
     # use the Bellman-Ford algorithm implemented in Graphs.jl
     # to compute the length of shortest edge walks between the apices and all other vertices
     p.dists[src] = Graphs.bellman_ford_shortest_paths(graph(p), src).dists
@@ -48,7 +46,7 @@ julia> dist(p, 1, 4)
 """
 function dist(p::Polytope, u::Int, v::Int)
     u, v = sort([u,v])
-    if !(isvertex(p, u) && isvertex(p, v))
+    if u < 1 || v > nvertices(p)
         throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
     end
     
@@ -60,7 +58,7 @@ function dist(p::Polytope, u::Int, v::Int)
 end
 
 
-# arguments as returned by induced subgraph; return nothing if not a cycle
+# arguments as returned by Graphs.induced_subgraph; return nothing if not a cycle
 function cyclicorder(g::Graphs.SimpleGraph, vmap::Vector{Int})
     # pick an arbitrary starting vertex and traverse the graph g depth-first
     start = first(Graphs.vertices(g))

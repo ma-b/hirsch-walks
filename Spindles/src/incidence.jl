@@ -64,7 +64,7 @@ end
 
 function incidentfacets(p::Polytope, indices::AbstractVector{Int})
     if !all(isvertex.(p, indices))
-        throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
+        throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
     end
 
     if !isempty(indices)
@@ -115,7 +115,7 @@ julia> apices(square, 2)
 """
 function apices(p::Polytope, apex::Union{Nothing, Int}=nothing)
     if apex !== nothing && !isvertex(p, apex)
-        throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
+        throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
     end
 
     nv = nvertices(p)
