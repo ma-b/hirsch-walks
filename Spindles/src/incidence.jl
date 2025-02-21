@@ -52,9 +52,7 @@ List the indices of all vertices of the polytope `p` for which each inequality i
 If `indices` is empty, this is the same as `collect(1:nvertices(p))`.
 """
 function incidentvertices(p::Polytope, indices::AbstractVector{Int})
-    if !all(isineq.(p, indices))
-        throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
-    end
+    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
     
     if !inciscomputed(p)
         computeinc!(p)
@@ -63,9 +61,7 @@ function incidentvertices(p::Polytope, indices::AbstractVector{Int})
 end
 
 function incidentfacets(p::Polytope, indices::AbstractVector{Int})
-    if !all(isvertex.(p, indices))
-        throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
-    end
+    all(isvertex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
 
     if !isempty(indices)
         if !inciscomputed(p)
@@ -132,7 +128,7 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing)
 
     # incidences must be mutually exclusive except for non-facet defining inequalities, 
     # where incidence is arbitrary (may be both if implicit equation, or even none if they define empty face)
-    isapexpair(i,j) = all((p.inc[i] .⊻ p.inc[j]) .| nonfacet)  # bitwise XOR
+    isapexpair(i,j) = all((p.inc[i] .⊻ p.inc[j]) .| nonfacet)  # ⊻ bitwise XOR
 
     # in particular, the number of incident facets of j must be at least 
     # nf - sum(p.inc[i]) >= nf - sum(nonfacet) - maxinc, 

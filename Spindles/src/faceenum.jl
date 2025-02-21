@@ -221,8 +221,9 @@ function maxchain(p::Polytope, f::AbstractVector{Int}, vindices::AbstractVector{
         # if all vertices are incident with `f`, we arrived at the (unique) maximal face, the polytope itself
         return [f]
     else
-        # pick any subset of maximum cardinality (which must therefore also be inclusion-maximal) among all subsets found
-        nextf = containing_faces[findfirst(length.(containing_faces) .== maximum(length, containing_faces))]
+        # pick any subset of maximum cardinality (which must therefore also be inclusion-maximal)
+        # among all subsets found
+        nextf = argmax(length, containing_faces)
         return pushfirst!(maxchain(p, nextf, vindices), f)
     end
 end
@@ -255,7 +256,7 @@ function dim(p::Polytope)
     if !dimiscomputed(p)
         p.dim = dim(p, Int[])
     end
-    return p.dim
+    p.dim
 end
 
 """
@@ -265,9 +266,7 @@ Compute the dimension of the face of `p` that is defined by the inequalities in 
 If `indices` is empty, this is the same as `dim(p)`.
 """
 function dim(p::Polytope, indices::AbstractVector{Int})
-    if !all(isineq.(p, indices))
-        throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
-    end
+    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
 
     if !inciscomputed(p)
         computeinc!(p)
@@ -277,7 +276,11 @@ function dim(p::Polytope, indices::AbstractVector{Int})
 
     # the maximal face in the chain will have the desired dimension, 
     # so subtract 2 for the (-1)-dim and 0-dim faces (if present)
-    length(maxchain(p, 1:nhalfspaces(p), incidentvertices(p, indices))) - 2
+    if isempty(indices)
+        return length(maxchain(p, 1:nhalfspaces(p))) - 2
+    else
+        return length(maxchain(p, 1:nhalfspaces(p), incidentvertices(p, indices))) - 2
+    end
 end
 
 """
@@ -374,3 +377,19 @@ for each point in `p`.
 See also [`facets`](@ref).
 """
 impliciteqs(p::Polytope) = [i for i=1:nhalfspaces(p) if dim(p, i) == dim(p)]
+
+#
+function verticesonly(p::Polytope)
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+	
+	nv = nvertices(p)
+
+    # a point is a vertex if and only if its set of incident halfspaces 
+    # is inclusion-maximal among all points
+
+    # f incident to i => f incident to j
+    iscontained(i,j) = all(p.inc[j] .| (~).(p.inc[i]))  # ~ bitwise NOT
+    [i for i=1:nv if !any(iscontained(i,j) for j=1:nv if i != j)]
+end

@@ -57,7 +57,8 @@ end
 
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
-plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
+plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300))
+#src , plot_title="Good 2-faces")
 
 #src ==========================
 # ## Dimension 20
@@ -117,7 +118,7 @@ dist(s20, apx20...)
 # Instead, we may take advantage of the structure in its coefficient matrix to "guess" good 2-faces.
 
 #src ==========================
-# ## Guessing good 2-faces
+# ## "Guessing" good 2-faces
 
 # For example, here is one of the good 2-faces of `s` again:
 face = [2,8,9]
@@ -160,7 +161,7 @@ dist_labels20 = map(1:nvertices(s20)) do v
 end
 
 #-
-edges  = isgood2face(s, face, apx...).edges
+edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(

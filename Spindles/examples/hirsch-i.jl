@@ -236,4 +236,4 @@ for f in sort(facesofdim(s, 2))
 end
 
 # If you would like to explore one of the actual counterexamples to the Hirsch conjecture
-# that was built from a spindle like `s`, please read on [here](@ref "Spindles and the Hirsch conjecture II").
+# that was built from a spindle like `s`, please read on [here](@ref "Spindles and the Hirsch conjecture I").

@@ -6,7 +6,7 @@ using Polyhedra, Graphs
 const EXAMPLES = [
     ("firststeps", "First steps"),
     ("hirsch-i", "Spindles and the Hirsch conjecture I"),
-    ("hirsch-ii", "Spindles and the Hirsch conjecture II"),
+    #("hirsch-ii", "Spindles and the Hirsch conjecture II"),
 ]
 EXAMPLE_DIR = joinpath(@__DIR__, "..", "examples")
 OUTPUT_DIR = joinpath(@__DIR__, "src", "tutorials")
