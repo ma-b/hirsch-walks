@@ -11,7 +11,7 @@ export isgood2face, dist
 """
 struct FaceState
     good::Bool
-    indices::Union{Nothing, Vector{Int}}
+    facets::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
     vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
 end
