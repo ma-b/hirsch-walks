@@ -1,4 +1,8 @@
 # Index
 
+```@docs
+Spindles
+```
+
 ```@index
 ```

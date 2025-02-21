@@ -48,17 +48,18 @@ labels
 #     the assignment to the rows of `A` is different.
 
 # The resulting spindle `s` has
-s = Spindle(A, b)
+s = Polytope(A, b)
 nvertices(s)
 # vertices and its apices are
-collect(vertices(s))[apices(s)]
+apx = apices(s)
+collect(vertices(s))[apx]
 
 # The distance between them in the graph of `s` is indeed 6:
-dist(s, apices(s)...)
+dist(s, apx...)
 
 # Note that both apices are highly degenerate:
 using Graphs: degree
-degree(graph(s), apices(s))
+degree(graph(s), apx)
 
 #src ==========================
 # ## Inspecting faces
@@ -86,22 +87,19 @@ plot2face(s, face; ineqlabels=labels)
 # To print the distances of each vertex to the two apices of `s` on a second line
 # beneath the vertex index, we first generate all labels in the desired format. Here, we use the format
 # `"dist1 | dist2"` for the second line of the label, where `dist1` and `dist2` are placeholders for the
-# distances to `apices(s)[1]` and `apices(s)[2]`, respectively.
+# distances to `apx[1]` and `apx[2]`, respectively.
 dist_labels = map(1:nvertices(s)) do v
-    "$v\n" * join(dist.((s,), apices(s), v), " | ")
+    "$v\n" * join(dist.(s, apx, v), " | ")
 end
 
 # !!! note "Julia syntax"
 #     ````julia
-#     dist.((s,), apices(s), v)
+#     dist.(s, apx, v)
 #     ````
 #     is a shorthand for
 #     ````julia
-#     [dist(s, apex, v) for apex in apices(s)]
+#     [dist(s, a, v) for a in apx]
 #     ````
-#     Wrapping `s` in a tuple makes sure that the Julia "broadcast dot" is only applied
-#     to the second argument of `dist`, namely `apices(s)`, and not to the first argument `s` 
-#     (which is not iterable).
 
 # Our custom vertex labels can now be passed to `plot2face` as follows:
 plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=false)
@@ -119,7 +117,7 @@ plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=f
 # since we know that there is no shorter path between the apices. In fact, there are (at least) two such 
 # shortest paths that traverse parts of the face:
 # One of the apices of `s` actually is a vertex of the face, namely the first apex
-apices(s)
+apx
 # at index `1`. Start from there and take
 # 3 steps to either `56` or `80`. Both vertices are at distance 3 from the second apex, 
 # as their labels tell us. 
@@ -135,7 +133,7 @@ apices(s)
 # to the respectively closest apex is at most some given number $k$. 
 #src that only depends on the dimension of the spindle. 
 # In our case, any $k \ge 3$ would work for this definition of being "close", since
-# the distance of $V_1$ to `apices(s)[1]` is 0 and that of any vertex in $V_2$ to `apices(s)[2]` is 3.
+# the distance of $V_1$ to `apx[1]` is 0 and that of any vertex in $V_2$ to `apx[2]` is 3.
 
 #src We will come back to the choice of this number $k$ in a moment. First,
 # Let's visualize the two sets $V_1$ and $V_2$. Again, we tweak the arguments passed to
@@ -200,7 +198,7 @@ plot2face(s, face;
 # (regardless of its direction). 
 # *Spindles.jl* provides a function [`isgood2face`](@ref) that tests a face for being good.
 
-isgood2face(s, face)
+isgood2face(s, face, apx...)
 
 # The result is wrapped in a bespoke data type called
 # [`FaceState`](@ref Spindles.FaceState). The field `good` indicates whether or not
@@ -208,7 +206,7 @@ isgood2face(s, face)
 # of being good are stored in the field `vsets` (see also the documentation on the
 # [`FaceState`](@ref Spindles.FaceState) type):
 
-fstate = isgood2face(s, face)
+fstate = isgood2face(s, face, apx...)
 fstate.good, fstate.vsets
 
 # Feel free to compare the output with the sets $V_1$ and $V_2$ that we identified above.
@@ -218,7 +216,7 @@ fstate.good, fstate.vsets
 
 # Using the function [`facesofdim`](@ref) and [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
 for f in sort(facesofdim(s, 2))
-    if isgood2face(s, f).good
+    if isgood2face(s, f, apx...).good
         println(join(labels[f], " "))
     end
 end
@@ -230,10 +228,10 @@ for f in sort(facesofdim(s, 2))
     min_total_length = sum(
         minimum(
             dist(s, a, v) for v in incidentvertices(s, f)
-        ) for a in apices(s)
+        ) for a in apx
     )
     if min_total_length <= 3
-        println(join(labels[f], " "), "\t", isgood2face(s, f).good)
+        println(join(labels[f], " "), "\t", isgood2face(s, f, apx...).good)
     end
 end
 

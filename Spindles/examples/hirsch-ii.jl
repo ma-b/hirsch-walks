@@ -19,10 +19,11 @@
 
 using Spindles
 A, b, = readineq("s-25-5.txt", BigInt)
-s = Spindle(A, b)
+s = Polytope(A, b)
+apx = apices(s)
 
 # !!! note
-#     We created the spindle `s` from rational data with numerators and denominators of type `BigInt` 
+#     We created `s` from rational data with numerators and denominators of type `BigInt` 
 #     (this is the second argument passed to `readineq`). Choosing `Int` here (as in [part I](@ref "Reading a spindle from a file") 
 #     of this tutorial) would have produced an integer overflow error. See also the section on 
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)
@@ -31,7 +32,7 @@ s = Spindle(A, b)
 # The following code finds all good 2-faces of `s`.
 goodfaces = []
 for f in sort(facesofdim(s, 2))
-    fstate = isgood2face(s, f)
+    fstate = isgood2face(s, f, apx...)
     if fstate.good
         push!(goodfaces, fstate)
     end
@@ -42,7 +43,7 @@ length(goodfaces)
 using Plots
 
 dist_labels = map(1:nvertices(s)) do v
-    "$v\n" * join(dist.((s,), apices(s), v), " | ")
+    "$v\n" * join(dist.(s, apx, v), " | ")
 end
 
 plot_arr = []
@@ -56,7 +57,7 @@ end
 
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
-plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300))
+plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
 
 #src ==========================
 # ## Dimension 20
@@ -94,16 +95,17 @@ A[[3, 7, 2],:]
 # ### Building the spindle
 
 A20, b20, labels = readineq("s-25.txt", BigInt)
-s20 = Spindle(A20, b20)
+s20 = Polytope(A20, b20)
 
-collect(vertices(s20))[apices(s20)]
+apx20 = apices(s20)
+collect(vertices(s20))[apx20]
 
 # Note that `s20` is simple:
 using Graphs: degree
 all(degree(graph(s20)) .== dim(s20))
 
 # Its most important property, however, is the length of a shortest path between the apices:
-dist(s20, apices(s20)...)
+dist(s20, apx20...)
 
 # The Hirsch conjecture would imply that there must be a strictly shorter path, namely of length 20.
 # Therefore, `s20` is a counterexample to the Hirsch conjecture.
@@ -119,13 +121,13 @@ dist(s20, apices(s20)...)
 
 # For example, here is one of the good 2-faces of `s` again:
 face = [2,8,9]
-isgood2face(s, face).good
+isgood2face(s, face, apx...).good
 
 # The corresponding facets of `s20` are
 face20 = [i for (i,label) in enumerate(labels) if parse(Int, label) in face]
 
 # However, three facets do not make a 2-face in dimension 20 yet. We need another 15 facet-defining
-# inequalities from the description of `s20`. With some geometric intuition of what the wedging
+# inequalities from the description of `s20` (recall that `s20` is simple). With some geometric intuition of what the wedging
 # operation does, we propose the following rule of thumb: To get up to 18 facets, pick facets from
 # those two blocks of "replications" labeled `11` and `25`. Specifically, from each block, pick all
 # facets but one. Let us calculate the number of facets in each block:
@@ -138,7 +140,7 @@ face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
 join(unique(labels[face20]), " ")
 
 # This is the face we would expect to be a good 2-face. Let's check whether it really is:
-isgood2face(s20, face20).good
+isgood2face(s20, face20, apx20...).good
 
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
 # Let us plot this face and the original face `face` side by side.
@@ -154,12 +156,12 @@ plot(
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
 # that we generated for the smaller spindle above:
 dist_labels20 = map(1:nvertices(s20)) do v
-    "$v\n" * join(dist.((s20,), apices(s20), v), " | ")
+    "$v\n" * join(dist.((s20,), apx20, v), " | ")
 end
 
 #-
-edges  = isgood2face(s, face).edges
-edges20 = isgood2face(s20, face20).edges
+edges  = isgood2face(s, face, apx...).edges
+edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(
     plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),

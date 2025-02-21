@@ -12,9 +12,7 @@
 #src ==========================
 # ## Creating a spindle
 
-# Recall that the special property of a spindle is the existence of two vertices 
-# (the apices) whose incident facets partition the set of all facets. In this tutorial, 
-# we will be working with one of the simplest examples of a spindle: a cube. 
+# In this tutorial, we will be working with one of the simplest examples of a spindle: a cube. 
 # For example, the unit cube in 3D is given by all points $(x_1,x_2,x_3)$ that satisfy 
 # ```math
 # \begin{aligned}
@@ -29,17 +27,19 @@ A = [1 0 0; -1 0 0; 0 1 0; 0 -1 0; 0 0 1; 0 0 -1]
 # and
 b = [1, 1, 1, 1, 1, 1]
 
-# *Spindles.jl* provides a data type for representing and analyzing spindles: 
-# [`Spindle`](@ref). We may create an object of this type from our data `A` and `b` as follows:
+# *Spindles.jl* provides a data type for representing and analyzing polytopes: 
+# [`Polytope`](@ref). We may create an object of this type from our data `A` and `b` as follows:
 
 using Spindles # hide
-cube = Spindle(A, b)
+cube = Polytope(A, b)
 
-# The [`Spindle`](@ref) constructor already computes two apices. They may be inspected by running
+# What sets a spindle apart from a general polytope is the existence of two vertices 
+# (the apices) whose incident facets partition the set of all facets. 
+# We may check `cube` for the existence of such a pair of vertices by running
 apices(cube)
 
 # This returns the two indices of the apices as they appear in the list of all (eight) vertices 
-# of `cube`. We may list the vertices explicitly as follows:
+# of `cube`. To list the vertices explicitly, do
 vertices(cube)
 
 # !!! note
@@ -49,29 +49,19 @@ vertices(cube)
 #     [rational numbers](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers) and
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)).
 
-# So the first and last vertex in the list above can take the role of the apices `cube`.
+# So the first and last vertex in the list above can take the role of the apices of `cube`.
 # However, these two are not unique. In fact, for a cube there are many possible pairs of apices: 
 # Take an arbitrary vertex and its antipodal one, i.e., the vertex obtained by flipping the sign 
-# of each component. If we want to prescribe an apex, we can use the function [`setapex!`](@ref) 
-# that takes as input the index of a vertex of our choice and tries to find a matching second one
-# for a pair of apices:
-setapex!(cube, 3)
+# of each component. To prescribe an apex, pass its index as an additional argument
+# to the function [`apices`](@ref), which then tries to find a matching second apex:
+apx = apices(cube, 3)
 
-# !!! warning
-#     [`setapex!`](@ref) overwrites the previously computed apices. 
-
-# Calling the function [`apices`](@ref) again now returns
-apices(cube)
 
 #src ==========================
 # ## Working with the graph
 
 # We may even compute the distance between those two apices in the graph of `cube`:
-dist(cube, apices(cube)...)
-
-# !!! note
-#     Calling [`dist`](@ref) always refers to the current apices as returned by [`apices`](@ref). 
-#     For example, the above call computes the distance between `3` and `6` (and not between `1` and `8`).
+dist(cube, apx...)
 
 # Behind the scenes, the call to [`dist`](@ref) first computes the graph of `cube`. 
 # The graph can also be accessed directly using [`graph`](@ref), which returns a graph 
@@ -93,14 +83,18 @@ all(degree(graph(cube)) .== dim(cube))
 
 facesofdim(cube, 2)
 
-# Given that the two-dimensional faces of `cube` are precisely the six facets, 
+# Given that the two-dimensional faces of a cube are precisely its six facets, 
 # this should not be too surprising. 
 
-# !!! tip
-#     To count the faces of a given dimension without explicitly producing a list, 
-#     use the function [`nfacesofdim`](@ref).
+# To count the faces of a given dimension without explicitly producing a list, 
+# use the function [`nfacesofdim`](@ref). For example, we may compute
+# the [f-vector](https://en.wikipedia.org/wiki/Polyhedral_combinatorics#Faces_and_face-counting_vectors) 
+# of `cube` as follows.
+nfacesofdim.(cube, 0:(dim(cube)-1))
 
-# Let us list all vertices contained in the first facet.
+# This tells us that `cube` has 8 vertices, 12 edges, and 6 facets.
+
+# Next, let's list all vertices that are incident to the first facet.
 
 for v in incidentvertices(cube, [1])
     println(collect(vertices(cube))[v])
