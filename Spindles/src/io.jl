@@ -69,12 +69,12 @@ julia> labels
 julia> rm("square.txt")
 ```
 """
-function readineq(filename::AbstractString, ::Type{T}; comment_char::AbstractChar='#') where T<:Integer
+function readineq(filename::AbstractString, ::Type{T}; comment_char::AbstractChar='#', labels::Bool=true) where T<:Integer
     arr = readdlm(filename, ' ', String, comments=true, comment_char=comment_char)
-    labels = arr[:,1]
     
-    b, A = str2rat.(arr[:,2], T), -str2rat.(arr[:,3:end], T)
-    return A, b, labels
+    labs = labels ? arr[:, 1] : nothing    
+    b, A = str2rat.(arr[:, labels ? 2 : 1], T), -str2rat.(arr[:, (labels ? 3 : 2):end], T)
+    return A, b, labs
 end
 
 
