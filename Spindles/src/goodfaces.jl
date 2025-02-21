@@ -1,81 +1,67 @@
 export isgood2face, dist
 
-# TODO incorporate direction of shortcuts
 """
     FaceState
 
 # Fields
 * `good::Bool`
-* `facets`: all incident facets
+* `facets`: all incident halfspaces
 * `edges`
 * `vsets`
 """
 struct FaceState
     good::Bool
-    facets::Union{Nothing, Vector{Int}}
+    indices::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
     vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
 end
 
-distscomputed(s::Spindle) = s.dists !== nothing
-function computedistances!(s::Spindle)
+distscomputed(p::Polytope, src::Int) = haskey(p.dists, src)
+function computedistances!(p::Polytope, src::Int)
+    isvertex(p, src) || throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
+    
     # use the Bellman-Ford algorithm implemented in Graphs.jl
     # to compute the length of shortest edge walks between the apices and all other vertices
-    s.dists = Dict(a => bellman_ford_shortest_paths(graph(s), a).dists for a in apices(s))
+    p.dists[src] = Graphs.bellman_ford_shortest_paths(graph(p), src).dists
 end
 
 """
-    dist(s::Spindle, apex::Int, v::Int)
+    dist(p::Polytope, u::Int, v::Int)
 
-Compute the distance between `apex` and vertex `v` in the graph of spindle `s`.
-
-!!! note
-
-    Results are affected by resetting the apices with [`setapex!`](@ref).
+Compute the distance between vertices `u` and `v` in the graph of `p`.
 
 # Examples
 
 ```jldoctest
-julia> square = Spindle([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
+julia> p = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
 
-julia> vertices(square)
+julia> vertices(p)
 4-element iterator of Vector{Rational{BigInt}}:
  Rational{BigInt}[-1, -1]
  Rational{BigInt}[1, -1]
  Rational{BigInt}[-1, 1]
  Rational{BigInt}[1, 1]
 
-julia> apx1, apx2 = setapex!(square, 1)
-2-element Vector{Int64}:
- 1
- 4
-
-julia> dist(square, apx1, 4)
+julia> dist(p, 1, 4)
 2
-
-julia> apx1, apx2 = setapex!(square, 2)
-2-element Vector{Int64}:
- 2
- 3
-
-julia> dist(square, apx1, 4)
-1
 ```
 """
-function dist(s::Spindle, apex::Int, v::Int)
-    apex in apices(s) || throw(ArgumentError("$(apex) is not an apex"))
-    1 <= v <= nvertices(s) || throw(ArgumentError("vertex indices must be between 1 and $(nvertices(s))"))
+function dist(p::Polytope, u::Int, v::Int)
+    u, v = sort([u,v])
+    if !(isvertex(p, u) && isvertex(p, v))
+        throw(ArgumentError("vertex indices must be between 1 and $(nvertices(p))"))
+    end
     
-    # recompute distances also when apices have changed in the meantime
-    if !distscomputed(s) || !haskey(s.dists, apex)
-        computedistances!(s)
+    if !distscomputed(p, u)
+        computedistances!(p, u)
     end
 
-    return s.dists[apex][v]
+    return p.dists[u][v]
 end
 
+
 # arguments as returned by induced subgraph; return nothing if not a cycle
-function cyclicorder(g::SimpleGraph, vmap::Vector{Int})
+function cyclicorder(g::Graphs.SimpleGraph, vmap::Vector{Int})
     # pick an arbitrary starting vertex and traverse the graph g depth-first
     start = first(Graphs.vertices(g))
     cyclic = [start]
@@ -86,8 +72,8 @@ function cyclicorder(g::SimpleGraph, vmap::Vector{Int})
     
     while (v != start || it == 0) && it < Graphs.nv(g)
         # find a neighbor of v distinct from u and append it to list
-        nb_idx = findfirst(neighbors(g, v) .!= u)
-        nb = neighbors(g, v)[nb_idx]
+        nb_idx = findfirst(Graphs.neighbors(g, v) .!= u)
+        nb = Graphs.neighbors(g, v)[nb_idx]
         push!(cyclic, nb)
 
         u = v
@@ -106,16 +92,17 @@ end
 
 
 """
-    isgood2face(s::Spindle, facets)
+    isgood2face(p::Polytope, indices, src, dst)
 
-Test the face defined by `facets` for being a *good* 2-face of the spindle `s`.
+Test the face defined by `indices` for being a *good* 2-face of the polytope `p`
+with respect to the two vertices `src` and `dst`.
 Return a [`FaceState`](@ref).
 
-See [this tutorial](@ref "Spindles and the Hirsch conjecture I") for an informal explanation of what
+See [this tutorial]() for an informal explanation of what
 it means for a 2-face to be good.
 """
-function isgood2face(s::Spindle, facets::Vector{Int})
-    verticesinface = incidentvertices(s, facets)
+function isgood2face(p::Polytope, indices::AbstractVector{Int}, src::Int, dst::Int)
+    verticesinface = incidentvertices(p, indices)
     n = length(verticesinface)
 
     # first, check simple necessary conditions to speed up computations:
@@ -125,12 +112,12 @@ function isgood2face(s::Spindle, facets::Vector{Int})
 
     # (2) good faces must be 2-faces, i.e., their graph is a cycle
     # to check this, list the vertices in cyclic order around the face
-    cyclic = cyclicorder(induced_subgraph(graph(s), verticesinface)...)
+    cyclic = cyclicorder(Graphs.induced_subgraph(graph(p), verticesinface)...)
     cyclic !== nothing || return FaceState(false, nothing, nothing, nothing)
 
     # (3) shortest edge walks to and from the face must have total length <= dim-2
-    dists_by_apex = [[dist(s, a, v) for v in verticesinface] for a in apices(s)]
-    if sum(map(minimum, dists_by_apex)) > dim(s)-2
+    dists_by_src = [dist.(p, a, verticesinface) for a in [src,dst]] 
+    if sum(map(minimum, dists_by_src)) > dim(p)-2
         return FaceState(false, nothing, nothing, nothing)
     end
 
@@ -154,21 +141,21 @@ function isgood2face(s::Spindle, facets::Vector{Int})
             # their distances to opposite apices are at most d-2
 
             # maximum distance of a vertex in _plus (or _minus, resp.) to each apex (lists with 2 entries each)
-            max_dists_plus  = [maximum([dist(s, a, cyclic[vp]) for vp in vertices_plus]) for a in apices(s)]
-            max_dists_minus = [maximum([dist(s, a, cyclic[vm]) for vm in vertices_minus]) for a in apices(s)] 
+            max_dists_plus  = [maximum(dist.(p, a, cyclic[vertices_plus])) for a in [src,dst]]
+            max_dists_minus = [maximum(dist.(p, a, cyclic[vertices_minus])) for a in [src,dst]] 
 
             # translate the cyclic indices of the endpoints of the two edges back to their actual vertex indices
             # note here that [j,j+1] may wrap around
             edges = (cyclic[i:i+1], cyclic[[j, mod(j,n)+1]])
 
-            if max_dists_plus[1] + max_dists_minus[2] <= dim(s)-2
+            if max_dists_plus[1] + max_dists_minus[2] <= dim(p)-2
                 return FaceState(
-                    true, facets, edges, 
+                    true, collect(indices), edges, 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  # "plus" is closer to 1
                 )
-            elseif max_dists_minus[1] + max_dists_plus[2] <= dim(s)-2
+            elseif max_dists_minus[1] + max_dists_plus[2] <= dim(p)-2
                 return FaceState(
-                    true, facets, edges, 
+                    true, collect(indices), edges, 
                     (cyclic[vertices_minus], cyclic[vertices_plus])   # "minus" is closer to 1
                 )
             end
@@ -178,5 +165,3 @@ function isgood2face(s::Spindle, facets::Vector{Int})
     # no successful pair (i,j) found
     return FaceState(false, nothing, nothing, nothing)
 end
-
-

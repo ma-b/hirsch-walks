@@ -5,16 +5,16 @@ using Printf
 
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
 # whether the direction is unique (False if edge and reference_edge are parallel)
-function directedge(s::Spindle, edge::Vector{Int}, facet::Int)
+function directedge(p::Polytope, edge::Vector{Int}, facet::Int)
     u, v = edge
 
     # direction from u to v
-    verts = hcat(vertices(s)...)'   # TODO performance
+    verts = hcat(vertices(p)...)'   # TODO performance
     r = verts[v,:] - verts[u,:]
     # index of first nonzero entry (exists since u and v are distinct)
     i = findfirst(@. !isapprox(r, 0))
     r ./= abs(r[i]) # normalize
-    dotproduct = collect(Polyhedra.halfspaces(s.p))[facet].a' * r
+    dotproduct = collect(Polyhedra.halfspaces(p.poly))[facet].a' * r
 
     # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
     if dotproduct == 0
@@ -57,7 +57,7 @@ end
 
 """
     plot2face(
-        s::Spindle, indices;
+        p::Polytope, indices;
         usecoordinates = true,
         vertexlabels = ,
         ineqlabels = ,
@@ -66,7 +66,7 @@ end
         kw...
     )
 
-Make a plot of the 2-face of `s` that is defined by the inequalities in `indices`, 
+Make a plot of the 2-face of `p` that is defined by the inequalities in `indices`, 
 either as a 2D projection onto the plane (if the argument `usecoordinates` is set to `true`) or as a
 (combinatorial) plot of its graph otherwise.
 
@@ -91,27 +91,32 @@ The default behaviour can be overwritten by explicitly passing new values as key
 to `plot2face`. Anything in `kw...` takes precedence over the default behaviour in `plot2face`, except for (most)
 attributes related to annotations. They are hardcoded in `plot2face`.
 """
-function plot2face(s::Spindle, indices::Vector{Int}; 
+function plot2face(p::Polytope, indices::AbstractVector{Int}; 
     # custom keyword arguments:
     usecoordinates::Bool = true, 
-    vertexlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nvertices(s)),
-    ineqlabels::Union{Nothing, Vector{<:AbstractString}} = map(string, 1:nhalfspaces(s)),
+    vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}} = map(string, 1:nvertices(p)),
+    ineqlabels::Union{Nothing, AbstractVector{<:AbstractString}} = map(string, 1:nhalfspaces(p)),
     unique_labels_only::Bool = true,
     # omit_indices::Bool
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
     kw...
 )
-    verticesinface = incidentvertices(s, indices)
+    verticesinface = incidentvertices(p, indices)
     n = length(verticesinface)
+
+    # helper function to concatenate multiple inequality labels into a single string
+    concatlabels(labels::AbstractVector{<:AbstractString}) = join(
+        unique_labels_only ? unique(labels) : labels, ' '
+    )
     
     # list the vertices in cyclic order around the polygon
-    cyclic = cyclicorder(induced_subgraph(graph(s), verticesinface)...)
+    cyclic = cyclicorder(Graphs.induced_subgraph(graph(p), verticesinface)...)
     cyclic !== nothing || throw(ArgumentError("the given face is not 2-dimensional"))
 
     # ---- coordinates ----
 
     if usecoordinates
-        verts = hcat(vertices(s)...)'  # TODO only use subset of vertices
+        verts = hcat(vertices(p)...)'  # TODO only use subset of vertices
 
         # project out all but 2 coordinates in such a way that the projection is 2-dimensional again:
         # the projection is 1-dimensional if the images of all vertices, in particular of the first three 
@@ -133,6 +138,7 @@ function plot2face(s::Spindle, indices::Vector{Int};
     plot(;
         ticks=nothing, legend=false, framestyle=:box, size=(300,300),
         aspect_ratio = usecoordinates ? :auto : :equal,
+        title = ineqlabels !== nothing ? concatlabels(ineqlabels[indices]) : nothing,
         kw...
     )
     plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
@@ -174,14 +180,9 @@ function plot2face(s::Spindle, indices::Vector{Int};
 
     # edge labels
     if ineqlabels !== nothing
-        # helper function to concatenate multiple inequality labels into a single string
-        concatlabels(labels::Vector{<:AbstractString}) = join(
-            unique_labels_only ? unique(labels) : labels, ' '
-        )
-
         for i=1:n
             j = mod(i,n)+1  # successor of i on the cycle
-            tightfacets = incidentfacets(s, cyclic[[i,j]])
+            tightfacets = incidentfacets(p, cyclic[[i,j]])
             tightfacets = [f for f in tightfacets if !(f in indices)]
             annotate!(
                 (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
@@ -190,8 +191,8 @@ function plot2face(s::Spindle, indices::Vector{Int};
             )
         end
 
-        # figure title
-        title!(concatlabels(ineqlabels[indices]))
+        ## figure title
+        #title!(concatlabels(ineqlabels[indices]))
         # face label
         annotate!(bx, by, text(concatlabels(ineqlabels[indices]), 10, :center, :steelblue))
     end
@@ -204,16 +205,16 @@ function plot2face(s::Spindle, indices::Vector{Int};
 
     # ---- mark up edges ----
     if directed_edges !== nothing
-        if !all(@. length(directed_edges) == 2) || !all(Graphs.has_edge(graph(s), e...) for e in directed_edges)
+        if !all(@. length(directed_edges) == 2) || !all(Graphs.has_edge(graph(p), e...) for e in directed_edges)
             throw(ArgumentError("invalid edges"))
         end
 
         for k=1:2
             # get edge-defining inequality for reference edge
-            efacets = incidentfacets(s, directed_edges[k==1 ? 2 : 1])
+            efacets = incidentfacets(p, directed_edges[k==1 ? 2 : 1])
             ineq = findfirst(f -> !(f in indices), efacets)
 
-            (u,v), uniquedir = directedge(s, directed_edges[k], efacets[ineq])
+            (u,v), uniquedir = directedge(p, directed_edges[k], efacets[ineq])
             # get the indices of the endpoints of the edge as they appear in the cyclic order
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
             plot!(

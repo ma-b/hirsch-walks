@@ -2,45 +2,45 @@
 # Faces
 # ================================
 
-export facesofdim, nfacesofdim, graph, dim
+export facesofdim, nfacesofdim, graph, dim, facets, nfacets, impliciteqs
 
 # --------------------------------
 # graph
 # --------------------------------
 
-graphiscomputed(s::Spindle) = s.graph !== nothing
+graphiscomputed(p::Polytope) = p.graph !== nothing
 """
-    graph(s::Spindle)
+    graph(p::Polytope)
 
-Return the graph (aka *1-skeleton*) of `s`, which is a simple undirected graph of type 
+Return the graph of the polytope `p`, which is a simple undirected graph of type 
 [`Graphs.SimpleGraphs.SimpleGraph`](https://juliagraphs.org/Graphs.jl/stable/core_functions/simplegraphs/#Graphs.SimpleGraphs.SimpleGraph).
 """
-function graph(s::Spindle)
-    if !graphiscomputed(s)
-        computegraph!(s)
+function graph(p::Polytope)
+    if !graphiscomputed(p)
+        computegraph!(p)
     end
-    return s.graph
+    return p.graph
 end
 
-function computegraph!(s::Spindle)
-    if !inciscomputed(s)
-        computeinc!(s)
+function computegraph!(p::Polytope)
+    if !inciscomputed(p)
+        computeinc!(p)
     end
     
-    nv = nvertices(s)
-    s.graph = SimpleGraph(nv)
+    nv = nvertices(p)
+    p.graph = Graphs.SimpleGraph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
-    # https://sites.google.com/site/christopheweibel/research/hirsch-conjecture    
+    # https://sitep.google.com/site/christopheweibel/research/hirsch-conjecture    
     
     # (1) brute-force all pairs of vertices that are contained in at least dimension minus 1 common facets
 
     # we count the number of facets incident with both i and j as follows:
-    n_inc(i::Int, j::Int) = sum(s.inc[i] .& s.inc[j])
+    n_inc(i::Int, j::Int) = sum(p.inc[i] .& p.inc[j])
     
     pairs = [
         ([i,j], n_inc(i,j)) for i=1:nv, j=1:nv 
-        if i < j && n_inc(i,j) >= dim(s)-1
+        if i < j && n_inc(i,j) >= dim(p)-1
     ]
 
     # (2) drop all pairs that do not define edges: 
@@ -56,22 +56,22 @@ function computegraph!(s::Spindle)
     # most pairs will be of the first type, and inclusion among their sets of common facets does not have to 
     # be checked because they are all distinct and of the same size.
 
-    nondegenerate_pairs = [e for (e,m) in pairs if m == dim(s)-1]
-    degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(s)-1]
+    nondegenerate_pairs = [e for (e,m) in pairs if m == dim(p)-1]
+    degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(p)-1]
 
     # we use this function to check inclusion-maximality:
     # return true if and only if each facet that contains all vertices in list `a` also contains all vertices in `b`
-    iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, s.inc[a]) .<= reduce(.&, s.inc[b]))
+    iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, p.inc[a]) .<= reduce(.&, p.inc[b]))
     
     for e in nondegenerate_pairs
         if !any(iscontained(e, d) for (d,_) in degenerate_pairs)
-            add_edge!(s.graph, e...)
+            Graphs.add_edge!(p.graph, e...)
         end
     end
     for (d,m) in degenerate_pairs
         # strict superset must have strictly greater cardinality
         if !any(iscontained(d, dd) for (dd,mm) in degenerate_pairs if mm > m)
-            add_edge!(s.graph, d...)
+            Graphs.add_edge!(p.graph, d...)
         end
     end
 end
@@ -80,36 +80,36 @@ end
 # complete face enumeration
 # --------------------------------
 
-facescomputed(s::Spindle, k::Int) = haskey(s.faces, k)
-function computefacesofdim!(s::Spindle, k::Int)
-    if !inciscomputed(s)
-        computeinc!(s)
+facescomputed(p::Polytope, k::Int) = haskey(p.faces, k)
+function computefacesofdim!(p::Polytope, k::Int)
+    if !inciscomputed(p)
+        computeinc!(p)
     end
     
-    nv = nvertices(s)
+    nv = nvertices(p)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
-        s.faces[0] = [incidentfacets(s, [v]) for v=1:nv]
+        p.faces[0] = [incidentfacets(p, [v]) for v=1:nv]
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        s.faces[1] = [incidentfacets(s, [src(e), dst(e)]) for e in Graphs.edges(graph(s))]
+        p.faces[1] = [incidentfacets(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
     else
-        s.faces[k] = Vector{Vector{Int}}()
+        p.faces[k] = Vector{Vector{Int}}()
 
         # recurse and enumerate faces of one dimension lower
-        lowerfaces = facesofdim(s, k-1)
+        lowerfaces = facesofdim(p, k-1)
 
         proper_supsets = unique(
             # face of dimension one less plus a vertex not contained in it such that 
             # both are still contained in sufficiently many facets
-            f[s.inc[v][f]] for v=1:nv, f in lowerfaces
-            if !all(s.inc[v][f]) && sum(s.inc[v][f]) >= dim(s)-k  
+            f[p.inc[v][f]] for v=1:nv, f in lowerfaces
+            if !all(p.inc[v][f]) && sum(p.inc[v][f]) >= dim(p)-k  
         )
 
-        nondegenerate_supsets = [f for f in proper_supsets if length(f) == dim(s)-k]
-        degenerate_supsets = [f for f in proper_supsets if length(f) > dim(s)-k]
+        nondegenerate_supsets = [f for f in proper_supsets if length(f) == dim(p)-k]
+        degenerate_supsets = [f for f in proper_supsets if length(f) > dim(p)-k]
 
         # find inclusion-maximal subsets among all subsets of facets found 
         # (some may be higher-dim faces contained in more than the minimum number of facets)
@@ -118,82 +118,103 @@ function computefacesofdim!(s::Spindle, k::Int)
 
         for e in nondegenerate_supsets
             if !any(iscontained(e, d) for d in degenerate_supsets)
-                push!(s.faces[k], e)
+                push!(p.faces[k], e)
             end
         end
         for d in degenerate_supsets
             if !any(iscontained(d, dd) for dd in nondegenerate_supsets if length(dd) > length(d))
-                push!(s.faces[k], d)
+                push!(p.faces[k], d)
             end
         end
     end
 end
 
 """
-    facesofdim(s::Spindle, k::Int)
+    facesofdim(p::Polytope, k::Int)
 
-Enumerate all faces of dimension `k` of the spindle `s`. Each face is given by a list of the indices of its
-incident halfspaces/facets.
+Enumerate all faces of dimension `k` of the polytope `p`. Each face is given by a list of the indices of its
+incident halfspaces.
 
-!!! note
-    The empty face ``\\emptyset`` (which is the unique face of dimension -1 by convention)
-    is given by the list of *all* facet/halfspace indices, as the intersection of all facets of a polytope is empty.
+Note here that the empty face ``\\emptyset`` (which is the unique face of dimension -1 by convention)
+is given by the list of *all* halfspace indices, as the intersection of all facets of a polytope is empty.
 
-!!! warning "Difference to Polyhedra.jl"
-    The index of a halfspace/facet is its index in the collection of halfspaces of the polyhedron underlying `s`,
-    where hyperplanes are ignored. This is different from 
-    [the way that indices are treated in `Polyhedra`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Incidence),
+!!! warning "Difference from Polyhedra.jl"
+    The index of a halfspace is the index of the corresponding inequality in the linear description
+    of `p`, where (explicitly given) equality constraints (defining hyperplanes) are ignored. This is different from 
+    [the way that indices are treated in Polyhedra.jl](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Incidence),
     where hyperplanes and halfspaces share the same set of indices.
 
-The algorithm proceeds recursively and computes faces bottom-up, starting from the vertices. 
-
 !!! note
-    Results are cached internally in the `Spindle` object `s`. Therefore, subsequent calls to `facesofdim(s, l)`
-    for any ``l \\le k`` do not cost anything.
+    The algorithm proceeds recursively and computes faces bottom-up, starting from the vertices.
+    The results are cached internally in the `Polytope` object `p`. Therefore, 
+    subsequent calls to `facesofdim(p, l)` for any ``l \\le k`` do not cost anything.
 
-See also [`nfacesofdim`](@ref).
+See also [`nfacesofdim`](@ref), [`dim`](@ref).
 """
-function facesofdim(s::Spindle, k::Int)
-    if !(-1 <= k <= size(Polyhedra.hrep(s.p).A, 2))
+function facesofdim(p::Polytope, k::Int)
+    if !(-1 <= k <= size(Polyhedra.hrep(p.poly).A, 2))
         # there is no face of dimension less than -1 or greater than the dimension of the ambient space
         return Vector{Int}()
     elseif k == -1  # empty face
         # here we use that the intersection of all facets of a polytope is empty
-        return [collect(1:nhalfspaces(s))]
+        return [collect(1:nhalfspaces(p))]
     else
-        if !facescomputed(s, k)
-            computefacesofdim!(s, k)
+        if !facescomputed(p, k)
+            computefacesofdim!(p, k)
         end
-        return s.faces[k]
+        return p.faces[k]
     end
 end
 
 
 """
-    nfacesofdim(s::Spindle, k::Int)
+    nfacesofdim(p::Polytope, k::Int)
 
-Count the `k`-dimensional faces of the spindle `s`. 
-Shorthand for `length(facesofdim(s, k))`.
+Count the `k`-dimensional faces of the polytope `p`. 
+Shorthand for `length(facesofdim(p, k))`.
 
-See also [`facesofdim`](@ref).
+See also [`nfacets`](@ref), [`facesofdim`](@ref), [`dim`](@ref).
+
+# Examples
+```jldoctest
+julia> V = [(i >> j) & 1 for i=0:7, j=0:2]
+8×3 Matrix{Int64}:
+ 0  0  0
+ 1  0  0
+ 0  1  0
+ 1  1  0
+ 0  0  1
+ 1  0  1
+ 0  1  1
+ 1  1  1
+
+julia> cube = Polytope(V);
+
+julia> nfacesofdim.(cube, -1:3)
+5-element Vector{Int64}:
+  1
+  8
+ 12
+  6
+  1
+```
 """
-nfacesofdim(s::Spindle, k::Int) = length(facesofdim(s, k))
+nfacesofdim(p::Polytope, k::Int) = length(facesofdim(p, k))
 
 
 # --------------------------------
 # dimension
 # --------------------------------
 
-# compute a maximal chain in the face poset of `s`, starting from `f`
-# our implementation follows the same idea as the face enumeration routine
-function maxchain(s::Spindle, f::Vector{Int})
-    nv = nvertices(s)
-
+# Compute a maximal chain in the face lattice of `p` such that all faces only contain vertices in `vindices`,
+# and the minimal face of the chain is the face defined by inequalities `f`.
+# The implementation follows the same strategy as the face enumeration routine
+function maxchain(p::Polytope, f::AbstractVector{Int}, vindices::AbstractVector{Int}=1:nvertices(p))
     # enumerate all faces that properly contain the current face `f`: since we have a polytope,
     # each such face must contain all vertices of the current face plus (at least) one additional vertex 
-    # which is not incident to some of the incident halfspaces of `f`
+    # that is not incident to the current face
     containing_faces = [
-        f[s.inc[v][f]] for v=1:nv if !all(s.inc[v][f])
+        f[p.inc[v][f]] for v in vindices if !all(p.inc[v][f])
     ]
 
     if isempty(containing_faces)
@@ -202,36 +223,154 @@ function maxchain(s::Spindle, f::Vector{Int})
     else
         # pick any subset of maximum cardinality (which must therefore also be inclusion-maximal) among all subsets found
         nextf = containing_faces[findfirst(length.(containing_faces) .== maximum(length, containing_faces))]
-        return pushfirst!(maxchain(s, nextf), f)
+        return pushfirst!(maxchain(p, nextf, vindices), f)
     end
 end
-# same as above except that the initial face is the empty face (of dim -1), 
-# which for a polytope is the intersection of all facets
-maxchain(s::Spindle) = maxchain(s, collect(1:nhalfspaces(s)))
 
-dimiscomputed(s::Spindle) = s.dim !== nothing
-function computedim!(s::Spindle)
-    # the maximal face in the chain will have the desired dimension, so subtract 2 for the (-1)-dim and 0-dim faces
-    s.dim = length(maxchain(s)) - 2
-end
-
+dimiscomputed(p::Polytope) = p.dim !== nothing
 """
-    dim(s::Spindle)
+    dim(p::Polytope)
 
-Compute the dimension of the spindle `s`.
+Compute the dimension of `p`.
 
-This is done by computing the length of a maximal chain in the face poset of `s`,
+This is done by computing the length of a maximal chain in the face lattice of `p`,
 i.e., a finite sequence of faces 
 ```math
 \\emptyset = F_{-1} \\subsetneq F_0 \\subsetneq F_1 \\subsetneq \\dots \\subsetneq F_d
 ```
-for which `d` is maximal among all such sequences. Then ``F_d`` must be `s` itself, and `d` is its dimension.
+for which `d` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and `d` is its dimension.
 
 See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
+
+# Examples
+```jldoctest
+julia> p = Polytope([0 0; 1 0; 0 1; 1 1])
+Polytope{Rational{BigInt}}
+
+julia> dim(p)
+2
+```
 """
-function dim(s::Spindle)
-    if !dimiscomputed(s)
-        computedim!(s)
+function dim(p::Polytope)
+    if !dimiscomputed(p)
+        p.dim = dim(p, Int[])
     end
-    return s.dim
+    return p.dim
 end
+
+"""
+    dim(p::Polytope, indices)
+
+Compute the dimension of the face of `p` that is defined by the inequalities in `indices`.
+If `indices` is empty, this is the same as `dim(p)`.
+"""
+function dim(p::Polytope, indices::AbstractVector{Int})
+    if !all(isineq.(p, indices))
+        throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
+    end
+
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+
+    # here we use that the minimal facet containing all incident vertices of a face is the face itself
+
+    # the maximal face in the chain will have the desired dimension, 
+    # so subtract 2 for the (-1)-dim and 0-dim faces (if present)
+    length(maxchain(p, 1:nhalfspaces(p), incidentvertices(p, indices))) - 2
+end
+
+"""
+    dim(p::Polytope, i::Int)
+
+Same as `dim(p, [i])`.
+
+# Examples
+```jldoctest
+julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
+Polytope{Rational{BigInt}}
+
+julia> dim(p, Int[])
+2
+
+julia> dim(p, 1)
+1
+
+julia> dim(p, [1, 3])
+0
+
+julia> dim(p, [1, 2])
+-1
+```
+"""
+dim(p::Polytope, i::Int) = dim(p, [i])
+
+"""
+    facets(p::Polytope)
+
+Return a minimal subset of inequality indices that contains one inequality for each facet of `p`.
+
+If multiple inequalities in the description of `p` define the same facet,
+the one with the smallest index is selected.
+
+See also [`nfacets`](@ref), [`impliciteqs`](@ref).
+
+# Examples
+
+"""
+function facets(p::Polytope)
+    A = Polyhedra.hrep(p.poly).A
+    b = Polyhedra.hrep(p.poly).b
+    nf = nhalfspaces(p)
+
+    # BitVector whose i-th entry indicates whether inequality i is facet-defining
+    isfacet = dim.(p, 1:nf) .== dim(p)-1
+    # keep track of inequalities whose deletion will leave an irredundant inequality description
+    # their indices will be set to false in the following loop
+    keep = trues(nf)
+
+    for i=1:nf
+        # continue if i is not a facet or has already been flagged as redundant
+        isfacet[i] && keep[i] || continue
+        
+        for j=i+1:nf
+            isfacet[j] || continue
+
+            # find a column r of A such that A[j,r] is nonzero
+            # and scale the row j such that this entry matches A[i,r] in absolute value
+            r = findfirst(A[j,:] .!= 0)
+            if A[i,r] == 0  # dismiss right away, since we would have to scale j by 0
+                continue
+            end
+            α = abs(A[i,r]) / abs(A[j,r])
+
+            # if the rescaled row j is now identical to row i, then i and j must define the same facet
+            # (and the corresponding right-hand sides are necessarily identical too)
+            if A[j,:] * α == A[i,:]
+                @assert b[j] * α == b[i]
+                keep[j] = false
+            end  # (no j is considered twice)
+        end
+    end
+
+    findall(isfacet .& keep)
+end
+
+"""
+    nfacets(p::Polytope)
+
+Count the facets of `p`. Shorthand for `length(facets(p))`.
+
+See also [`nfacesofdim`](@ref), [`facets`](@ref).
+"""
+nfacets(p::Polytope) = length(facets(p))
+
+"""
+    impliciteqs(p::Polytope)
+
+Return the indices of all inequalities that are implicit equations, i.e., that are satisfied at equality
+for each point in `p`.
+
+See also [`facets`](@ref).
+"""
+impliciteqs(p::Polytope) = [i for i=1:nhalfspaces(p) if dim(p, i) == dim(p)]
