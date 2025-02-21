@@ -1,5 +1,6 @@
 Spindles/Manifest.toml
 Spindles/docs/build/
 Spindles/docs/Manifest.toml
+Spindles/test/Manifest.toml
 *.ipynb
 Spindles/docs/src/tutorials/

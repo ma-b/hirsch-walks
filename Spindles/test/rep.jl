@@ -1,32 +1,28 @@
-using Polyhedra: polyhedron, vrep, hrep
+using Polyhedra: hrep
 
 @testset "Tests for constructors" begin
-    @testset "Explicit equation" begin
-        p = polyhedron(vrep([1 0; 0 1]))
-
-        @test try apices(Polytope(p)) !== nothing
-            true
-        catch
-            false
-        end
-    end
-
-    @testset "Implicit equations" begin
+    @testset "Explicit and implicit equation" begin
+        p = Polytope([1 0; 0 1])
+        
+        # same, but with an implicit equation
         A = [-1 0; 1 1; 0 -1; -1 -1]
         b = [0, 1, 0, -1]
-        p = polyhedron(hrep(A, b))
+        q = Polytope(A, b)
 
-        @test try apices(Polytope(p)) !== nothing
+        @test try apices(p) !== nothing
             true
         catch
             false
         end
 
-        @test try apices(Polytope(A, b)) !== nothing
+        @test try apices(q) !== nothing
             true
         catch
             false
         end
+
+        @test p == Polytope(collect(vertices(p)))
+        @test p == q
     end
 
     @testset "Preserve indices" begin
