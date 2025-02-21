@@ -9,7 +9,7 @@ A *spindle* is a [polytope](https://en.wikipedia.org/wiki/Polytope) with two spe
 A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ that does not share a facet with $u$ (namely, the vertex that is "antipodal" to $u$). Any such pair $u$ and $v$ is a valid pair of apices for the cube.
 
 ### Why are spindles important?
-Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, a computational analysis of these counterexamples was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial]().
+Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, a computational analysis of these counterexamples was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 
 ### Who is this package for?
 *Spindles.jl* is built as a lightweight toolkit for basic computational tasks in polyhedral research. 
@@ -57,7 +57,7 @@ julia> using Spindles
 For the basic usage of *Spindles.jl*, please read the tutorial on [first steps](@ref "First steps"). 
 The full documentation can be found [here](@ref "Index").
 
-To learn more about how *Spindles.jl* can help analyze counterexamples to the Hirsch conjecture, please check out [this tutorial]().
+To learn more about how *Spindles.jl* can help analyze counterexamples to the Hirsch conjecture, please check out [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 
 !!! note
 

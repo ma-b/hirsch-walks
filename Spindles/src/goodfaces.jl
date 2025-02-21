@@ -98,7 +98,7 @@ Test the face defined by `indices` for being a *good* 2-face of the polytope `p`
 with respect to the two vertices `src` and `dst`.
 Return a [`FaceState`](@ref).
 
-See [this tutorial]() for an informal explanation of what
+See [this tutorial](@ref "Spindles and the Hirsch conjecture I") for an informal explanation of what
 it means for a 2-face to be good.
 """
 function isgood2face(p::Polytope, indices::AbstractVector{Int}, src::Int, dst::Int)
