@@ -77,7 +77,7 @@ face in facesofdim(s, 2)
 # To inspect `face`, we may use the function [`plot2face`](@ref) provided by *Spindles.jl* 
 # to make a plot.
 plot2face(s, face; ineqlabels=labels)
-#src #md nothing #hide
+#src nothing # hide
 
 # Each vertex is labeled by its index. Edges and the face itself get their labels from the incident facets, 
 # since we passed the `labels` extracted above to the keyword argument `ineqlabels`. Note here that the
@@ -103,7 +103,7 @@ end
 
 # Our custom vertex labels can now be passed to `plot2face` as follows:
 plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=false)
-#src #md nothing #hide
+#src nothing # hide
 
 # Note here that the (optional) additional argument `usecoordinates=false` changed the plot mode 
 # to a (combinatorial) drawing of the graph of the face `15⁺ 19⁺ 21⁺` rather than a planar projection of
@@ -149,6 +149,7 @@ set_labels = map(1:nvertices(s)) do v
     end
 end
 plot2face(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false, title="V₁ and V₂")
+#src nothing # hide
 
 # Note that there are exactly two edges of the face `15⁺ 19⁺ 21⁺` whose endpoints do not belong
 # to neither $V_1$ nor $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
@@ -159,6 +160,7 @@ plot2face(s, face;
 	directed_edges=([25,57], [33,81]),
     usecoordinates=false, title="V₁ and V₂"
 )
+#src nothing # hide
 
 # Not only are the two edges marked up in the plot, they are also drawn as *directed* edges now.
 # To see why (and how this direction is determined by `plot2face`),
@@ -174,6 +176,7 @@ plot2face(s, face;
 	directed_edges=([25,57], [33,81]),
     usecoordinates=true, title="V₁ and V₂"
 )
+#src nothing # hide
 
 # The geometry of the 2-face tells us that the point on the boundary that we hit must be on one of the
 # two edges incident to the apex `1`. From that point, we walk along the edge and reach `1` within

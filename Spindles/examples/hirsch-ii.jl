@@ -59,9 +59,9 @@ ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
 plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
 plot_arr = nothing # hide
-#md savefig("s-25-5-all.svg"); nothing # hide
+#src #md savefig("s-25-5-all.svg"); nothing # hide
 
-#md # ![](s-25-5-all.svg)
+#src #md # ![](s-25-5-all.svg)
 
 #src ==========================
 # ## Dimension 20
@@ -92,15 +92,18 @@ A[[3, 7, 2],:]
 # counterexample from spindles like `s`.
 
 # The structure that we just observed will be extremely useful in "guessing" good 2-faces of the
-# 20-dimensional spindle encoded in the file above. Before we examine its faces, let us first
-# read the file and construct a `Spindle` object from it.
+# 20-dimensional spindle encoded in the file above. 
 
 #src ==========================
 # ### Building the spindle
+# Before we examine its faces, let us first
+# read the file and construct a `Spindle` object from it.
 
 A20, b20, labels = readineq("s-25.txt", BigInt)
 s20 = Polytope(A20, b20)
-#-
+# To speed up computations, we tell the function `apices` that 
+# the system of linear inequalities specified by `A20` and `b20` is known to be minimal,
+# by using the keyword argument `checkredund` (see also the documentation for [`apices`](@ref)):
 apx20 = apices(s20; checkredund=false)
 collect(vertices(s20))[apx20]
 
@@ -149,14 +152,6 @@ isgood2face(s20, face20, apx20...).good
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
 # Let us plot this face and the original face `face` side by side.
 
-#src plot(
-#src     plot2face(s, face; vertexlabels=nothing),
-    #src plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
-    #src layout=grid(1,2), size=(800,300)
-#src )
-#src #md savefig("s-25-geom.svg"); nothing # hide
-
-#src #md # ![](s-25.svg)
 
 # Not only do their projections look very similar, they are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
@@ -169,14 +164,6 @@ end
 edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges
 
-plot(
-    plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),
-    plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
-    layout=grid(1,2), size=(800,400)
-)
-#md savefig("s-25-comb.svg"); nothing # hide
-
-#md # ![](s-25-comb.svg)
 
 # The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
 # which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,

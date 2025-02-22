@@ -1,5 +1,5 @@
 # ================================
-#  ...
+# Incidence
 # ================================
 
 export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidentfacets
@@ -78,13 +78,24 @@ end
 # --------------------------------
 
 """
-    apices(p::Polytope [, apex]) 
+    apices(p::Polytope [, apex]; checkredund=true) 
 
 Check whether `p` is a spindle, i.e., if there is a pair of vertices (the *apices*) for which
 each facet of `p` is incident to exactly one of them. If `p` has a pair of apices, return their indices;
 otherwise return `nothing`.
 
 The optional argument `apex` specifies the index of a vertex that is to be taken as one of the apices.
+
+# Keywords
+* `checkredund::Bool`: If `true` (default), first detect all inequalities in the description of `p` 
+    that are not facet-defining for `p`. 
+    Especially in higher dimensions, this step may be time- and memory-consuming.
+    To speed up computations for polytopes created from inequality descriptions that are known to be minimal, 
+    set `checkredund` to `false`.
+  
+!!! note
+    For polytopes created from a system that includes non-facet-defining inequalities, disabling `checkredund`
+	can only produce false negatives. All vertices returned by `apices` are guaranteed to be apices.
 
 # Examples
 
@@ -170,13 +181,12 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
             end
         end
     end
-
+ 
     # no apex pair found
     if !checkredund
         @warn """
-        No pair of apices found. This may be because each inequality was assumed
-        to be facet-defining or an implicit equation. Try without `checkredund`
-        if you do believe the polytope is a spindle.
+        Cannot find a pair of apices. This may be because all inequalities were assumed to be facet-defining or implicit equations. 
+        Try without `checkredund` if you do believe the polytope is a spindle.
         """
     end
     return nothing
