@@ -96,3 +96,9 @@ A[[3, 7, 2],:]
 
 #src ==========================
 # ### Building the spindle
+
+A20, b20, labels = readineq("s-25.txt", BigInt)
+s20 = Polytope(A20, b20)
+
+apx20 = apices(s20)
+collect(vertices(s20))[apx20]
