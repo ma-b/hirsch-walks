@@ -121,3 +121,27 @@ dist(s20, apx20...)
 
 #src ==========================
 # ## "Guessing" good 2-faces
+
+# For example, here is one of the good 2-faces of `s` again:
+face = [2,8,9]
+isgood2face(s, face, apx...).good
+
+# The corresponding facets of `s20` are
+face20 = [i for (i,label) in enumerate(labels) if parse(Int, label) in face]
+
+# However, three facets do not make a 2-face in dimension 20 yet. We need another 15 facet-defining
+# inequalities from the description of `s20` (recall that `s20` is simple). With some geometric intuition of what the wedging
+# operation does, we propose the following rule of thumb: To get up to 18 facets, pick facets from
+# those two blocks of "replications" labeled `11` and `25`. Specifically, from each block, pick all
+# facets but one. Let us calculate the number of facets in each block:
+sum(labels .== "11"), sum(labels .== "25")
+
+# So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
+# Let us "validate" this rule on `face`.
+blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in either of the two blocks
+face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
+join(unique(labels[face20]), " ")
+
+# This is the face we would expect to be a good 2-face. Let's check whether it really is:
+isgood2face(s20, face20, apx20...).good
+
