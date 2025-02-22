@@ -145,3 +145,44 @@ join(unique(labels[face20]), " ")
 # This is the face we would expect to be a good 2-face. Let's check whether it really is:
 isgood2face(s20, face20, apx20...).good
 
+# Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
+# Let us plot this face and the original face `face` side by side.
+
+plot(
+    plot2face(s, face; vertexlabels=nothing),
+    plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
+    layout=grid(1,2), size=(800,300)
+)
+#md savefig("s-25-geom.svg"); nothing # hide
+
+#md # ![](s-25.svg)
+
+# Not only do their projections look very similar, they are also combinatorially almost identical.
+# To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
+# that we generated for the smaller spindle above:
+dist_labels20 = map(1:nvertices(s20)) do v
+    "$v\n" * join(dist.((s20,), apx20, v), " | ")
+end
+
+#-
+edges = isgood2face(s, face, apx...).edges
+edges20 = isgood2face(s20, face20, apx20...).edges
+
+plot(
+    plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),
+    plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
+    layout=grid(1,2), size=(800,400)
+)
+#md savefig("s-25-comb.svg"); nothing # hide
+
+#md # ![](s-25-comb.svg)
+
+# The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
+# which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,
+# the only change is an additional edge (the one defined by `4`). Most importantly, however,
+# the property of being good is preserved.
+
+# Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
+# the good 2-faces of `s`.
+
+#src TODO
