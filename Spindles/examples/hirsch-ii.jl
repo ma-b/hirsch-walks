@@ -102,3 +102,22 @@ s20 = Polytope(A20, b20)
 
 apx20 = apices(s20)
 collect(vertices(s20))[apx20]
+
+# Note that `s20` is simple:
+using Graphs: degree
+all(degree(graph(s20)) .== dim(s20))
+
+# Its most important property, however, is the length of a shortest path between the apices:
+dist(s20, apx20...)
+
+# The Hirsch conjecture would imply that there must be a strictly shorter path, namely of length 20.
+# Therefore, `s20` is a counterexample to the Hirsch conjecture.
+
+# You may have noticed that computations in dimension 20 take longer than they did in dimension 5.
+# Calling `graph` or `dist` for the first time on `s20` (or any `Spindles` function that needs
+# the graph, in fact) triggers the computation of the entire graph of `s20`. Luckily, we don't
+# have to enumerate all 2-faces of `s20` to identify good ones. 
+# Instead, we may take advantage of the structure in its coefficient matrix to "guess" good 2-faces.
+
+#src ==========================
+# ## "Guessing" good 2-faces
