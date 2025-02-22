@@ -109,7 +109,7 @@ julia> apices(square, 2)
  3
 ```
 """
-function apices(p::Polytope, apex::Union{Nothing, Int}=nothing)
+function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true)
     if apex !== nothing && !isvertex(p, apex)
         throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
     end
@@ -124,7 +124,11 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing)
     # assuming that i and j are the indices of the apices that we want to find, their incidenct 
     # halfspaces/facets partition the set of all halfspaces excluding those that do not correspond to
     # facets (e.g., implicit equations or lower-dimensional faces)
-    nonfacet = dim.(p, 1:nf) .!= dim(p)-1
+    if checkredund
+        nonfacet = dim.(p, 1:nf) .!= dim(p)-1
+    else
+        nonfacet = reduce(.&, p.inc)  # only filter out implicit equations
+    end
 
     # incidences must be mutually exclusive except for non-facet defining inequalities, 
     # where incidence is arbitrary (may be both if implicit equation, or even none if they define empty face)
@@ -168,5 +172,12 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing)
     end
 
     # no apex pair found
+    if !checkredund
+        @warn """
+        No pair of apices found. This may be because each inequality was assumed
+        to be facet-defining or an implicit equation. Try without `checkredund`
+        if you do believe the polytope is a spindle.
+        """
+    end
     return nothing
 end

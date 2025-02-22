@@ -61,10 +61,10 @@ To learn more about how *Spindles.jl* can help analyze counterexamples to the Hi
 
 !!! note
 
-    If you would like to run some of the examples presented in the tutorials yourself, you can view or download them
-    as Jupyter notebooks. The links can be found on the respective tutorial pages.
+    If you would like to run the examples presented in the tutorials yourself, you can view or 
+    download all tutorials as Jupyter notebooks. The links can be found on the respective tutorial pages.
 
-    Note that the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required to run the example notebooks in your own Julia environment. It can be installed in Pkg mode by running
+    Note that the [Julia kernel](https://github.com/JuliaLang/IJulia.jl) for Jupyter notebooks is required to run them in your own Julia environment. It can be installed in Pkg mode by running
 
     ```
     pkg> add IJulia

@@ -58,6 +58,7 @@ end
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
 plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
+plot_arr = nothing # hide
 #md savefig("s-25-5-all.svg"); nothing # hide
 
 #md # ![](s-25-5-all.svg)
@@ -99,8 +100,8 @@ A[[3, 7, 2],:]
 
 A20, b20, labels = readineq("s-25.txt", BigInt)
 s20 = Polytope(A20, b20)
-
-apx20 = apices(s20)
+#-
+apx20 = apices(s20; checkredund=false)
 collect(vertices(s20))[apx20]
 
 # Note that `s20` is simple:
@@ -148,20 +149,20 @@ isgood2face(s20, face20, apx20...).good
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
 # Let us plot this face and the original face `face` side by side.
 
-plot(
-    plot2face(s, face; vertexlabels=nothing),
-    plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
-    layout=grid(1,2), size=(800,300)
-)
-#md savefig("s-25-geom.svg"); nothing # hide
+#src plot(
+#src     plot2face(s, face; vertexlabels=nothing),
+    #src plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
+    #src layout=grid(1,2), size=(800,300)
+#src )
+#src #md savefig("s-25-geom.svg"); nothing # hide
 
-#md # ![](s-25.svg)
+#src #md # ![](s-25.svg)
 
 # Not only do their projections look very similar, they are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
 # that we generated for the smaller spindle above:
 dist_labels20 = map(1:nvertices(s20)) do v
-    "$v\n" * join(dist.((s20,), apx20, v), " | ")
+    "$v\n" * join(dist.(s20, apx20, v), " | ")
 end
 
 #-
