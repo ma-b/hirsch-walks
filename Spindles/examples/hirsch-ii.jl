@@ -161,12 +161,9 @@ plot(
 # Not only do their projections look very similar, they are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
 # that we generated for the smaller spindle above:
-dist_labels = Dict(map(incidentvertices(s20, face20)) do v
-    v => "$v\n" * join(dist.((s20,), apx20, v), " | ")
+dist_labels20 = Dict(map(incidentvertices(s20, face20)) do v
+    v => "$v\n" * join(dist.(s20, apx20, v), " | ")
 end)
-#src dist_labels20 = map(1:nvertices(s20)) do v
-#src     "$v\n" * join(dist.((s20,), apx20, v), " | ")
-#src end
 
 #-
 edges = isgood2face(s, face, apx...).edges
