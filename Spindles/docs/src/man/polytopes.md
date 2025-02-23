@@ -41,7 +41,7 @@ Equivalently, our 2D polytope may be created from the inequality description
 0 \le x_2 &\le 1
 \end{aligned}
 ```
-by running
+which translates to
 ```jldoctest polytopes
 julia> r = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
 Polytope{Rational{BigInt}}
