@@ -44,6 +44,18 @@ function computeinc!(p::Polytope)
     end
 end
 
+# internal functions without bound checks
+function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
+    [v for v=1:nvertices(p) if all(p.inc[v][indices])]
+end
+function _incidentfacets(p::Polytope, indices::AbstractVector{Int})
+    if isempty(indices)
+        1:nhalfspaces(p)  # TODO type
+    else
+        findall(reduce(.&, p.inc[indices]))
+    end
+end
+
 """
     incidentvertices(p::Polytope, indices::AbstractVector{Int})
 
@@ -57,20 +69,16 @@ function incidentvertices(p::Polytope, indices::AbstractVector{Int})
     if !inciscomputed(p)
         computeinc!(p)
     end
-    [v for v=1:nvertices(p) if all(p.inc[v][indices])]
+    _incidentvertices(p, indices)
 end
 
 function incidentfacets(p::Polytope, indices::AbstractVector{Int})
     all(isvertex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
 
-    if !isempty(indices)
-        if !inciscomputed(p)
-            computeinc!(p)
-        end
-        return findall(reduce(.&, p.inc[indices]))
-    else
-        return Int[]
+    if !inciscomputed(p)
+        computeinc!(p)
     end
+    _incidentfacets(p, indices)
 end
 
 # --------------------------------
@@ -136,7 +144,7 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
     # halfspaces/facets partition the set of all halfspaces excluding those that do not correspond to
     # facets (e.g., implicit equations or lower-dimensional faces)
     if checkredund
-        nonfacet = dim.(p, 1:nf) .!= dim(p)-1
+        nonfacet = codim.(p, 1:nf) .!= 1
     else
         nonfacet = reduce(.&, p.inc)  # only filter out implicit equations
     end
@@ -185,8 +193,9 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
     # no apex pair found
     if !checkredund
         @warn """
-        Cannot find a pair of apices. This may be because all inequalities were assumed to be facet-defining or implicit equations. 
-        Try without `checkredund` if you do believe the polytope is a spindle.
+        Cannot find a pair of apices. 
+        This may be because all inequalities were assumed to define facets or implicit equations. 
+        Try without `checkredund` if you do believe the polytope is a spindle$(apex !== nothing ? " with $apex as an apex" : "").
         """
     end
     return nothing

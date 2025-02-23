@@ -2,7 +2,7 @@
 # Faces
 # ================================
 
-export facesofdim, nfacesofdim, graph, dim, facets, nfacets, impliciteqs
+export facesofdim, nfacesofdim, graph, dim, codim, facets, nfacets, impliciteqs
 
 # --------------------------------
 # graph
@@ -59,9 +59,9 @@ function computegraph!(p::Polytope)
     nondegenerate_pairs = [e for (e,m) in pairs if m == dim(p)-1]
     degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(p)-1]
 
-    # we use this function to check inclusion-maximality:
-    # return true if and only if each facet that contains all vertices in list `a` also contains all vertices in `b`
-    iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, p.inc[a]) .<= reduce(.&, p.inc[b]))
+    # we use this predicate to check inclusion-maximality: return true if and only if 
+    # each facet incident to all vertices in list `a` is also incident to all vertices in `b`
+    iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, p.inc[b]) .| (~).(reduce(.&, p.inc[a])))  # ~ bitwise NOT
     
     for e in nondegenerate_pairs
         if !any(iscontained(e, d) for (d,_) in degenerate_pairs)
@@ -113,16 +113,13 @@ function computefacesofdim!(p::Polytope, k::Int)
 
         # find inclusion-maximal subsets among all subsets of facets found 
         # (some may be higher-dim faces contained in more than the minimum number of facets)
-        
-        iscontained(a::Vector{Int}, b::Vector{Int}) = all(i in b for i in a)
-
         for e in nondegenerate_supsets
-            if !any(iscontained(e, d) for d in degenerate_supsets)
+            if !any(issubset(e, d) for d in degenerate_supsets)
                 push!(p.faces[k], e)
             end
         end
         for d in degenerate_supsets
-            if !any(iscontained(d, dd) for dd in nondegenerate_supsets if length(dd) > length(d))
+            if !any(issubset(d, dd) for dd in nondegenerate_supsets if length(dd) > length(d))
                 push!(p.faces[k], d)
             end
         end
@@ -135,7 +132,7 @@ end
 Enumerate all faces of dimension `k` of the polytope `p`. Each face is given by a list of the indices of its
 incident halfspaces.
 
-Note here that the empty face ``\\emptyset`` (which is the unique face of dimension -1 by convention)
+Note here that the empty face ``\\emptyset`` (which is the unique face of dimension −1 by convention)
 is given by the list of *all* halfspace indices, as the intersection of all facets of a polytope is empty.
 
 !!! warning "Difference from Polyhedra.jl"
@@ -208,9 +205,12 @@ nfacesofdim(p::Polytope, k::Int) = length(facesofdim(p, k))
 
 # Compute a maximal chain in the face lattice of `p` such that all faces only contain vertices in `vindices`,
 # and the minimal face of the chain is the face defined by inequalities `f`.
-# The implementation follows the same strategy as the face enumeration routine
+# IMPORTANT: `f` must be the inclusion-maximal subset of halfspaces incident to the face because at each step 
+#            of the chain, at least one halfspace index is dropped, and no new index enters.
+#            This means that the length of the chain is at most length(f)+1. Fails, e.g., when `f ` only contains two disjoint facets.
 function maxchain(p::Polytope, f::AbstractVector{Int}, vindices::AbstractVector{Int}=1:nvertices(p))
-    # enumerate all faces that properly contain the current face `f`: since we have a polytope,
+    # Implementation strategy is the same as for `facesofdim`:
+    # We enumerate all faces that properly contain the current face `f`. Since we have a polytope,
     # each such face must contain all vertices of the current face plus (at least) one additional vertex 
     # that is not incident to the current face
     containing_faces = [
@@ -239,7 +239,7 @@ i.e., a finite sequence of faces
 ```math
 \\emptyset = F_{-1} \\subsetneq F_0 \\subsetneq F_1 \\subsetneq \\dots \\subsetneq F_d
 ```
-for which `d` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and `d` is its dimension.
+for which ``d``` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and ``d``` is its dimension.
 
 See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
 
@@ -309,6 +309,55 @@ julia> dim(p, [1, 2])
 dim(p::Polytope, i::Int) = dim(p, [i])
 
 """
+    codim(p::Polytope, indices)
+
+Compute the codimension of the face of `p` that is defined by the inequalities in `indices`.
+
+The codimension is defined as `dim(p) - dim(p, indices)`. For the sake of consistency, 
+we use the convention that the codimension of the empty face of a ``d``-dimensional polytope is ``d+1``.
+
+Similarly to [`dim`](@ref), the codimension is computed by finding a maximal chain of faces
+between the given face and `p` itself in the face lattice of `p`.
+
+See also [`dim`](@ref).
+"""
+function codim(p::Polytope, indices::AbstractVector{Int})
+    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
+
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+
+    indices = _incidentfacets(p, _incidentvertices(p, indices))
+    return length(maxchain(p, indices)) - 1
+end
+"""
+    codim(p::Polytope, i::Int)
+
+Same as `codim(p, [i])`.
+
+# Examples
+```jldoctest
+julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
+Polytope{Rational{BigInt}}
+
+julia> codim(p, Int[])
+0
+
+julia> codim(p, 1)
+1
+
+julia> codim(p, [1, 3])
+2
+
+julia> codim(p, [1, 2])
+3
+```
+"""
+codim(p::Polytope, i::Int) = codim(p, [i])
+
+
+"""
     facets(p::Polytope)
 
 Return a minimal subset of inequality indices that contains one inequality for each facet of `p`.
@@ -326,8 +375,12 @@ function facets(p::Polytope)
     b = Polyhedra.hrep(p.poly).b
     nf = nhalfspaces(p)
 
+    # We first drop all inequalities that are not facet-defining. Detecting redundancy among the remaining
+    # inequalities is straightforward: two inequalities define the same facet iff their outer normals are
+    # positive scalar multiples of each other
+
     # BitVector whose i-th entry indicates whether inequality i is facet-defining
-    isfacet = dim.(p, 1:nf) .== dim(p)-1
+    isfacet = codim.(p, 1:nf) .== 1
     # keep track of inequalities whose deletion will leave an irredundant inequality description
     # their indices will be set to false in the following loop
     keep = trues(nf)
@@ -342,11 +395,11 @@ function facets(p::Polytope)
             # find a column r of A such that A[j,r] is nonzero
             # and scale the row j such that this entry matches A[i,r] in absolute value
             r = findfirst(A[j,:] .!= 0)
-            if A[i,r] == 0  # dismiss right away, since we would have to scale j by 0
-                continue
-            end
-            α = abs(A[i,r]) / abs(A[j,r])
+            A[i,r] != 0 || continue  # dismiss right away, since we would have to scale j by 0  
 
+            α = A[i,r] / A[j,r]
+            α > 0 || continue   # rows must be positive scalar multiples of 
+                                # each other in order to define the same facet
             # if the rescaled row j is now identical to row i, then i and j must define the same facet
             # (and the corresponding right-hand sides are necessarily identical too)
             if A[j,:] * α == A[i,:]
@@ -376,7 +429,7 @@ for each point in `p`.
 
 See also [`facets`](@ref).
 """
-impliciteqs(p::Polytope) = [i for i=1:nhalfspaces(p) if dim(p, i) == dim(p)]
+impliciteqs(p::Polytope) = findall(reduce(.&, p.inc))
 
 #
 function verticesonly(p::Polytope)

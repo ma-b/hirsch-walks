@@ -13,7 +13,7 @@
 #md #     Click on the badge above to view it in [nbviewer](https://nbviewer.jupyter.org/).
 
 #src ==========================
-# ## Dimension 5
+# ## Good faces in dimension 5
 
 # To begin, let us enumerate the good 2-faces of the 5-dimensional spindle.
 
@@ -64,12 +64,12 @@ plot_arr = nothing # hide
 #src #md # ![](s-25-5-all.svg)
 
 #src ==========================
-# ## Dimension 20
+# ## Good faces in dimension 20
 
 #src ==========================
-# ### Warm-up: Patterns in the inequality description
-# Let us first take a look at the inequality description of the 20-dimensional spindle.
-# A minimal description is provided in the file `s-25.txt`. Its contents are as follows:
+# ### Patterns in the inequality description
+# As a warm-up, let's take a look at the inequality description of the 20-dimensional spindle.
+# A minimal description is provided in the file `s-25.txt`:
 print(read("s-25.txt", String))
 
 # You may notice that the coefficients in the first couple of columns are very similar to
@@ -103,7 +103,7 @@ A20, b20, labels = readineq("s-25.txt", BigInt)
 s20 = Polytope(A20, b20)
 # To speed up computations, we tell the function `apices` that 
 # the system of linear inequalities specified by `A20` and `b20` is known to be minimal,
-# by using the keyword argument `checkredund` (see also the documentation for [`apices`](@ref)):
+# by using the keyword argument `checkredund` (see also the API documentation on [`apices`](@ref)):
 apx20 = apices(s20; checkredund=false)
 collect(vertices(s20))[apx20]
 
@@ -124,7 +124,7 @@ dist(s20, apx20...)
 # Instead, we may take advantage of the structure in its coefficient matrix to "guess" good 2-faces.
 
 #src ==========================
-# ## "Guessing" good 2-faces
+# ### "Guessing" good 2-faces
 
 # For example, here is one of the good 2-faces of `s` again:
 face = [2,8,9]
@@ -150,7 +150,7 @@ join(unique(labels[face20]), " ")
 isgood2face(s20, face20, apx20...).good
 
 # Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
-# Let us plot this face and the original face `face` side by side.
+# Let us plot this face and the original one in dimension 5 side by side.
 
 
 # Not only do their projections look very similar, they are also combinatorially almost identical.
@@ -161,14 +161,19 @@ dist_labels20 = map(1:nvertices(s20)) do v
 end
 
 #-
-edges = isgood2face(s, face, apx...).edges
-edges20 = isgood2face(s20, face20, apx20...).edges
+#src edges = isgood2face(s, face, apx...).edges
+#src edges20 = isgood2face(s20, face20, apx20...).edges
 
 
 # The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by 
 # which facets of the 5-dimensional spindle `s` they correspond to. Combinatorially,
 # the only change is an additional edge (the one defined by `4`). Most importantly, however,
-# the property of being good is preserved.
+# the property of being good is preserved, since the two vertex sets $V_1$ and $V_2$ are still sufficiently
+# close to the apices. Here, "sufficiently close" again means that there are paths from any pair of vertices in
+# $V_1$ and $V_2$ to the apices `apx20[1]` and `apx20[2]`, respectively, of total length $20-2=18$.
+
+#src ==========================
+# ### ...
 
 # Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
 # the good 2-faces of `s`.

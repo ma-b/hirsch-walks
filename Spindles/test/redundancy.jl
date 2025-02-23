@@ -29,7 +29,7 @@
 
     @testset "Introduce redundancy to s48" begin
         A, b, = readineq(joinpath("..", "examples", "s-48-5.txt"), Int)
-        s = Polytope([A; sum(A[1:10,:],dims=1)], [b; sum(b[1:10])])
+        s = Polytope([A; sum(A[1:10,:], dims=1)], [b; sum(b[1:10])])
         @test nfacets(s) == 48
         
         apx = apices(s)
@@ -40,4 +40,5 @@
     end
 
     # test facets and impliciteqs disjoint
+
 end
