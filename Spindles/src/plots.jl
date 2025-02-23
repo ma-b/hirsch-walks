@@ -77,7 +77,9 @@ either as a 2D projection onto the plane (if the argument `usecoordinates` is se
 # Keywords
 
 * `usecoordinates`: If `true` (default), plot a 2D projection. Otherwise draw the graph.
-* `vertexlabels`: A list of strings or `nothing` to suppress labels. Default: ... `vertexlabels[i]` for vertex `i`.
+* `vertexlabels`: An indexable collection of strings (such as `AbstractVector` or `AbstractDict`), or `nothing` to suppress labels. 
+  Default: ... 
+  `vertexlabels[i]` for vertex `i`.
 * `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
 
@@ -98,7 +100,7 @@ attributes related to annotations. They are hardcoded in `plot2face`.
 function plot2face(p::Polytope, indices::AbstractVector{Int}; 
     # custom keyword arguments:
     usecoordinates::Bool = true, 
-    vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}} = map(string, 1:nvertices(p)),
+    vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}, AbstractDict{Int, <:AbstractString}} = map(string, 1:nvertices(p)),
     ineqlabels::Union{Nothing, AbstractVector{<:AbstractString}} = map(string, 1:nhalfspaces(p)),
     unique_labels_only::Bool = true,
     # omit_indices::Bool
@@ -171,7 +173,8 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
     # vertex labels
     if vertexlabels !== nothing
         for i=1:n
-            labeltext = vertexlabels[cyclic[i]]
+            # if index/key not found, don't print a label
+            labeltext = get(vertexlabels, cyclic[i], nothing)
 
             annotate!(
                 xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 
