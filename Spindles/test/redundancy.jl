@@ -10,10 +10,16 @@
         cube = Polytope(B, d)
         @test nvertices(cube) == 8
 
-        isfacet(i::Int) = dim(cube, i) == dim(cube)-1
+        isfacet(i::Int) = codim(cube, i) == 1
 
         @test all( isfacet.([1:6; 9])) # facets
         @test !any(isfacet.([7,8]))    # non-facets
+
+        # test codim of lower-dim faces that are already defined by a subset of their tight inequalities
+        # (see also issue_codim.jl)
+        for i=1:nhalfspaces(cube)
+            @test dim(cube, i) + codim(cube, i) == dim(cube, i)
+        end
 
         for v=1:nvertices(cube)
             apx = apices(cube, v)

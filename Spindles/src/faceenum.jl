@@ -265,6 +265,9 @@ end
 
 Compute the dimension of the face of `p` that is defined by the inequalities in `indices`.
 If `indices` is empty, this is the same as `dim(p)`.
+
+The implementation idea is the same as above except that the maximal face of the chain is the face
+defined by `indices`.
 """
 function dim(p::Polytope, indices::AbstractVector{Int})
     all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
@@ -317,7 +320,7 @@ by the inequalities in `indices`.
 
 For the sake of consistency, 
 we define the codimension of the empty face of a ``d``-dimensional polytope as ``d+1``.
-Like [`dim`](@ref), the codimension is computed by finding a maximal chain of faces
+The implementation is complementary to [`dim`](@ref) and computes a maximal chain of faces
 between the given face and `p` itself in the face lattice of `p`.
 
 See also [`dim`](@ref).

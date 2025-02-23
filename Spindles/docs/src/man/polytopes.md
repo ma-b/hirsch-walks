@@ -109,6 +109,14 @@ incidentvertices
 Spindles.dim
 ```
 
+As in the example above, [`dim`](@ref Spindles.dim) can be used to test whether an inequality is facet-defining 
+for a polytope `p`. However, this may be slow in high dimensions, since [`dim`](@ref Spindles.dim) needs to
+compute a chain of faces starting from the empty face and leading up to the given face. For a facet, such a chain
+may be long. To speed up computations in those cases, consider the complementary approach to the implementation of 
+[`dim`](@ref Spindles.dim): Start the chain of faces not at the empty face but at the given face, and extend it 
+up to the maximal face in the face lattice (the polytope `p` itself). From the length of the resulting chain, one 
+can easily read off the *codimension* of the face (which equals 1 for a facet):
+
 ```@docs
 codim
 ```
