@@ -239,9 +239,10 @@ i.e., a finite sequence of faces
 ```math
 \\emptyset = F_{-1} \\subsetneq F_0 \\subsetneq F_1 \\subsetneq \\dots \\subsetneq F_d
 ```
-for which ``d``` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and ``d``` is its dimension.
+for which ``d`` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and ``d`` is its dimension.
 
-See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
+See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim), 
+[`codim`](@ref).
 
 # Examples
 ```jldoctest
@@ -311,12 +312,12 @@ dim(p::Polytope, i::Int) = dim(p, [i])
 """
     codim(p::Polytope, indices)
 
-Compute the codimension of the face of `p` that is defined by the inequalities in `indices`.
+Compute the codimension `dim(p) - dim(p, indices)` of the face of `p` that is defined 
+by the inequalities in `indices`. 
 
-The codimension is defined as `dim(p) - dim(p, indices)`. For the sake of consistency, 
-we use the convention that the codimension of the empty face of a ``d``-dimensional polytope is ``d+1``.
-
-Similarly to [`dim`](@ref), the codimension is computed by finding a maximal chain of faces
+For the sake of consistency, 
+we define the codimension of the empty face of a ``d``-dimensional polytope as ``d+1``.
+Like [`dim`](@ref), the codimension is computed by finding a maximal chain of faces
 between the given face and `p` itself in the face lattice of `p`.
 
 See also [`dim`](@ref).
