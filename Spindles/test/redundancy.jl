@@ -18,7 +18,7 @@
         # test codim of lower-dim faces that are already defined by a subset of their tight inequalities
         # (see also issue_codim.jl)
         for i=1:nhalfspaces(cube)
-            @test dim(cube, i) + codim(cube, i) == dim(cube, i)
+            @test dim(cube, i) + codim(cube, i) == dim(cube)
         end
 
         for v=1:nvertices(cube)
