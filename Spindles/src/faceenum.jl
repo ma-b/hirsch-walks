@@ -90,11 +90,11 @@ function computefacesofdim!(p::Polytope, k::Int)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
-        p.faces[0] = [incidentfacets(p, [v]) for v=1:nv]
+        p.faces[0] = [_incidentfacets(p, [v]) for v=1:nv]
     elseif k == 1
         # call more efficient edge enumeration routine
         # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
-        p.faces[1] = [incidentfacets(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
+        p.faces[1] = [_incidentfacets(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
     else
         p.faces[k] = Vector{Vector{Int}}()
 
@@ -279,7 +279,7 @@ function dim(p::Polytope, indices::AbstractVector{Int})
     if isempty(indices)
         return length(maxchain(p, 1:nhalfspaces(p))) - 2
     else
-        return length(maxchain(p, 1:nhalfspaces(p), incidentvertices(p, indices))) - 2
+        return length(maxchain(p, 1:nhalfspaces(p), _incidentvertices(p, indices))) - 2
     end
 end
 
