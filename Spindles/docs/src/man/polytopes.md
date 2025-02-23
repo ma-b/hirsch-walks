@@ -109,6 +109,10 @@ incidentvertices
 Spindles.dim
 ```
 
+```@docs
+codim
+```
+
 ## Redundancy and implicit equations
 
 When constructing a `Polytope` from an inequality description, *any* inequality description is allowed. 
