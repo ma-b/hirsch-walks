@@ -165,6 +165,10 @@ dist_labels20 = Dict(map(incidentvertices(s20, face20)) do v
     v => "$v\n" * join(dist.(s20, apx20, v), " | ")
 end)
 
+# Note here that we only generated labels for the vertices of `face20` and stored them in a more compact dictionary
+# rather than a (long) list of labels for *all* vertices of *s20*. For the purpose of plotting,
+# this does not make a difference, since the function [`plot2face`] also accepts dictionaries of labels: 
+
 #-
 edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges

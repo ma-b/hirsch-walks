@@ -1,14 +1,13 @@
 # Plotting faces
 
-Since the initial purpose of *Spindles.jl* is the detection of 2-faces of special polytopes with certain 
-(combinatorial or geometric) properties, the package provides a function to visualize 2-faces. 
-Often drawings help understand those properties (which is also why these documentation pages aim
-to visualize as much as possible.
+Since the initial purpose of *Spindles.jl* is the detection of special 2-faces, 
+the package provides a function to visualize those.
 
 !!! note "Implementation note"
 
-    The implementation in *Spindles.jl* heavily relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
-    Two-dimensional faces of polytopes may also be visualized using [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
+    The implementation in *Spindles.jl* relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
+    Polygons such as 2-faces of polytopes may also be visualized, more generally, 
+    using [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
 
 The plotting function of *Spindles.jl* is called [`plot2face`](@ref) and is best described using an example. 
 

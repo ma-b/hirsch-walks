@@ -77,11 +77,13 @@ either as a 2D projection onto the plane (if the argument `usecoordinates` is se
 # Keywords
 
 * `usecoordinates`: If `true` (default), plot a 2D projection. Otherwise draw the graph.
-* `vertexlabels`: An indexable collection of strings (such as `AbstractVector` or `AbstractDict`), or `nothing` to suppress labels. 
-  Default: ... 
-  `vertexlabels[i]` for vertex `i`.
-* `ineqlabels`: A list of strings to be used as facet labels, or `nothing` to suppress labels. Default:
-* `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges. ...
+* `vertexlabels`: An indexable collection (such as `AbstractVector` or `AbstractDict`) of strings, 
+  or `nothing`. If `nothing`, no vertex labels are shown. Otherwise, the label of vertex `i` will 
+  be `vertexlabels[i]`, where missing values are treated as `""`. 
+  If `vertexlabels` is unspecified, use vertex indices as default labels.
+* `ineqlabels`: A collection of strings to be used as facet labels, or `nothing` to suppress labels.
+  If unspecified, use inequality indices as default labels.
+* `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges.
 
 The remaining keyword arguments `kw...` are passed to [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot)
 and can be any plot, subplot, or axis attributes.
@@ -100,8 +102,8 @@ attributes related to annotations. They are hardcoded in `plot2face`.
 function plot2face(p::Polytope, indices::AbstractVector{Int}; 
     # custom keyword arguments:
     usecoordinates::Bool = true, 
-    vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}, AbstractDict{Int, <:AbstractString}} = map(string, 1:nvertices(p)),
-    ineqlabels::Union{Nothing, AbstractVector{<:AbstractString}} = map(string, 1:nhalfspaces(p)),
+    vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}, AbstractDict{Int, <:AbstractString}} = string.(1:nvertices(p)),
+    ineqlabels::Union{Nothing, AbstractVector{<:AbstractString}} = string.(1:nhalfspaces(p)),
     unique_labels_only::Bool = true,
     # omit_indices::Bool
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
@@ -144,7 +146,7 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
     plot(;
         ticks=nothing, legend=false, framestyle=:box, size=(300,300),
         aspect_ratio = usecoordinates ? :auto : :equal,
-        title = ineqlabels !== nothing ? concatlabels(ineqlabels[indices]) : nothing,
+        title = ineqlabels !== nothing ? concatlabels(ineqlabels[indices]) : "",
         kw...
     )
     plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)
@@ -174,7 +176,7 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
     if vertexlabels !== nothing
         for i=1:n
             # if index/key not found, don't print a label
-            labeltext = get(vertexlabels, cyclic[i], nothing)
+            labeltext = get(vertexlabels, cyclic[i], "")
 
             annotate!(
                 xs[i]+K*xs_offset[i], ys[i]+K*ys_offset[i], 

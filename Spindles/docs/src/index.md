@@ -13,8 +13,10 @@ Spindles play an important role in the [construction of counterexamples](https:/
 
 ### Who is this package for?
 *Spindles.jl* is built as a lightweight toolkit for basic computational tasks in polyhedral research. 
-Even though the package was born out of a research project focused on a special class of polytopes, namely spindles, its implementation is not specific to spindles at all. In fact, it allows for representing and analyzing any polytope.
-For example, *Spindles.jl* implements lightweight (and mostly combinatorial) algorithms to enumerate and count faces, compute the dimension, or detect redundancy in a given linear description of a polytope.
+Even though the package was born out of a research project focused on spindles, its implementation is not specific 
+to this special class of polytopes at all. In fact, it allows for representing and analyzing any polytope.
+For example, *Spindles.jl* implements lightweight (and mostly combinatorial) algorithms to enumerate and 
+count faces, compute the dimension, or detect redundancy in a given linear description of a polytope.
 
 Of course, there are many great (and free) software packages and libraries for manipulating polyhedra that offer much more than *Spindles.jl* does. A (non-exhaustive) list of examples from the Julia ecosystem is:
 * [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl): Implements the [double description method](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription)
