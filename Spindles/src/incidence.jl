@@ -7,7 +7,7 @@ export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidentfacet
 """
     vertices(p::Polytope)
 
-Returns an iterator over the vertices of the polytope `p`.
+Return an iterator over the vertices of the polytope `p`.
 """
 vertices(p::Polytope) = Polyhedra.points(p.poly)
 
@@ -86,7 +86,7 @@ end
 # --------------------------------
 
 """
-    apices(p::Polytope [, apex]; checkredund=true) 
+    apices(p::Polytope [, apex::Int]; checkredund=true) 
 
 Check whether `p` is a spindle, i.e., if there is a pair of vertices (the *apices*) for which
 each facet of `p` is incident to exactly one of them. If `p` has a pair of apices, return their indices;
@@ -102,7 +102,7 @@ The optional argument `apex` specifies the index of a vertex that is to be taken
     set `checkredund` to `false`.
   
 !!! note
-    For polytopes created from a system that includes non-facet-defining inequalities, disabling `checkredund`
+    For polytopes created from systems that include non-facet-defining inequalities, disabling `checkredund`
 	can only produce false negatives. All vertices returned by `apices` are guaranteed to be apices.
 
 # Examples
@@ -195,7 +195,7 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
         @warn """
         Cannot find a pair of apices. 
         This may be because all inequalities were assumed to define facets or implicit equations. 
-        Try without `checkredund` if you do believe the polytope is a spindle$(apex !== nothing ? " with $apex as an apex" : "").
+        Try without checkredund=false if you do believe the polytope is a spindle$(apex !== nothing ? " with $apex as an apex" : "").
         """
     end
     return nothing

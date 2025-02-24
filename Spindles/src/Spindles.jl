@@ -11,10 +11,10 @@ export Polytope
 mutable struct Polytope{T}
     const poly::Polyhedra.Polyhedron{T}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
-    graph::Union{Nothing, Graphs.SimpleGraph{Int}}
+    graph::Union{Nothing, Graphs.SimpleGraph{Int}}  # graph
+    dim::Union{Nothing, Int}  # dimension
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
-    dim::Union{Nothing, Int}
-    dists::Union{Nothing, Dict{Int, Vector{Int}}}
+    dists::Union{Nothing, Dict{Int, Vector{Int}}}  # cache graph distance matrix
 
     function Polytope{T}(p::Polyhedra.Polyhedron{T}) where T
         # first check whether `p` is a polytope
@@ -22,7 +22,7 @@ mutable struct Polytope{T}
             throw(ArgumentError("got an unbounded polyhedron"))
         end
 
-        new{T}(p, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), nothing, Dict{Int, Vector{Int}}())
+        new{T}(p, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), Dict{Int, Vector{Int}}())
     end
 end
 # constructor that infers the element type T from the polyhedron
@@ -39,7 +39,7 @@ function Polytope(rep::Union{Polyhedra.MixedMatHRep, Polyhedra.MixedMatVRep}, li
 end
 
 """
-    Polytope(V::AbstractVector{Vector})
+    Polytope(V::AbstractVector{AbstractVector})
 
 Create a polytope from the convex hull of the collection of points `V`.
 """

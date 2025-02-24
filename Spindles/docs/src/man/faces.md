@@ -1,4 +1,4 @@
-# Faces
+# Faces and graphs
 
 ```@meta
 DocTestSetup = quote
@@ -33,6 +33,7 @@ graph
 ```@docs
 dist
 ```
+
 ## Good faces
 
 ```@docs

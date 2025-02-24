@@ -27,7 +27,7 @@ Of course, there are many great (and free) software packages and libraries for m
 The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl), as a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 
 !!! note
-    It should be noted that *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices, and vice versa.
+    It should be noted that *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices and vice versa.
 
 See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
 
