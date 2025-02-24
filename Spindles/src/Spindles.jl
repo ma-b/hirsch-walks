@@ -74,14 +74,19 @@ end
 
 # overload useful Base methods
 
-Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q))) # TODO
-Base.show(io::IO, p::Polytope) = print(io, typeof(p))
+Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))  # TODO
+
+Base.show(io::IO, p::Polytope) = print(io, typeof(p))  # TODO
+Base.summary(p::Polytope) = "$(typeof(p))"
+
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
 Base.broadcastable(p::Polytope) = Ref(p)
 
 
 include("incidence.jl")
 include("faceenum.jl")
+include("dim.jl")
+include("redundancy.jl")
 include("goodfaces.jl")
 include("plots.jl")
 include("io.jl")
