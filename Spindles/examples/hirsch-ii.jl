@@ -91,8 +91,8 @@ A[[3, 7, 2],:]
 # an operation called *wedging*, which plays a crucial role in Santos' construction of a Hirsch
 # counterexample from spindles like `s`.
 
-# The structure that we just observed will be extremely useful in "guessing" good 2-faces of the
-# 20-dimensional spindle encoded in the file above. 
+# For our purposes, the correspondence between rows of `A20` and `A` will be extremely useful
+# in "guessing" good 2-faces of the 20-dimensional spindle.
 
 #src ==========================
 # ### Building the spindle
@@ -130,26 +130,35 @@ dist(s20, apx20...)
 face = [2,8,9]
 isgood2face(s, face, apx...).good
 
-# The corresponding facets of `s20` are
-face20 = [i for (i,label) in enumerate(labels) if parse(Int, label) in face]
+# To get the corresponding facets of `s20`, we define a function
+# that takes a given subset of row `indices` of `A` and sends it to the corresponding rows of `A20`. 
+map5to20(indices) = findall(label -> label in string.(indices), labels)
+map5to20(face)
 
-# However, three facets do not make a 2-face in dimension 20 yet. We need another 15 facet-defining
-# inequalities from the description of `s20` (recall that `s20` is simple). With some geometric intuition of what the wedging
-# operation does, we propose the following rule of thumb: To get up to 18 facets, pick facets from
+# Three facets don't define a 2-face in dimension 20 yet. We need another 15 facet-defining
+# inequalities from the description of `s20` (recall that `s20` is simple). 
+# With some geometric intuition of what the wedging operation does, 
+# we propose the following rule of thumb: To get up to 18 facets, pick facets from
 # those two blocks of "replications" labeled `11` and `25`. Specifically, from each block, pick all
 # facets but one. Let us calculate the number of facets in each block:
-sum(labels .== "11"), sum(labels .== "25")
+length(map5to20([11])), length(map5to20([25]))
+#src sum(labels .== "11"), sum(labels .== "25")
 
 # So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
-# Let us "validate" this rule on `face`.
-blocks = [findall(labels .== ref) for ref in ["11", "25"]]  # all row indices in either of the two blocks
-face20 = [face20; blocks[1][2:end]; blocks[2][2:end]]
-join(unique(labels[face20]), " ")
+# Let us "validate" this rule on `face`. 
+# Suppose that we omit the first index in each block. Then, by our rule, we would expect the following
+# facets to define a good 2-face:
+face20 = [
+    map5to20(face);
+    map5to20([11])[2:end]; 
+    map5to20([25])[2:end]
+]
+#src join(unique(labels[face20]), " ")
 
-# This is the face we would expect to be a good 2-face. Let's check whether it really is:
+# Let's check whether `face20` really has this property.
 isgood2face(s20, face20, apx20...).good
 
-# Great! By omitting the first facet from each block, we immediately found a good 2-face of `s20`.
+# Great! We have found a good 2-face of `s20`.
 # Let us plot this face and the original one in dimension 5 side by side.
 
 plot(
@@ -166,8 +175,8 @@ dist_labels20 = Dict(map(incidentvertices(s20, face20)) do v
 end)
 
 # Note here that we only generated labels for the vertices of `face20` and stored them in a more compact dictionary
-# rather than a (long) list of labels for *all* vertices of *s20*. For the purpose of plotting,
-# this does not make a difference, since the function [`plot2face`] also accepts dictionaries of labels: 
+# rather than a (long) list of labels for *all* vertices of `s20`. For the purpose of plotting,
+# this does not make a difference, since the function [`plot2face`](@ref) also accepts a dictionary of labels: 
 
 #-
 edges = isgood2face(s, face, apx...).edges
@@ -187,9 +196,30 @@ plot(
 # $V_1$ and $V_2$ to the apices `apx20[1]` and `apx20[2]`, respectively, of total length $20-2=18$.
 
 #src ==========================
-# ### ...
+# ### More good faces
 
 # Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
-# the good 2-faces of `s`.
+# the good 2-faces of `s`. The following code prints one line for each good 2-face of the 5-dimensional
+# spindle `s`, listing its incident facets with their indices in `A` and the corresponding indices
+# in `A20`. Additionally, one possible choice of index pairs according to our rule of thumb above is printed.
 
-#src TODO
+for (count, gf) in enumerate(goodfaces)
+    # loop through all pairs of indices in the two blocks corresponding to labels 11 and 25
+    for i = 1:length(map5to20([11])), j = 1:length(map5to20([25]))
+        # the face obtained after omitting i and j is:
+        f = unique([
+            map5to20(gf.facets);
+            map5to20([11])[1:end .!= i]; 
+            map5to20([25])[1:end .!= j]
+        ])
+        
+        if isgood2face(s20, f, apx20...).good
+            println("good face #$(count):\t", gf.facets, "\t-> ", map5to20(gf.facets), "\t(except $i, $j)")
+            break
+        end
+    end
+end
+
+# Notice that some good faces of `s` are incident to facets `11` or `25`. Recall that the corresponding rows of `A`
+# are precisely those that were "replicated" to obtain `A20` from `A`. For those good faces, the analogue face
+# in dimension 20 needs to be defined from *all* facets in the respective block of replications.

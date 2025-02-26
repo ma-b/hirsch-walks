@@ -64,7 +64,7 @@ end
     dim(p::Polytope, indices)
     dim(p::Polytope, i::Int)
 
-Compute the dimension of the face of `p` defined by the inequalities 
+Compute the dimension of the face of `p` that is defined by the inequalities 
 in the collection `indices`, or by the single inequality at index `i`.
 If `indices` is empty, this is the same as `dim(p)`.
 
@@ -114,7 +114,7 @@ dim(p::Polytope, i::Int) = dim(p, [i])
     codim(p::Polytope, indices)
     codim(p::Polytope, i::Int)
 
-Compute the codimension `dim(p) - dim(p, indices)` of the face of `p` defined 
+Compute the codimension `dim(p) - dim(p, indices)` of the face of `p` that is defined 
 by the inequalities in `indices`, or by the single inequality at index `i`.
 
 For the sake of consistency, 
