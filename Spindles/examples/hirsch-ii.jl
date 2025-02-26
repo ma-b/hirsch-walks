@@ -58,6 +58,7 @@ end
 ncols = 4
 nrows = ceil(Int, length(plot_arr) / ncols)
 plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
+#-
 plot_arr = nothing # hide
 #src #md savefig("s-25-5-all.svg"); nothing # hide
 
@@ -131,7 +132,7 @@ face = [2,8,9]
 isgood2face(s, face, apx...).good
 
 # To get the corresponding facets of `s20`, we define a function
-# that takes a given subset of row `indices` of `A` and sends it to the corresponding rows of `A20`. 
+# that sends a given subset of row `indices` of `A` to the corresponding rows of `A20`. 
 map5to20(indices) = findall(label -> label in string.(indices), labels)
 map5to20(face)
 
@@ -146,8 +147,8 @@ length(map5to20([11])), length(map5to20([25]))
 
 # So, in total, our proposed rule of thumb would indeed give us the desired number of $9+8-2=15$ facets.
 # Let us "validate" this rule on `face`. 
-# Suppose that we omit the first index in each block. Then, by our rule, we would expect the following
-# facets to define a good 2-face:
+# Suppose that we omit the first index in each block. Then, by our rule, we would expect the following 18
+# facets to define a 2-face of `s20`:
 face20 = [
     map5to20(face);
     map5to20([11])[2:end]; 
@@ -155,10 +156,11 @@ face20 = [
 ]
 #src join(unique(labels[face20]), " ")
 
-# Let's check whether `face20` really has this property.
+# Let's check whether they do, using [`isgood2face`](@ref) (which not only tests a face for being good
+# but also checks its dimension first).
 isgood2face(s20, face20, apx20...).good
 
-# Great! We have found a good 2-face of `s20`.
+# Great! We have indeed found a good 2-face of `s20`.
 # Let us plot this face and the original one in dimension 5 side by side.
 
 plot(
@@ -196,7 +198,7 @@ plot(
 # $V_1$ and $V_2$ to the apices `apx20[1]` and `apx20[2]`, respectively, of total length $20-2=18$.
 
 #src ==========================
-# ### More good faces
+# ### Many good faces
 
 # Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
 # the good 2-faces of `s`. The following code prints one line for each good 2-face of the 5-dimensional
@@ -214,12 +216,12 @@ for (count, gf) in enumerate(goodfaces)
         ])
         
         if isgood2face(s20, f, apx20...).good
-            println("good face #$(count):\t", gf.facets, "\t-> ", map5to20(gf.facets), "\t(except $i, $j)")
+            println("good face #$(count):\t", gf.facets, "\t->   ", map5to20(gf.facets), "\t(except $i, $j)")
             break
         end
     end
 end
 
-# Notice that some good faces of `s` are incident to facets `11` or `25`. Recall that the corresponding rows of `A`
+# Notice that four good faces of `s` are incident to facets `11` or `25`. Recall that the corresponding rows of `A`
 # are precisely those that were "replicated" to obtain `A20` from `A`. For those good faces, the analogue face
-# in dimension 20 needs to be defined from *all* facets in the respective block of replications.
+# in dimension 20 needs to be contained in *all* facets of the respective block of replications.
