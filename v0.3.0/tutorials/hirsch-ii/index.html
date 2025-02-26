@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Spindles and the Hirsch conjecture II · Spindles.jl</title><meta name="title" content="Spindles and the Hirsch conjecture II · Spindles.jl"/><meta property="og:title" content="Spindles and the Hirsch conjecture II · Spindles.jl"/><meta property="twitter:title" content="Spindles and the Hirsch conjecture II · Spindles.jl"/><meta name="description" content="Documentation for Spindles.jl."/><meta property="og:description" content="Documentation for Spindles.jl."/><meta property="twitter:description" content="Documentation for Spindles.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">Spindles.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Tutorials</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../firststeps/">First steps</a></li><li><a class="tocitem" href="../hirsch-i/">Spindles and the Hirsch conjecture I</a></li><li class="is-active"><a class="tocitem" href>Spindles and the Hirsch conjecture II</a><ul class="internal"><li><a class="tocitem" href="#Good-faces-in-dimension-5"><span>Good faces in dimension 5</span></a></li><li><a class="tocitem" href="#Good-faces-in-dimension-20"><span>Good faces in dimension 20</span></a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../man/api/">Index</a></li><li><a class="tocitem" href="../../man/polytopes/">Polytopes</a></li><li><a class="tocitem" href="../../man/dimension/">Dimension</a></li><li><a class="tocitem" href="../../man/faces/">Faces and graphs</a></li><li><a class="tocitem" href="../../man/plots/">Plots</a></li><li><a class="tocitem" href="../../man/io/">File I/O</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Spindles and the Hirsch conjecture II</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Spindles and the Hirsch conjecture II</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ma-b/hirsch-walks" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ma-b/hirsch-walks/blob/main/Spindles/examples/hirsch-ii.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Spindles-and-the-Hirsch-conjecture-II"><a class="docs-heading-anchor" href="#Spindles-and-the-Hirsch-conjecture-II">Spindles and the Hirsch conjecture II</a><a id="Spindles-and-the-Hirsch-conjecture-II-1"></a><a class="docs-heading-anchor-permalink" href="#Spindles-and-the-Hirsch-conjecture-II" title="Permalink"></a></h1><p><a href="https://nbviewer.jupyter.org/github/ma-b/hirsch-walks/blob/gh-pages/v0.3.0/tutorials/Spindles and the Hirsch conjecture II.ipynb"><img src="https://img.shields.io/badge/show-nbviewer-579ACA.svg" alt/></a></p><p>In the second part of the tutorial, we will be analyzing the lowest-dimensional counterexample to the (bounded) Hirsch conjecture known to date. It is a spindle with 40 facets in dimension 20 that is constructed from a 5-dimensional &quot;base&quot; spindle found by <a href="https://arxiv.org/abs/1202.4701">Matschke, Santos, and Weibel</a>. Following the terminology of <a href="../hirsch-i/#Spindles-and-the-Hirsch-conjecture-I">part I</a> of this tutorial, our goal is to find <em>good 2-faces</em>.</p><div class="admonition is-info"><header class="admonition-header">Note</header><div class="admonition-body"><p>This example is also available as a Jupyter notebook. Click on the badge above to view it in <a href="https://nbviewer.jupyter.org/">nbviewer</a>.</p></div></div><h2 id="Good-faces-in-dimension-5"><a class="docs-heading-anchor" href="#Good-faces-in-dimension-5">Good faces in dimension 5</a><a id="Good-faces-in-dimension-5-1"></a><a class="docs-heading-anchor-permalink" href="#Good-faces-in-dimension-5" title="Permalink"></a></h2><p>To begin, let us enumerate the good 2-faces of the 5-dimensional spindle.</p><pre><code class="language-julia hljs">using Spindles
+A, b, = readineq(&quot;../../../examples/s-25-5.txt&quot;, BigInt)
+s = Polytope(A, b)
+apx = apices(s)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Int64}:
+  1
+ 64</code></pre><div class="admonition is-info"><header class="admonition-header">Note</header><div class="admonition-body"><p>We created <code>s</code> from rational data with numerators and denominators of type <code>BigInt</code> (this is the second argument passed to <code>readineq</code>). Choosing <code>Int</code> here (as in <a href="../hirsch-i/#Reading-a-spindle-from-a-file">part I</a> of this tutorial) would have produced an integer overflow error. See also the section on <a href="https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic">arbitrary-precision arithmetic</a> in the Julia language documentation.</p></div></div><p>The following code finds all good 2-faces of <code>s</code>.</p><pre><code class="language-julia hljs">goodfaces = []
+for f in sort(facesofdim(s, 2))
+    fstate = isgood2face(s, f, apx...)
+    if fstate.good
+        push!(goodfaces, fstate)
+    end
+end
+length(goodfaces)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">32</code></pre><p>Next, let&#39;s plot the graph of each of those 32 good 2-faces:</p><pre><code class="language-julia hljs">using Plots
+
+dist_labels = map(1:nvertices(s)) do v
+    &quot;$v\n&quot; * join(dist.(s, apx, v), &quot; | &quot;)
+end
+
+plot_arr = []
+for fstate in goodfaces
+    push!(plot_arr,
+        plot2face(s, fstate.facets;
+            vertexlabels=dist_labels, usecoordinates=false, directed_edges=fstate.edges
+        )
+    )
+end
+
+ncols = 4
+nrows = ceil(Int, length(plot_arr) / ncols)
+plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title=&quot;Good 2-faces&quot;)</code></pre><img src="68b409a5.svg" alt="Example block output"/><h2 id="Good-faces-in-dimension-20"><a class="docs-heading-anchor" href="#Good-faces-in-dimension-20">Good faces in dimension 20</a><a id="Good-faces-in-dimension-20-1"></a><a class="docs-heading-anchor-permalink" href="#Good-faces-in-dimension-20" title="Permalink"></a></h2><h3 id="Patterns-in-the-inequality-description"><a class="docs-heading-anchor" href="#Patterns-in-the-inequality-description">Patterns in the inequality description</a><a id="Patterns-in-the-inequality-description-1"></a><a class="docs-heading-anchor-permalink" href="#Patterns-in-the-inequality-description" title="Permalink"></a></h3><p>As a warm-up, let&#39;s take a look at the inequality description of the 20-dimensional spindle. A minimal description is provided in the file <code>s-25.txt</code>:</p><pre><code class="language-julia hljs">print(read(&quot;../../../examples/s-25.txt&quot;, String))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># 20-dimensional spindle with 40 facets and length 21
+# due to Matschke, Santos, and Weibel (see Table 1 in https://arxiv.org/abs/1202.4701)
+3 1 -1 0 0 -21 7 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0 0
+7 1 -1 0 0 -16 15 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0 0
+2 1 -1 0 0 0 32 0 0 0 0 0 0 0 0 0 0 0 0 -1 -1 0
+8 1 -1 0 0 16 15 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 -1
+4 1 -1 0 0 21 7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+6 1 -1 0 0 20 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1
+1 1 -1 0 0 0 -32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+5 1 -1 0 0 -20 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+9 1 -1 -3/50 1/25 0 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+10 1 -1 3/50 1/25 0 -30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+12 1 -1 3/1000 -7/1000 0 -159/5 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 -10000000000 -100000000000 -100000000000 -100000000000 -100000000000 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 10000000 0 0 0 0 0 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 10000000 0 0 0 0 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 10000000 0 0 0 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 10000000000 0 0 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 -10000000000 100000000000 0 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 -10000000000 -100000000000 100000000000 0 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 -10000000000 -100000000000 -100000000000 100000000000 0 -1 0 0 0 0 0 0
+11 1 -1 -3/1000 -7/1000 0 159/5 -10000000 -10000000 -10000000 -10000000000 -100000000000 -100000000000 -100000000000 100000000000 -1 0 0 0 0 0 0
+13 1 1 -60 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0 0 0 0
+18 1 1 -8 30 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0 0 0
+16 1 1 0 33 0 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0 0
+20 1 1 2 32 0 0 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0 0
+14 1 1 55 0 0 0 0 0 0 0 0 0 -1 -1 0 0 0 0 0 0 0
+19 1 1 34 -36 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0
+15 1 1 0 -76 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+17 1 1 -44 -34 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+21 1 1 20 0 -1/5 1/5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+22 1 1 -2999/50 0 3/25 1/5 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0
+23 1 1 -299999/5000 0 0 -1/100 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0
+24 1 1 549/10 0 -1/5000 -1/800 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 -10000000 -10000000 -100000000 -100000000 -1000000000
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 100000 0 0 0 0 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 10000000 0 0 0 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 10000000 0 0 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 -10000000 10000000 0 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 -10000000 -10000000 100000000 0 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 -10000000 -10000000 -100000000 100000000 0
+25 1 1 54 0 -1/500 1/80 0 0 0 0 0 0 0 0 -100000 -10000000 -10000000 -10000000 -100000000 -100000000 1000000000</code></pre><p>You may notice that the coefficients in the first couple of columns are very similar to those of <code>A</code>, the coefficient matrix of the 5-dimensional &quot;base&quot; spindle <code>s</code>. This similarity is no coincidence: the matrix encoded in the file above is derived from <code>A</code> in a highly structured way. Each row has a &quot;counterpart&quot; in <code>A</code>. For convenience, each row above is already labeled by the index of its &quot;counterpart&quot;. For example, the labels of the first three rows (the numbers in the first column) are</p><pre><code class="language-julia hljs">[3, 7, 2]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
+ 3
+ 7
+ 2</code></pre><p>and the corresponding rows of <code>A</code> are</p><pre><code class="language-julia hljs">A[[3, 7, 2],:]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3×5 Matrix{Rational{BigInt}}:
+ 1  0  0  21   -7
+ 1  0  0  16  -15
+ 1  0  0   0  -32</code></pre><p>If you inspect those row labels closely, you may notice a pattern. Two labels appear multiple times, namely  <code>11</code> and <code>25</code>. The corresponding rows of <code>A</code> have been &quot;replicated&quot; a number of times. Each time, a new nonzero entry is added to the right whose order of magnitude is much larger than that of all other coefficients. At the polyhedral level, this &quot;replication&quot; of rows is reflected by an operation called <em>wedging</em>, which plays a crucial role in Santos&#39; construction of a Hirsch counterexample from spindles like <code>s</code>.</p><p>For our purposes, the correspondence between rows of <code>A20</code> and <code>A</code> will be extremely useful in &quot;guessing&quot; good 2-faces of the 20-dimensional spindle.</p><h3 id="Building-the-spindle"><a class="docs-heading-anchor" href="#Building-the-spindle">Building the spindle</a><a id="Building-the-spindle-1"></a><a class="docs-heading-anchor-permalink" href="#Building-the-spindle" title="Permalink"></a></h3><p>Before we examine its faces, let us first read the file and construct a <code>Spindle</code> object from it.</p><pre><code class="language-julia hljs">A20, b20, labels = readineq(&quot;../../../examples/s-25.txt&quot;, BigInt)
+s20 = Polytope(A20, b20)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Polytope{Rational{BigInt}}</code></pre><p>To speed up computations, we tell the function <code>apices</code> that the system of linear inequalities specified by <code>A20</code> and <code>b20</code> is known to be minimal, by using the keyword argument <code>checkredund</code> (see also the API documentation on <a href="../../man/polytopes/#Spindles.apices"><code>apices</code></a>):</p><pre><code class="language-julia hljs">apx20 = apices(s20; checkredund=false)
+collect(vertices(s20))[apx20]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2-element Vector{Vector{Rational{BigInt}}}:
+ [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</code></pre><p>Note that <code>s20</code> is simple:</p><pre><code class="language-julia hljs">using Graphs: degree
+all(degree(graph(s20)) .== dim(s20))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><p>Its most important property, however, is the length of a shortest path between the apices:</p><pre><code class="language-julia hljs">dist(s20, apx20...)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">21</code></pre><p>The Hirsch conjecture would imply that there must be a strictly shorter path, namely of length 20. Therefore, <code>s20</code> is a counterexample to the Hirsch conjecture.</p><p>You may have noticed that computations in dimension 20 take longer than they did in dimension 5. Calling <code>graph</code> or <code>dist</code> for the first time on <code>s20</code> (or any <code>Spindles</code> function that needs the graph, in fact) triggers the computation of the entire graph of <code>s20</code>. Luckily, we don&#39;t have to enumerate all 2-faces of <code>s20</code> to identify good ones. Instead, we may take advantage of the structure in its coefficient matrix to &quot;guess&quot; good 2-faces.</p><h3 id="&quot;Guessing&quot;-good-2-faces"><a class="docs-heading-anchor" href="#&quot;Guessing&quot;-good-2-faces">&quot;Guessing&quot; good 2-faces</a><a id="&quot;Guessing&quot;-good-2-faces-1"></a><a class="docs-heading-anchor-permalink" href="#&quot;Guessing&quot;-good-2-faces" title="Permalink"></a></h3><p>For example, here is one of the good 2-faces of <code>s</code> again:</p><pre><code class="language-julia hljs">face = [2,8,9]
+isgood2face(s, face, apx...).good</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><p>To get the corresponding facets of <code>s20</code>, we define a function that sends a given subset of row <code>indices</code> of <code>A</code> to the corresponding rows of <code>A20</code>.</p><pre><code class="language-julia hljs">map5to20(indices) = findall(label -&gt; label in string.(indices), labels)
+map5to20(face)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
+ 3
+ 4
+ 9</code></pre><p>Three facets don&#39;t define a 2-face in dimension 20 yet. We need another 15 facet-defining inequalities from the description of <code>s20</code> (recall that <code>s20</code> is simple). With some geometric intuition of what the wedging operation does, we propose the following rule of thumb: To get up to 18 facets, pick facets from those two blocks of &quot;replications&quot; labeled <code>11</code> and <code>25</code>. Specifically, from each block, pick all facets but one. Let us calculate the number of facets in each block:</p><pre><code class="language-julia hljs">length(map5to20([11])), length(map5to20([25]))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">(9, 8)</code></pre><p>So, in total, our proposed rule of thumb would indeed give us the desired number of <span>$9+8-2=15$</span> facets. Let us &quot;validate&quot; this rule on <code>face</code>. Suppose that we omit the first index in each block. Then, by our rule, we would expect the following 18 facets to define a 2-face of <code>s20</code>:</p><pre><code class="language-julia hljs">face20 = [
+    map5to20(face);
+    map5to20([11])[2:end];
+    map5to20([25])[2:end]
+]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">18-element Vector{Int64}:
+  3
+  4
+  9
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40</code></pre><p>Let&#39;s check whether they do, using <a href="../../man/faces/#Spindles.isgood2face"><code>isgood2face</code></a> (which not only tests a face for being good but also checks its dimension first).</p><pre><code class="language-julia hljs">isgood2face(s20, face20, apx20...).good</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><p>Great! We have indeed found a good 2-face of <code>s20</code>. Let us plot this face and the original one in dimension 5 side by side.</p><pre><code class="language-julia hljs">plot(
+    plot2face(s, face; vertexlabels=nothing),
+    plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
+    layout=grid(1,2), size=(800,300)
+)</code></pre><img src="a244ea35.svg" alt="Example block output"/><p>Not only do their projections look very similar, the two faces are also combinatorially almost identical. To see this, let us make plots of their graphs. For <code>s20</code>, we would like the same kind of vertex labels that we generated for the smaller spindle above:</p><pre><code class="language-julia hljs">dist_labels20 = Dict(map(incidentvertices(s20, face20)) do v
+    v =&gt; &quot;$v\n&quot; * join(dist.(s20, apx20, v), &quot; | &quot;)
+end)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Dict{Int64, String} with 9 entries:
+  27519 =&gt; &quot;27519\n11 | 10&quot;
+  27671 =&gt; &quot;27671\n13 | 8&quot;
+  28778 =&gt; &quot;28778\n14 | 7&quot;
+  28777 =&gt; &quot;28777\n11 | 10&quot;
+  27518 =&gt; &quot;27518\n12 | 9&quot;
+  28492 =&gt; &quot;28492\n14 | 7&quot;
+  27670 =&gt; &quot;27670\n12 | 9&quot;
+  27503 =&gt; &quot;27503\n13 | 8&quot;
+  27672 =&gt; &quot;27672\n11 | 10&quot;</code></pre><p>Note here that we only generated labels for the vertices of <code>face20</code> and stored them in a more compact dictionary rather than a (long) list of labels for <em>all</em> vertices of <code>s20</code>. For the purpose of plotting, this does not make a difference, since the function <a href="../../man/plots/#Spindles.plot2face"><code>plot2face</code></a> also accepts a dictionary of labels:</p><pre><code class="language-julia hljs">edges = isgood2face(s, face, apx...).edges
+edges20 = isgood2face(s20, face20, apx20...).edges
+
+plot(
+    plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),
+    plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
+    layout=grid(1,2), size=(800,400)
+)</code></pre><img src="c04ae3b7.svg" alt="Example block output"/><p>The figure on the right is the graph of the 2-face in dimension 20, with facets labeled by which facets of the 5-dimensional spindle <code>s</code> they correspond to. Combinatorially, the only change is an additional edge (the one defined by <code>4</code>). Most importantly, however, the property of being good is preserved, since the two vertex sets <span>$V_1$</span> and <span>$V_2$</span> are still sufficiently close to the apices. Here, &quot;sufficiently close&quot; again means that there are paths from any pair of vertices in <span>$V_1$</span> and <span>$V_2$</span> to the apices <code>apx20[1]</code> and <code>apx20[2]</code>, respectively, of total length <span>$20-2=18$</span>.</p><h3 id="Many-good-faces"><a class="docs-heading-anchor" href="#Many-good-faces">Many good faces</a><a id="Many-good-faces-1"></a><a class="docs-heading-anchor-permalink" href="#Many-good-faces" title="Permalink"></a></h3><p>Next, let&#39;s take the analysis one step further and find such a good 2-face in dimension 20 for each of the good 2-faces of <code>s</code>. The following code prints one line for each good 2-face of the 5-dimensional spindle <code>s</code>, listing its incident facets with their indices in <code>A</code> and the corresponding indices in <code>A20</code>. The output also includes a possible choice of index pairs according to our rule of thumb above.</p><pre><code class="language-julia hljs">for (count, gf) in enumerate(goodfaces)
+    # loop through all pairs of indices in the two blocks corresponding to labels 11 and 25
+    for i = 1:length(map5to20([11])), j = 1:length(map5to20([25]))
+        # the face obtained after omitting i and j is:
+        f = unique([
+            map5to20(gf.facets);
+            map5to20([11])[1:end .!= i];
+            map5to20([25])[1:end .!= j]
+        ])
+
+        if isgood2face(s20, f, apx20...).good
+            println(&quot;good face #$(count):\t&quot;, gf.facets, &quot;\t-&gt;   &quot;, map5to20(gf.facets), &quot;\t(except $i, $j)&quot;)
+            break
+        end
+    end
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">good face #1:	[1, 5, 10]	-&gt;   [7, 8, 10]	(except 1, 1)
+good face #2:	[1, 5, 12]	-&gt;   [7, 8, 11]	(except 1, 1)
+good face #3:	[1, 6, 10]	-&gt;   [6, 7, 10]	(except 1, 1)
+good face #4:	[1, 6, 12]	-&gt;   [6, 7, 11]	(except 1, 1)
+good face #5:	[2, 7, 9]	-&gt;   [2, 3, 9]	(except 1, 1)
+good face #6:	[2, 7, 11]	-&gt;   [2, 3, 12, 13, 14, 15, 16, 17, 18, 19, 20]	(except 1, 1)
+good face #7:	[2, 8, 9]	-&gt;   [3, 4, 9]	(except 1, 1)
+good face #8:	[2, 8, 11]	-&gt;   [3, 4, 12, 13, 14, 15, 16, 17, 18, 19, 20]	(except 1, 1)
+good face #9:	[3, 5, 9]	-&gt;   [1, 8, 9]	(except 1, 1)
+good face #10:	[3, 5, 10]	-&gt;   [1, 8, 10]	(except 1, 1)
+good face #11:	[3, 7, 9]	-&gt;   [1, 2, 9]	(except 1, 1)
+good face #12:	[3, 7, 10]	-&gt;   [1, 2, 10]	(except 1, 1)
+good face #13:	[4, 6, 9]	-&gt;   [5, 6, 9]	(except 1, 1)
+good face #14:	[4, 6, 10]	-&gt;   [5, 6, 10]	(except 1, 1)
+good face #15:	[4, 8, 9]	-&gt;   [4, 5, 9]	(except 1, 1)
+good face #16:	[4, 8, 10]	-&gt;   [4, 5, 10]	(except 1, 1)
+good face #17:	[13, 17, 22]	-&gt;   [21, 28, 30]	(except 1, 1)
+good face #18:	[13, 17, 23]	-&gt;   [21, 28, 31]	(except 1, 1)
+good face #19:	[13, 18, 22]	-&gt;   [21, 22, 30]	(except 1, 1)
+good face #20:	[13, 18, 23]	-&gt;   [21, 22, 31]	(except 1, 1)
+good face #21:	[14, 19, 24]	-&gt;   [25, 26, 32]	(except 1, 1)
+good face #22:	[14, 19, 25]	-&gt;   [25, 26, 33, 34, 35, 36, 37, 38, 39, 40]	(except 1, 1)
+good face #23:	[14, 20, 24]	-&gt;   [24, 25, 32]	(except 1, 1)
+good face #24:	[14, 20, 25]	-&gt;   [24, 25, 33, 34, 35, 36, 37, 38, 39, 40]	(except 1, 1)
+good face #25:	[15, 17, 21]	-&gt;   [27, 28, 29]	(except 1, 1)
+good face #26:	[15, 17, 22]	-&gt;   [27, 28, 30]	(except 1, 1)
+good face #27:	[15, 19, 21]	-&gt;   [26, 27, 29]	(except 1, 1)
+good face #28:	[15, 19, 22]	-&gt;   [26, 27, 30]	(except 1, 1)
+good face #29:	[16, 18, 21]	-&gt;   [22, 23, 29]	(except 1, 1)
+good face #30:	[16, 18, 22]	-&gt;   [22, 23, 30]	(except 1, 1)
+good face #31:	[16, 20, 21]	-&gt;   [23, 24, 29]	(except 1, 1)
+good face #32:	[16, 20, 22]	-&gt;   [23, 24, 30]	(except 1, 1)</code></pre><p>Notice that four good faces of <code>s</code> are incident to facets <code>11</code> or <code>25</code>. Recall that the corresponding rows of <code>A</code> are precisely those that were &quot;replicated&quot; to obtain <code>A20</code> from <code>A</code>. For those good faces, the analogue face in dimension 20 needs to be contained in <em>all</em> facets of the respective block of replications.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../hirsch-i/">« Spindles and the Hirsch conjecture I</a><a class="docs-footer-nextpage" href="../../man/api/">Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Wednesday 26 February 2025 22:33">Wednesday 26 February 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
