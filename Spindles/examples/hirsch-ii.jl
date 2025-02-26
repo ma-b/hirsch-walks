@@ -169,7 +169,7 @@ plot(
     layout=grid(1,2), size=(800,300)
 )
 
-# Not only do their projections look very similar, they are also combinatorially almost identical.
+# Not only do their projections look very similar, the two faces are also combinatorially almost identical.
 # To see this, let us make plots of their graphs. For `s20`, we would like the same kind of vertex labels
 # that we generated for the smaller spindle above:
 dist_labels20 = Dict(map(incidentvertices(s20, face20)) do v
@@ -200,10 +200,10 @@ plot(
 #src ==========================
 # ### Many good faces
 
-# Next, let us take this one step further and find such a good 2-face in dimension 20 for each of
+# Next, let's take the analysis one step further and find such a good 2-face in dimension 20 for each of
 # the good 2-faces of `s`. The following code prints one line for each good 2-face of the 5-dimensional
 # spindle `s`, listing its incident facets with their indices in `A` and the corresponding indices
-# in `A20`. Additionally, one possible choice of index pairs according to our rule of thumb above is printed.
+# in `A20`. The output also includes a possible choice of index pairs according to our rule of thumb above.
 
 for (count, gf) in enumerate(goodfaces)
     ## loop through all pairs of indices in the two blocks corresponding to labels 11 and 25
