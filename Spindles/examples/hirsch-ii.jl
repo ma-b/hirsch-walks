@@ -204,9 +204,9 @@ plot(
 # in `A20`. Additionally, one possible choice of index pairs according to our rule of thumb above is printed.
 
 for (count, gf) in enumerate(goodfaces)
-    # loop through all pairs of indices in the two blocks corresponding to labels 11 and 25
+    ## loop through all pairs of indices in the two blocks corresponding to labels 11 and 25
     for i = 1:length(map5to20([11])), j = 1:length(map5to20([25]))
-        # the face obtained after omitting i and j is:
+        ## the face obtained after omitting i and j is:
         f = unique([
             map5to20(gf.facets);
             map5to20([11])[1:end .!= i]; 
