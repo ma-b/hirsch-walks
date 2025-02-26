@@ -78,18 +78,18 @@ See also [`facets`](@ref).
 """
 impliciteqs(p::Polytope) = findall(reduce(.&, p.inc))
 
-#
-function verticesonly(p::Polytope)
+function isvertex(p::Polytope, v::Int)
     if !inciscomputed(p)
         computeinc!(p)
     end
 	
-	nv = nvertices(p)
+	nv = Polyhedra.npoints(p.poly)
+    # TODO assuming 1 <= v <= nv
 
     # a point is a vertex if and only if its set of incident halfspaces 
     # is inclusion-maximal among all points
 
     # f incident to i => f incident to j
-    iscontained(i,j) = all(p.inc[j] .| (~).(p.inc[i]))  # ~ bitwise NOT
-    [i for i=1:nv if !any(iscontained(i,j) for j=1:nv if i != j)]
+    iscontained(i, j) = all(p.inc[j] .| (~).(p.inc[i]))  # ~ bitwise NOT
+    return !any(iscontained(v, j) for j=1:nv if v != j)
 end

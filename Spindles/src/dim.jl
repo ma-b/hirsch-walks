@@ -92,7 +92,7 @@ julia> dim(p, [1, 2])
 ```
 """
 function dim(p::Polytope, indices::AbstractVector{Int})
-    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
+    all(isineqindex.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
 
     if !inciscomputed(p)
         computeinc!(p)
@@ -143,7 +143,7 @@ julia> codim(p, [1, 2])
 ```
 """
 function codim(p::Polytope, indices::AbstractVector{Int})
-    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
+    all(isineqindex.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
 
     if !inciscomputed(p)
         computeinc!(p)

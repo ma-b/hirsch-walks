@@ -17,11 +17,11 @@ vertices(p::Polytope) = Polyhedra.points(p.poly)
 Count the vertices of `p`.
 """
 nvertices(p::Polytope) = Polyhedra.npoints(p.poly)
-isvertex(p::Polytope, v::Int) = 1 <= v <= nvertices(p)
+isvertexindex(p::Polytope, v::Int) = 1 <= v <= nvertices(p)
 
 # convenient shorthands for index checks
 nhalfspaces(p::Polytope) = Polyhedra.nhalfspaces(p.poly)
-isineq(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
+isineqindex(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
 
 # --------------------------------
 # vertex-halfspace incidences
@@ -64,7 +64,7 @@ List the indices of all vertices of the polytope `p` for which each inequality i
 If `indices` is empty, this is the same as `collect(1:nvertices(p))`.
 """
 function incidentvertices(p::Polytope, indices::AbstractVector{Int})
-    all(isineq.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
+    all(isineqindex.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
     
     if !inciscomputed(p)
         computeinc!(p)
@@ -73,7 +73,7 @@ function incidentvertices(p::Polytope, indices::AbstractVector{Int})
 end
 
 function incidentfacets(p::Polytope, indices::AbstractVector{Int})
-    all(isvertex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
+    all(isvertexindex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
 
     if !inciscomputed(p)
         computeinc!(p)
@@ -129,7 +129,7 @@ julia> apices(square, 2)
 ```
 """
 function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true)
-    if apex !== nothing && !isvertex(p, apex)
+    if apex !== nothing && !isvertexindex(p, apex)
         throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
     end
 
