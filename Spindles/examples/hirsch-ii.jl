@@ -49,7 +49,7 @@ end
 plot_arr = []
 for fstate in goodfaces
     push!(plot_arr, 
-        plot2face(s, fstate.facets; 
+        plot2face(s, fstate.indices; 
             vertexlabels=dist_labels, usecoordinates=false, directed_edges=fstate.edges
         )
     )
@@ -210,13 +210,13 @@ for (count, gf) in enumerate(goodfaces)
     for i = 1:length(map5to20([11])), j = 1:length(map5to20([25]))
         ## the face obtained after omitting i and j is:
         f = unique([
-            map5to20(gf.facets);
+            map5to20(gf.indices);
             map5to20([11])[1:end .!= i]; 
             map5to20([25])[1:end .!= j]
         ])
         
         if isgood2face(s20, f, apx20...).good
-            println("good face #$(count):\t", gf.facets, "\t->   ", map5to20(gf.facets), "\t(except $i, $j)")
+            println("good face #$(count):\t", gf.indices, "\t->   ", map5to20(gf.indices), "\t(except $i, $j)")
             break
         end
     end

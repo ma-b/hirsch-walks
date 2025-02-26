@@ -184,7 +184,7 @@ plot2face(s, face;
 # So, in a relaxed regime where paths may pass through the interior of a face, one might consider taking
 # three edges steps from the second apex to some vertex in $V_2$, then apply the two-step "shortcut" through
 # the interior of the face `15⁺ 19⁺ 21⁺`, and end up at the first apex `1`. This yields (at most) 5 steps in total.
-# Recall that in the traditional regime where paths through the interior are forbidden, one cannot do better than 6 steps.
+# Recall that in the traditional setting that forbids paths through the interior, one cannot do better than 6 steps.
 
 # !!! note
 #     It is important to note here that, unlike paths along edges,

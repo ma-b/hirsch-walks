@@ -5,13 +5,13 @@ export isgood2face, dist
 
 # Fields
 * `good::Bool`
-* `facets`: all incident halfspaces
+* `indices`: indices of all incident halfspaces
 * `edges`
 * `vsets`
 """
 struct FaceState
     good::Bool
-    facets::Union{Nothing, Vector{Int}}
+    indices::Union{Nothing, Vector{Int}}
     edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
     vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
 end
