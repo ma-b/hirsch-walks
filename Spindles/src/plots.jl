@@ -200,10 +200,10 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
             )
         end
 
-        ## figure title
-        #title!(concatlabels(ineqlabels[indices]))
         # face label
         annotate!(bx, by, text(concatlabels(ineqlabels[indices]), 10, :center, :steelblue))
+		
+        # plot title has already been set above, possibly with facet labels too
     end
 
     # set limits
@@ -219,12 +219,12 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
         end
 
         for k=1:2
-            # get edge-defining inequality for reference edge
-            efacets = incidentfacets(p, directed_edges[k==1 ? 2 : 1])
-            ineq = findfirst(f -> !(f in indices), efacets)
+            # get an edge-defining inequality for the other edge
+            edgefacets = incidentfacets(p, directed_edges[k==1 ? 2 : 1])
+            ineq = findfirst(f -> !(f in indices), edgefacets)
 
-            (u,v), uniquedir = directedge(p, directed_edges[k], efacets[ineq])
-            # get the indices of the endpoints of the edge as they appear in the cyclic order
+            (u,v), uniquedir = directedge(p, directed_edges[k], edgefacets[ineq])
+            # get the indices of the endpoints of the current edge as they appear in the cyclic order
             i,j = map(x -> findfirst(cyclic .== x), [u,v])
             plot!(
                 xs[[i,j]], ys[[i,j]]; 

@@ -4,21 +4,19 @@ using Graphs: degree
 @testset "Tests for incidence/graph computations" begin
 
     A, b, _ = readineq("../examples/s-25-5.txt", BigInt)  # TODO for others too
-    sp = Polytope(A, b)
-
-    #Spindles.computeinc!(sp)
+    s = Polytope(A, b)
 
     @testset "Redundancy/dimension" begin
-        @test nhalfspaces(sp) == size(A, 1)  # we know that Ax <= b is irredundant
-        @test dim(sp) == 5
+        @test nhalfspaces(s) == size(A, 1)  # we know that Ax <= b is irredundant
+        @test dim(s) == 5
     end
 
     # distances must be symmetric
-    @test dist(sp, apices(sp)...) == dist(sp, reverse(apices(sp))...)
+    @test dist(s, apices(s)...) == dist(s, reverse(apices(s))...)
 
     @testset "Count degenerate vertices" begin
         # find all degenerate vertices
-        @test findall(degree(graph(sp)) .> 5) == findall(map(sum, sp.inc) .> 5)
+        @test findall(degree(graph(s)) .> 5) == findall(map(sum, s.inc) .> 5)
     end
 
     @testset "Incidence matrix" begin
@@ -30,10 +28,10 @@ using Graphs: degree
             [isapprox.(hrep(s.poly).A * v, hrep(s.poly).b) for v in vertices(s)]
         end
 
-        @test sp.inc == inc2(sp) == inc3(sp)
+        @test s.inc == inc2(s) == inc3(s)
     end
 
-    # test the two improper faces: sp itself and the empty face
-    @test incidentvertices(sp, Int[]) == collect(1:nvertices(sp))
-    @test isempty(incidentvertices(sp, collect(1:nhalfspaces(sp))))
+    # test the two improper faces: s itself and the empty face
+    @test incidentvertices(s, Int[]) == collect(1:nvertices(s))
+    @test isempty(incidentvertices(s, 1:nhalfspaces(s)))
 end

@@ -32,18 +32,32 @@ true
 ```
 
 !!! note
-    Two `Polytope`s are considered equal by the `==` operator if and only if they have the same set of vertices.
+    Two `Polytope`s are considered equal by the [`==`](@ref) operator if and only if they have the same set of vertices.
 
-Equivalently, our 2D polytope may be created from the inequality description
+An equivalent description of the 2D polytope `p` is in terms of the following system of linear inequalities:
 ```math
 \begin{aligned}
 0 \le x_1 &\le 1 \\
 0 \le x_2 &\le 1
 \end{aligned}
 ```
-which translates to
+This translates to
 ```jldoctest polytopes
-julia> r = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
+julia> A = [-1 0; 1 0; 0 -1; 0 1]
+4×2 Matrix{Int64}:
+ -1   0
+  1   0
+  0  -1
+  0   1
+
+julia> b = [0, 1, 0, 1]
+4-element Vector{Int64}:
+ 0
+ 1
+ 0
+ 1
+
+julia> r = Polytope(A, b)
 Polytope{Rational{BigInt}}
 
 julia> p == r
@@ -52,11 +66,18 @@ true
 Unlike for the first two constructors above, there is no guarantee that a polyhedron defined by 
 a general system $Ax \le b$ is bounded (and, hence, a polytope). Indeed, 
 if we drop any of the four inequalities above – say the last one –, this property is lost:
-```jldoctest
-julia> Polytope([-1 0; 1 0; 0 -1], [0, 1, 0])
+```jldoctest polytopes
+julia> Polytope(A[1:3,:], b[1:3])
 ERROR: ArgumentError: got an unbounded polyhedron
 [...]
 ```
+
+Even though all examples so far only featured *minimal* descriptions of the two-dimensional 0/1 cube,
+a `Polytope` object can be created from *any* description of the polytope, not necessarily a minimal one.
+In particular, the list of points whose convex hull is the polytope can include non-vertices. Likewise,
+redundant inequalities and implicit equations in a system of linear inequalities are permitted. 
+Such redundancy can be detected, see [Minimal representations](@ref).
+
 
 !!! note "Type parameter"
     [`Polytope`](@ref) is a [parametric type](https://docs.julialang.org/en/v1/manual/types/#Parametric-Types). Namely, the precise type of each of the three objects constructed above is `Polytope{Rational{BigInt}}`, where the parameter `Rational{BigInt}` is called the element type and is inferred from the type of the data
@@ -84,55 +105,6 @@ ERROR: ArgumentError: got an unbounded polyhedron
     import CDDLib
     Polytope(A, b, CDDLib.Library(:exact))
     ``` 
-    
-Also note that lists of points or inequality descriptions passed to one of the [`Polytope`](@ref) constructors need not be minimal: They may include non-vertices; and redundant inequalities or implicit equations in a system of linear inequalities are allowed, too. However, these can be detected, see the section on [Redundancy and implicit equations](@ref) below.
-
-## Vertices
-
-```@docs
-Spindles.vertices
-```
-
-```@docs
-nvertices
-```
-
-## Incidence 
-
-```@docs
-incidentvertices
-```
-
-## Redundancy and implicit equations
-
-When constructing a `Polytope` from an inequality description, *any* inequality description is allowed. 
-In particular, it may contain redundant inequalities (whose deletion leaves the polytope unchanged) or implicit equations (inequalities that are satisfied at equality by all points in the polytope).
-So the inequalities in a given description may be
-partitioned into three sets:
-1. a minimal set of facet-defining inequalities (which may not be unique), 
-2. a (possibly empty) set of implicit equations contained in the inequality system, and 
-3. all remaining inequalities (that may safely be deleted). 
-This partition can be computed using the functions [`facets`](@ref) and [`impliciteqs`](@ref),
-which return the first two sets of the partition.
-
-```@docs
-facets
-```
-
-```@docs
-nfacets
-```
-
-```@docs
-impliciteqs
-```
-
-## Spindles
-
-```@docs
-apices
-```
-
 
 
 ```@meta

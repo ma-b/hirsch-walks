@@ -65,7 +65,7 @@ dist(cube, apx...)
 
 # Behind the scenes, the call to [`dist`](@ref) first computes the graph of `cube`. 
 # The graph can also be accessed directly using [`graph`](@ref), which returns a graph 
-# of a type defined by the [*Graphs.jl*](https://juliagraphs.org/Graphs.jl/) package. 
+# of a type defined by the [Graphs.jl](https://github.com/JuliaGraphs/Graphs.jl) package. 
 # For instance, we may verify the well-known fact that cubes are simple by using the 
 # functions [`dim`](@ref Spindles.dim) and [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 using Graphs: degree

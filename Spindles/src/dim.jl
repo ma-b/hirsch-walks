@@ -98,13 +98,12 @@ function dim(p::Polytope, indices::AbstractVector{Int})
         computeinc!(p)
     end
 
-    # here we use that the minimal facet containing all incident vertices of a face is the face itself
-
     # the maximal face in the chain will have the desired dimension, 
     # so subtract 2 for the (-1)-dim and 0-dim faces (if present)
     if isempty(indices)
         return length(maxchain(p, 1:nhalfspaces(p))) - 2
     else
+        # here we use that the minimal face containing all incident vertices of a face is the face itself
         return length(maxchain(p, 1:nhalfspaces(p), _incidentvertices(p, indices))) - 2
     end
 end
@@ -149,7 +148,9 @@ function codim(p::Polytope, indices::AbstractVector{Int})
         computeinc!(p)
     end
 
-    indices = _incidentfacets(p, _incidentvertices(p, indices))
-    return length(maxchain(p, indices)) - 1
+    # to correctly compute a chain of faces, we need to begin with all facets that contain the given face,
+    # even if the face can be expressed as the intersection of a strict subset of those facets
+    allindices = _incidentfacets(p, _incidentvertices(p, indices))
+    return length(maxchain(p, allindices)) - 1
 end
 codim(p::Polytope, i::Int) = codim(p, [i])

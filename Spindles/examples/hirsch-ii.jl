@@ -223,5 +223,5 @@ for (count, gf) in enumerate(goodfaces)
 end
 
 # Notice that four good faces of `s` are incident to facets `11` or `25`. Recall that the corresponding rows of `A`
-# are precisely those that were "replicated" to obtain `A20` from `A`. For those good faces, the analogue face
+# are precisely those that were "replicated" to obtain `A20` from `A`. For those good faces, the analogous face
 # in dimension 20 needs to be contained in *all* facets of the respective block of replications.

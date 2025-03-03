@@ -14,9 +14,10 @@ using Polyhedra: hrep
         @test [1,0,0,0,0] in apx
         @test [-1,0,0,0,0] in apx
 
-        # verify that the given inequality description is minimal
-        isfacet(i::Int) = dim(s, i) == dim(s)-1
-        @test all(isfacet.(1:nhalfspaces(s)))
+        # verify that the given inequality description is minimal -- in four equivalent ways:
+        @test all(codim.(s, 1:nhalfspaces(s)) .== 1)
+        @test all(dim.(s, 1:nhalfspaces(s)) .== dim(s)-1)
+        @test nfacets(s) == nhalfspaces(s)
         @test isempty(impliciteqs(s))
 
         @testset "Test $(filename) against polymake" begin
@@ -28,7 +29,7 @@ using Polyhedra: hrep
                 return [map(x -> parse(Int, x), split(f)) for f in strlist]
             end
 
-            for k=-1:size(hrep(s.poly).A, 2)
+            for k=-1:5
                 ps = readpolymake(joinpath("polymake", "$(filename)_f$(k).txt"))
                 # convert 0-based polymake indices to 1-based Julia indices
                 ps = map(x->x.+1, ps)

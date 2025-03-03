@@ -15,7 +15,39 @@ the one with the smallest index is selected.
 See also [`nfacets`](@ref), [`impliciteqs`](@ref).
 
 # Examples
+````jldoctest
+julia> A = [-1 0; 1 1; 2 0; 1 0; 0 -1; 0 1]
+6×2 Matrix{Int64}:
+ -1   0
+  1   1
+  2   0
+  1   0
+  0  -1
+  0   1
 
+julia> b = [0, 2, 2, 1, 0, 1]
+6-element Vector{Int64}:
+ 0
+ 2
+ 2
+ 1
+ 0
+ 1
+
+julia> p = Polytope(A, b);
+
+julia> facets(p)
+4-element Vector{Int64}:
+ 1
+ 3
+ 5
+ 6
+
+julia> q = Polytope(A[facets(p),:], b[facets(p)]);
+
+julia> p == q
+true
+````
 """
 function facets(p::Polytope)
     A = Polyhedra.hrep(p.poly).A
@@ -75,15 +107,64 @@ Return the indices of all inequalities that are implicit equations, i.e., that a
 for each point in `p`.
 
 See also [`facets`](@ref).
+
+# Examples
+````jldoctest impliciteqs
+julia> A = [-1 0; 1 0; 0 -1; 0 1]; b = [0, 1, 0, 1];
+
+julia> p = Polytope(A, b);
+
+julia> impliciteqs(p)
+Int64[]
+````
+Now embed the polytope `p` into the hyperplane ``x_3 = 0`` in one dimension higher:
+````jldoctest impliciteqs
+julia> B = [A zeros(Int, 4); 0 0 -1; 0 0 1]
+6×3 Matrix{Int64}:
+ -1   0   0
+  1   0   0
+  0  -1   0
+  0   1   0
+  0   0  -1
+  0   0   1
+
+julia> d = [b; 0; 0]
+6-element Vector{Int64}:
+ 0
+ 1
+ 0
+ 1
+ 0
+ 0
+
+julia> q = Polytope(B, d);
+
+julia> facets(q)
+4-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+
+julia> impliciteqs(q)
+2-element Vector{Int64}:
+ 5
+ 6
+````
 """
-impliciteqs(p::Polytope) = findall(reduce(.&, p.inc))
+function impliciteqs(p::Polytope)
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+    findall(reduce(.&, p.inc))
+end
 
 function isvertex(p::Polytope, v::Int)
     if !inciscomputed(p)
         computeinc!(p)
     end
 	
-	nv = Polyhedra.npoints(p.poly)
+    nv = Polyhedra.npoints(p.poly)
     # TODO assuming 1 <= v <= nv
 
     # a point is a vertex if and only if its set of incident halfspaces 

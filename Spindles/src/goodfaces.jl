@@ -146,12 +146,12 @@ function isgood2face(p::Polytope, indices::AbstractVector{Int}, src::Int, dst::I
 
             if max_dists_plus[1] + max_dists_minus[2] <= dim(p)-2
                 return FaceState(
-                    true, collect(indices), edges, 
+                    true, _incidentfacets(p, indices), edges, 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  # "plus" is closer to 1
                 )
             elseif max_dists_minus[1] + max_dists_plus[2] <= dim(p)-2
                 return FaceState(
-                    true, collect(indices), edges, 
+                    true, _incidentfacets(p, indices), edges, 
                     (cyclic[vertices_minus], cyclic[vertices_plus])   # "minus" is closer to 1
                 )
             end

@@ -8,6 +8,16 @@ export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidentfacet
     vertices(p::Polytope)
 
 Return an iterator over the vertices of the polytope `p`.
+
+# Examples
+````jldoctest
+julia> p = Polytope([1 0; 0 1; 0 1; 1//2 1//2]);
+
+julia> collect(vertices(p))
+2-element Vector{Vector{Rational{Int64}}}:
+ [1, 0]
+ [0, 1]
+````
 """
 vertices(p::Polytope) = Polyhedra.points(p.poly)
 
@@ -55,6 +65,7 @@ function _incidentfacets(p::Polytope, indices::AbstractVector{Int})
         findall(reduce(.&, p.inc[indices]))
     end
 end
+_incidentfacets(p::Polytope, v::Int) = _incidentfacets(p, [v])
 
 """
     incidentvertices(p::Polytope, indices::AbstractVector{Int})
@@ -88,7 +99,7 @@ end
 """
     apices(p::Polytope [, apex::Int]; checkredund=true) 
 
-Check whether `p` is a spindle, i.e., if there is a pair of vertices (the *apices*) for which
+Check whether `p` is a spindle, i.e., whether there is a pair of vertices (the *apices*) for which
 each facet of `p` is incident to exactly one of them. If `p` has a pair of apices, return their indices;
 otherwise return `nothing`.
 
@@ -97,13 +108,14 @@ The optional argument `apex` specifies the index of a vertex that is to be taken
 # Keywords
 * `checkredund::Bool`: If `true` (default), first detect all inequalities in the description of `p` 
     that are not facet-defining for `p`. 
-    Especially in higher dimensions, this step may be time- and memory-consuming.
-    To speed up computations for polytopes created from inequality descriptions that are known to be minimal, 
-    set `checkredund` to `false`.
-  
+    If `p` was created from an inequality description that is known to be minimal, this step may be skipped
+    by setting `checkredund` to `false`.
+
 !!! note
-    For polytopes created from systems that include non-facet-defining inequalities, disabling `checkredund`
-	can only produce false negatives. All vertices returned by `apices` are guaranteed to be apices.
+    In the presence of redundant inequalities, disabling `checkredund` can only produce false negatives: 
+    Whenever `apices` returns a pair of vertices, they are guaranteed to be apices of `p`. The converse, however,
+    is not necessarily true. A spindle may not be detected as such if its inequality description contains
+    inequalities that are not facet-defining.
 
 # Examples
 

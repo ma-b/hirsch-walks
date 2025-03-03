@@ -1,4 +1,4 @@
-# Index
+# API Index
 
 ```@docs
 Spindles

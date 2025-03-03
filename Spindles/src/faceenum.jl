@@ -35,7 +35,7 @@ function computegraph!(p::Polytope)
     
     # (1) brute-force all pairs of vertices that are contained in at least dimension minus 1 common facets
 
-    # we count the number of facets incident with both i and j as follows:
+    # we count the number of facets incident with both vertex i and j as follows:
     n_inc(i::Int, j::Int) = sum(p.inc[i] .& p.inc[j])
     
     pairs = [
@@ -60,7 +60,8 @@ function computegraph!(p::Polytope)
     degenerate_pairs  = [(e,m) for (e,m) in pairs if m > dim(p)-1]
 
     # we use this predicate to check inclusion-maximality: return true if and only if 
-    # each facet incident to all vertices in list `a` is also incident to all vertices in `b`
+    # each facet incident to all vertices in list `a` is also incident to all vertices in `b`, or
+    # in terms of BitVectors, x <= y iff y .| (~).x
     iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, p.inc[b]) .| (~).(reduce(.&, p.inc[a])))  # ~ bitwise NOT
     
     for e in nondegenerate_pairs
@@ -90,10 +91,10 @@ function computefacesofdim!(p::Polytope, k::Int)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
-        p.faces[0] = [_incidentfacets(p, [v]) for v=1:nv]
+        p.faces[0] = _incidentfacets.(p, 1:nv)
     elseif k == 1
         # call more efficient edge enumeration routine
-        # and compute sets of incident facets from adjacent vertex pairs returned by `edges`
+        # and convert pairs of adjacent vertices to sets of incident facets
         p.faces[1] = [_incidentfacets(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
     else
         p.faces[k] = Vector{Vector{Int}}()
@@ -103,7 +104,7 @@ function computefacesofdim!(p::Polytope, k::Int)
 
         proper_supsets = unique(
             # face of dimension one less plus a vertex not contained in it such that 
-            # both are still contained in sufficiently many facets
+            # both are still contained in at least the minimum number of dimension minus k facets
             f[p.inc[v][f]] for v=1:nv, f in lowerfaces
             if !all(p.inc[v][f]) && sum(p.inc[v][f]) >= dim(p)-k  
         )

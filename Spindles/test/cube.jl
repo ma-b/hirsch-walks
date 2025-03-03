@@ -6,7 +6,7 @@
         Polytope(V)
     end
 
-    # n-th standard cross-polytope
+    # n-dimensional standard cross-polytope
     function crosspolytope(n::Int)
         # matrix with one row for each of the 2n vertices
         V = zeros(Int, 2n, n)

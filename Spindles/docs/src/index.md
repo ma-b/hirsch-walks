@@ -1,4 +1,5 @@
 # Spindles.jl
+## Introduction
 
 The goal of *Spindles.jl* is to provide a lightweight interface for representing and analyzing polytopes.
 The initial purpose of the package is to facilitate research in polyhedral theory on so-called spindles.
@@ -12,24 +13,25 @@ A simple example is a cube: For each vertex $u$, there is a unique vertex $v$ th
 Spindles play an important role in the [construction of counterexamples](https://arxiv.org/abs/1006.2814) to the [Hirsch conjecture](https://en.wikipedia.org/wiki/Hirsch_conjecture). In fact, a computational analysis of these counterexamples was the main driver of the development of *Spindles.jl*. More details can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 
 ### Who is this package for?
-*Spindles.jl* is built as a lightweight toolkit for basic computational tasks in polyhedral research. 
-Even though the package was born out of a research project focused on spindles, its implementation is not specific 
-to this special class of polytopes at all. In fact, it allows for representing and analyzing any polytope.
-For example, *Spindles.jl* implements lightweight (and mostly combinatorial) algorithms to enumerate and 
+Even though the package was born out of polyhedral research on spindles, 
+its implementation is not specific to this special class of polytopes at all. 
+In fact, *Spindles.jl* allows for representing and analyzing any polytope. 
+For example, the package implements lightweight (and mostly combinatorial) algorithms to enumerate and 
 count faces, compute the dimension, or detect redundancy in a given linear description of a polytope.
 
-Of course, there are many great (and free) software packages and libraries for manipulating polyhedra that offer much more than *Spindles.jl* does. A (non-exhaustive) list of examples from the Julia ecosystem is:
+Of course, there are many great and free software packages and libraries for manipulating polyhedra.
+Here is a non-exhaustive list of examples from the Julia ecosystem:
 * [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl): Implements the [double description method](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription)
   for converting representations of polyhedra into each other. Also provides an interface to many other libraries for polyhedral computations, see the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 * [Polymake.jl](https://github.com/oscar-system/Polymake.jl): Julia wrapper for [polymake](https://polymake.org/doku.php) and part of the [OSCAR computer algebra system](https://www.oscar-system.org/).
 * [CDDLib.jl](https://github.com/JuliaPolyhedra/CDDLib.jl): Julia wrapper for [cdd](https://people.inf.ethz.ch/fukudak/cdd_home/).
 * [LRSLib.jl](https://github.com/JuliaPolyhedra/LRSLib.jl): Julia wrapper for [lrs](https://cgm.cs.mcgill.ca/~avis/C/lrs.html).
-The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl), as a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
+The latter two are examples of libraries that can also be used with [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl), as can a couple of others listed on the [JuliaPolyhedra website](https://juliapolyhedra.github.io/).
 
 !!! note
-    It should be noted that *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices and vice versa.
+    *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices and vice versa.
 
-See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
+See the [full API reference](@ref "API Index") for more technical details on the package design and its functionalities.
 
 ---
 
@@ -57,7 +59,7 @@ julia> using Spindles
 
 ## Getting started
 For the basic usage of *Spindles.jl*, please read the tutorial on [first steps](@ref "First steps"). 
-The full documentation can be found [here](@ref "Index").
+The full documentation can be found [here](@ref "API Index").
 
 To learn more about how *Spindles.jl* can help analyze counterexamples to the Hirsch conjecture, please check out [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 
