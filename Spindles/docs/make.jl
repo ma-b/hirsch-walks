@@ -56,6 +56,8 @@ makedocs(
         "API Reference" => [
             "Index" => "man/api.md",
             "Polytopes" => "man/polytopes.md",
+            "Minimal representations" => "man/representation.md",
+            "Spindles" => "man/spindles.md",
             "Dimension" => "man/dimension.md",
             "Faces and graphs" => "man/faces.md",
             "Plots" => "man/plots.md",
