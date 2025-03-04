@@ -4,6 +4,10 @@
 
 export facets, nfacets, impliciteqs
 
+# --------------------------------
+# H-redundancy
+# --------------------------------
+
 """
     facets(p::Polytope)
 
@@ -15,37 +19,44 @@ the one with the smallest index is selected.
 See also [`nfacets`](@ref), [`impliciteqs`](@ref).
 
 # Examples
-````jldoctest
-julia> A = [-1 0; 1 1; 2 0; 1 0; 0 -1; 0 1]
-6×2 Matrix{Int64}:
- -1   0
-  1   1
-  2   0
-  1   0
-  0  -1
-  0   1
 
-julia> b = [0, 2, 2, 1, 0, 1]
-6-element Vector{Int64}:
- 0
- 2
- 2
- 1
- 0
- 1
+````jldoctest facets
+julia> A = [-1 0; 1 0; 0 -1; 0 1]; b = [0, 1, 0, 1];
 
 julia> p = Polytope(A, b);
+````
+creates the polytope defined by the system
+```math
+\\begin{aligned}
+0 \\le x_1 &\\le 1 \\\\
+0 \\le x_2 &\\le 1
+\\end{aligned}
+```
 
-julia> facets(p)
+The following inequalities are also valid for `p`:
+```math
+\\begin{aligned}
+3 x_1 &\\le 3 \\\\
+x_1 + x_2 &\\le 2
+\\end{aligned}
+```
+
+Adding them to the original (irredundant) system introduces redundancy:
+````jldoctest facets
+julia> B = [3 0; 1 1; A]; d = [3; 2; b];
+
+julia> q = Polytope(B, d);
+
+julia> f = facets(q)
 4-element Vector{Int64}:
  1
  3
  5
  6
 
-julia> q = Polytope(A[facets(p),:], b[facets(p)]);
+julia> r = Polytope(B[f,:], d[f]);
 
-julia> p == q
+julia> p == q == r
 true
 ````
 """
@@ -109,47 +120,24 @@ for each point in `p`.
 See also [`facets`](@ref).
 
 # Examples
-````jldoctest impliciteqs
-julia> A = [-1 0; 1 0; 0 -1; 0 1]; b = [0, 1, 0, 1];
+The polytope given by
+```math
+\\begin{aligned}
+0 \\le x_1 &\\le 1 \\\\
+x_2 &= 0
+\\end{aligned}
+```
+can be modeled by replacing the equality constraint with two inequalities ``\\pm x_2 \\le 0`` as follows:
+
+````jldoctest
+julia> A = [-1 0; 1 0; 0 -1; 0 1]; b = [0, 1, 0, 0];
 
 julia> p = Polytope(A, b);
 
 julia> impliciteqs(p)
-Int64[]
-````
-Now embed the polytope `p` into the hyperplane ``x_3 = 0`` in one dimension higher:
-````jldoctest impliciteqs
-julia> B = [A zeros(Int, 4); 0 0 -1; 0 0 1]
-6×3 Matrix{Int64}:
- -1   0   0
-  1   0   0
-  0  -1   0
-  0   1   0
-  0   0  -1
-  0   0   1
-
-julia> d = [b; 0; 0]
-6-element Vector{Int64}:
- 0
- 1
- 0
- 1
- 0
- 0
-
-julia> q = Polytope(B, d);
-
-julia> facets(q)
-4-element Vector{Int64}:
- 1
- 2
+2-element Vector{Int64}:
  3
  4
-
-julia> impliciteqs(q)
-2-element Vector{Int64}:
- 5
- 6
 ````
 """
 function impliciteqs(p::Polytope)
@@ -159,18 +147,36 @@ function impliciteqs(p::Polytope)
     findall(reduce(.&, p.inc))
 end
 
-function isvertex(p::Polytope, v::Int)
+# --------------------------------
+# V-redundancy
+# --------------------------------
+
+# Check whether index v is a vertex of p. 
+# To be able to build a list of all vertices without duplicates, set unique=true.
+# Then, for each vertex that occurs multiple times in the description of p, only the 
+# occurrence with the least index counts as a vertex.
+function isvertex(p::Polytope, v::Int; unique::Bool=false)
     if !inciscomputed(p)
         computeinc!(p)
     end
 	
-    nv = Polyhedra.npoints(p.poly)
-    # TODO assuming 1 <= v <= nv
+    nv = nvertices(p)
+    # TODO assuming that 1 <= v <= nv
 
-    # a point is a vertex if and only if its set of incident halfspaces 
-    # is inclusion-maximal among all points
-
-    # f incident to i => f incident to j
+    # A point is a vertex if and only if its set of incident halfspaces 
+    # is inclusion-maximal among all points. We may check whether each halfspace 
+    # incident to i is also incident to j like this:
     iscontained(i, j) = all(p.inc[j] .| (~).(p.inc[i]))  # ~ bitwise NOT
-    return !any(iscontained(v, j) for j=1:nv if v != j)
+
+    # to avoid filtering out all occurrences of duplicate vertices,
+    # we require strict containment (for all i > j if unique is set to true)
+    isidentical(i, j) = p.inc[i] == p.inc[j] && (!unique || i < j)
+    
+    return all(!iscontained(v, j) || isidentical(v, j) for j=1:nv if v != j)
+end
+
+# Delete all non-vertices from the description (return new polytope if applies)
+function remove_vredundancy(p::Polytope)
+    isv = isvertex.(p, 1:nvertices(p); unique=true)
+    all(isv) ? p : Polytope(collect(vertices(p))[isv])
 end

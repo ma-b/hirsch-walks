@@ -40,7 +40,7 @@ apices(cube)
 
 # This returns the two indices of the apices as they appear in the list of all (eight) vertices 
 # of `cube`. To list the vertices explicitly, do
-vertices(cube)
+collect(vertices(cube))
 
 # !!! note
 #     By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each 

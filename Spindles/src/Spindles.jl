@@ -17,7 +17,9 @@ mutable struct Polytope{T}
     dists::Union{Nothing, Dict{Int, Vector{Int}}}  # cache graph distance matrix
 
     function Polytope{T}(p::Polyhedra.Polyhedron{T}) where T
-        # first check whether `p` is a polytope
+        # First check whether `p` is a polytope. This triggers the computation of V-representation if necessary.
+        # INVARIANT: the V-representation has no redundancy,
+        # see https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription
         if Polyhedra.nlines(p) + Polyhedra.nrays(p) > 0
             throw(ArgumentError("got an unbounded polyhedron"))
         end
@@ -46,7 +48,7 @@ Create a polytope from the convex hull of the collection of points `V`.
 function Polytope(V::AbstractVector{<:AbstractVector{<:Real}}, lib::Union{Nothing, Polyhedra.Library}=nothing)
     # first convert to MixedMatVRep type to get the correct polyhedron (sub)type
     rep = Polyhedra.MixedMatVRep(Polyhedra.vrep(V))
-    Polytope(rep, lib)
+    remove_vredundancy(Polytope(rep, lib))
 end
 
 """
@@ -55,7 +57,7 @@ end
 Create a polytope from the convex hull of the rows of `V`.
 """
 function Polytope(V::AbstractMatrix{<:Real}, lib::Union{Nothing, Polyhedra.Library}=nothing)
-    Polytope(Polyhedra.vrep(V), lib)
+    remove_vredundancy(Polytope(Polyhedra.vrep(V), lib))
 end
 
 """
@@ -74,9 +76,20 @@ end
 
 # overload useful Base methods
 
-Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))  # TODO
+"""
+    p::Polytope == q::Polytope
 
-Base.show(io::IO, p::Polytope) = print(io, typeof(p))  # TODO
+Check whether the sets of vertices of `p` and `q` are identical.
+
+# Examples
+````jldoctest
+julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
+true
+````
+"""
+Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
+
+Base.show(io::IO, p::Polytope) = print(io, typeof(p))
 Base.summary(p::Polytope) = "$(typeof(p))"
 
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
