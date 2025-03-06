@@ -42,27 +42,23 @@ length(goodfaces)
 # Next, let's plot the graph of each of those 32 good 2-faces:
 using Plots
 
+## generate vertex labels
 dist_labels = map(1:nvertices(s)) do v
     "$v\n" * join(dist.(s, apx, v), " | ")
 end
 
-plot_arr = []
+plot_arr = []  # collect subplots to make one subplot per face in the final plot
 for fstate in goodfaces
     push!(plot_arr, 
-        plot2face(s, fstate.indices; 
-            vertexlabels=dist_labels, usecoordinates=false, directed_edges=fstate.edges
+        plot2face(s, fstate.indices; usecoordinates=false,
+            vertexlabels=dist_labels, directed_edges=fstate.edges
         )
     )
 end
 
 ncols = 4
-nrows = ceil(Int, length(plot_arr) / ncols)
+nrows = ceil(Int, length(plot_arr) / ncols)  # maximum number of subplots per column
 plot(plot_arr..., layout=(nrows, ncols), size=(1000, nrows*300), plot_title="Good 2-faces")
-#-
-plot_arr = nothing # hide
-#src #md savefig("s-25-5-all.svg"); nothing # hide
-
-#src #md # ![](s-25-5-all.svg)
 
 #src ==========================
 # ## Good faces in dimension 20
@@ -185,8 +181,8 @@ edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(
-    plot2face(s, face; directed_edges=edges, vertexlabels=dist_labels, usecoordinates=false),
-    plot2face(s20, face20; directed_edges=edges20, vertexlabels=dist_labels20, ineqlabels=labels, usecoordinates=false),
+    plot2face(s, face; usecoordinates=false, vertexlabels=dist_labels, directed_edges=edges),
+    plot2face(s20, face20; usecoordinates=false, vertexlabels=dist_labels20, ineqlabels=labels, directed_edges=edges20),
     layout=grid(1,2), size=(800,400)
 )
 

@@ -159,7 +159,7 @@ plot2face(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=f
 # Let's mark them up in the plot using the keyword argument `directed_edges`:
 plot2face(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
-	directed_edges=([25,57], [33,81]),
+    directed_edges=([25,57], [33,81]),
     usecoordinates=false, title="V₁ and V₂"
 )
 #src nothing # hide
@@ -175,8 +175,9 @@ plot2face(s, face;
 # as far as possible without leaving the face.
 plot2face(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
-	directed_edges=([25,57], [33,81]),
-    usecoordinates=true, title="V₁ and V₂"
+    directed_edges=([25,57], [33,81]),
+    usecoordinates=true, title="V₁ and V₂",
+    xguide="", yguide=""  # hide axis labels
 )
 #src nothing # hide
 
@@ -231,7 +232,7 @@ end
 # Interestingly, all 2-faces of `s` that satisfy this weaker condition are good:
 for f in sort(facesofdim(s, 2))
     min_total_length = sum(
-        minimum(
+        minimum(  # minimum distance of any vertex of the face to each apex
             dist(s, a, v) for v in incidentvertices(s, f)
         ) for a in apx
     )
