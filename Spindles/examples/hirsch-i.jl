@@ -32,15 +32,14 @@
 #src ==========================
 # ## Reading a spindle from a file
 
-# We may read the description from the file as follows.
+# The data can be read from the file using the function [`readineq`](@ref) as follows.
 using Spindles
 A, b, labels = readineq("s-48-5.txt", Int);
-#-
+
+# The function returns not only the coefficient matrix `A` and vector of 
+# right-hand sides `b` of the description $Ax \le b$ 
 [A b]
-
-# The function [`readineq`](@ref) does not only return the data in the inequality description 
-# $Ax \le b$ from the source but also the attached labels, one for each inequality.
-
+# but also a label for each inequality:
 labels
 
 # !!! note
@@ -78,6 +77,9 @@ face in facesofdim(s, 2)
 # to make a plot.
 plot2face(s, face; ineqlabels=labels)
 #src nothing # hide
+
+# This creates a two-dimensional projection of `face` onto the two coordinates
+# by which the axes are labeled above.
 
 # Each vertex is labeled by its index. Edges and the face itself get their labels from the incident facets, 
 # since we passed the `labels` extracted above to the keyword argument `ineqlabels`. Note here that the

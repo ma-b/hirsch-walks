@@ -2,10 +2,9 @@
 # Plots
 # ================================
 
-export plot2face
-
 using Plots
-using Printf
+
+export plot2face
 
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
 # whether the direction is unique (False if edge and reference_edge are parallel)
@@ -63,41 +62,40 @@ end
     plot2face(
         p::Polytope, indices;
         usecoordinates = true,
-        vertexlabels = ,
-        ineqlabels = ,
+        vertexlabels = string.(1:nvertices(p)),
+        ineqlabels = string.(1:nhalfspaces(p)),
         directed_edges = nothing,
-        # plot kw args
         kw...
     )
 
-Make a plot of the 2-face of `p` that is defined by the inequalities in `indices`, 
-either as a 2D projection onto the plane (if the argument `usecoordinates` is set to `true`) or as a
+Make a plot of the 2-face of `p` that is defined by the inequalities indexed by the collection `indices`, 
+either as a 2D projection onto the plane if `usecoordinates` is `true`, or as a
 (combinatorial) plot of its graph otherwise.
+
+The implementation relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
 
 # Keywords
 
-* `usecoordinates`: If `true` (default), plot a 2D projection. Otherwise draw the graph.
+* `usecoordinates`: If `true` (default), plot a 2D projection onto a coordinate subspace.
+  Otherwise draw the graph.
 * `vertexlabels`: An indexable collection (such as `AbstractVector` or `AbstractDict`) of strings, 
-  or `nothing`. If `nothing`, no vertex labels are shown. Otherwise, the label of vertex `i` will 
-  be `vertexlabels[i]`, where missing values are treated as `""`. 
-  If `vertexlabels` is unspecified, use vertex indices as default labels.
-* `ineqlabels`: A collection of strings to be used as facet labels, or `nothing` to suppress labels.
+  or `nothing` to disable vertex labels. If not `nothing`, the label of vertex `i` is 
+  `vertexlabels[i]`, where missing values are treated as `""`. 
+  If unspecified, use vertex indices as default labels.
+* `ineqlabels`: A collection of strings to be used as facet labels, or `nothing` to disable labels.
   If unspecified, use inequality indices as default labels.
 * `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges.
 
 The remaining keyword arguments `kw...` are passed to [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot)
 and can be any plot, subplot, or axis attributes.
 See also the [Plots.jl documentation pages](https://docs.juliaplots.org/latest/attributes/) 
-for a list of available attributes. Some of them are used by `plot2face` with a 
-different default value than in Plots.jl. Notable keyword arguments among those are:
+for a list of available attributes. Some of them are used with a 
+different value than their default value in Plots.jl. 
+These include `size`, `aspect_ratio`, `title`, `legend`, `framestyle`, `ticks`, and others.
 
-* `size`: A tuple of `Integer`s that determines the plot size. Defaults here to `(300,300)`.
-* `aspect_ratio`: Defaults to `:equal` if `usecoordinates` is `false`, and `:auto` otherwise 
-  (default in Plots.jl).
-
-The default behaviour can be overwritten by explicitly passing new values as keyword arguments in `kw...`
+The default behaviour of all of the above attributes can be overwritten by explicitly passing new values as keyword arguments in `kw...`
 to `plot2face`. Anything in `kw...` takes precedence over the default behaviour in `plot2face`, except for (most)
-attributes related to annotations. They are hardcoded in `plot2face`.
+attributes related to annotations, which are hardcoded in `plot2face`.
 """
 function plot2face(p::Polytope, indices::AbstractVector{Int}; 
     # custom keyword arguments:
@@ -105,7 +103,6 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
     vertexlabels::Union{Nothing, AbstractVector{<:AbstractString}, AbstractDict{Int, <:AbstractString}} = string.(1:nvertices(p)),
     ineqlabels::Union{Nothing, AbstractVector{<:AbstractString}} = string.(1:nhalfspaces(p)),
     unique_labels_only::Bool = true,
-    # omit_indices::Bool
     directed_edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}} = nothing,
     kw...
 )
@@ -137,9 +134,15 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
 
         i,j = proj_onto_indices(r12, r13)
         xs, ys = verts[cyclic,i], verts[cyclic,j]  # TODO convert to float
+
+        # use indices of projection coordinates as axis labels
+        subscript_unicode(n::Int) =
+            n >= 0 ? join(['\u2080'+d for d in digits(n)]) : throw(ArgumentError("negative subscripts not allowed"))
+        xguide, yguide = "x" .* subscript_unicode.([i,j])
     else
         angles = [2*pi*i/n for i=1:n]
         xs, ys = cos.(angles), sin.(angles)
+        xguide, yguide = "", ""  # no axis labels
     end
 
     # clear plot pane
@@ -147,6 +150,7 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
         ticks=nothing, legend=false, framestyle=:box, size=(300,300),
         aspect_ratio = usecoordinates ? :auto : :equal,
         title = ineqlabels !== nothing ? concatlabels(ineqlabels[indices]) : "",
+        xguide=xguide, yguide=yguide,
         kw...
     )
     plot!(Shape(xs,ys); lw=2, lc=:steelblue, fillcolor=:lightsteelblue1, fillalpha=.5)

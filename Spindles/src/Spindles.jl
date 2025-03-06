@@ -77,7 +77,7 @@ end
 # overload useful Base methods
 
 """
-    p::Polytope == q::Polytope
+    ==(p::Polytope, q::Polytope)
 
 Check whether the sets of vertices of `p` and `q` are identical.
 

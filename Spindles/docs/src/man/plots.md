@@ -1,70 +1,67 @@
 # Plotting faces
 
 Since the initial purpose of *Spindles.jl* is the detection of special 2-faces, 
-the package provides a function to visualize those.
-
-!!! note "Implementation note"
-
-    The implementation in *Spindles.jl* relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
-    Polygons such as 2-faces of polytopes may also be visualized, more generally, 
-    using [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl).
-
-The plotting function of *Spindles.jl* is called [`plot2face`](@ref) and is best described using an example. 
-
-## Example
-We will use the following simple polytope, a square in 2D given by
-```math
-\begin{aligned}
--1 \le x_1 &\le 1 \\
--1 \le x_2 &\le 1
-\end{aligned}
-```
-
-```@example plots
-using Spindles #hide
-square = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1])
-vertices(square)
-```
-
-Since `square` is two-dimensional already, the most basic form of calling `plot2face` 
-just takes as arguments the polytope and a list of inequality indices that define the face to be drawn.
-In our example, this list is empty to get the maximal face, the polytope itself:
-```@example plots
-plot2face(square, Int[])
-```
-By default, vertices are labeled by their index in `vertices(square)`. The edge labels indicate which facet-defining inequalities for `square` define the edge. We may relabel vertices and edges using the keyword 
-arguments `vertexlabels` and `ineqlabels` as follows:
-
-```@example plots
-plot2face(square, Int[]; vertexlabels=["a", "b", "c", "d"], ineqlabels=["^", "*", "+", "-"])
-```
-
-If we are only interested in the combinatorics of `square` (which of course isn't all too interesting),
-we can tell `plot2face` to make a plot of the graph of `square`, where vertices are placed equidistantly
-on a cycle. In our example, this of course does not change too much:
-```@example plots
-plot2face(square, Int[]; usecoordinates=false)
-```
-
-Another option that has its origins in the theoretical analysis of 2-faces allows for marking up a pair of edges.
-To see the effect, let us drop the edge labels for the moment. This is achieved by setting `ineqlabels` to
-`nothing`.
-```@example plots
-plot2face(square, Int[]; ineqlabels=nothing, directed_edges=([1,3], [2,4]))
-```
-
-Now perturb the square slightly so that those two edges are no longer parallel.
-```@example plots
-perturbed_square = Polytope([1 -1//8; 0 1; -1 -1//8; 0 -1], [9//8, 1, 9//8, 1])
-vertices(perturbed_square)
-```
-
-```@example plots
-plot2face(perturbed_square, Int[]; ineqlabels=nothing, directed_edges=([1,3], [2,4]))
-```
-
-## Full reference
+the package includes a visualization function.
 
 ```@docs
 plot2face
 ```
+
+###### Examples
+Consider the following polytope, a perturbed cube:
+````@example plots
+using Spindles #hide
+p = Polytope(
+    [ 1  0     0
+      0  1 -1//8
+      0  0     1
+      -1 0     0
+      0 -1 -1//8
+      0  0    -1 ], 
+    [1, 9//8, 1, 1, 9//8, 1]
+);
+nothing #hide
+````
+
+Let's create a custom plot of two facets of `p`, facets `1` and `6`:
+````@example plots
+plot_arr = [
+    plot2face(p, [i];
+        grid=true, ticks=-2:2, aspect_ratio=:equal, 
+        title="Facet $i",
+    ) for i in [6,1]
+]
+
+using Plots
+plot(plot_arr..., layout=grid(1,2), size=(500,250), plot_title="Example")
+````
+
+By default, the axes of each subplot are labeled by the two coordinates onto which the face was projected.
+For example, the second subplot for facet `1` shows the four vertices at the following coordinates:
+````@example plots
+for i in incidentvertices(p, [1])
+    println(i, "  ", collect(vertices(p))[i][2:3])
+end
+````
+
+To turn off axis labels, pass the keywords `xguide=""` and `yguide=""` to [`plot2face`](@ref).
+Note that these are [axis attributes of Plots.jl](https://docs.juliaplots.org/latest/generated/attributes_axis/)
+and overwrite the default behaviour of `plot2face` with `usecoordinates=true`.
+
+
+
+````@example plots
+plot_arr = [
+    plot2face(p, [i]; ineqlabels=nothing,
+        grid=true, ticks=-2:2, aspect_ratio=:equal, 
+        title="Facet $i",
+        directed_edges = i==6 ? ([1,3],[2,7]) : ([2,5],[7,8])
+    ) for i in [6,1]
+]
+
+using Plots
+plot(plot_arr..., layout=grid(1,2), size=(500,250), plot_title="Example")
+````
+
+!!! tip
+    More examples can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture I").
