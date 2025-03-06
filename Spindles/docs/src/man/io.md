@@ -1,13 +1,6 @@
 # File I/O
 
 ```@docs
+writeineq
 readineq
-```
-
-```@docs
-Spindles.writeineq
-```
-
-```@docs
-Spindles.readrational
 ```
