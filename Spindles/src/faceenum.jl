@@ -91,11 +91,11 @@ function computefacesofdim!(p::Polytope, k::Int)
 
     # base cases: dimensions 0 and 1 (vertices and edges)
     if k == 0
-        p.faces[0] = _incidentfacets.(p, 1:nv)
+        p.faces[0] = _incidenthalfspaces.(p, 1:nv)
     elseif k == 1
         # call more efficient edge enumeration routine
         # and convert pairs of adjacent vertices to sets of incident facets
-        p.faces[1] = [_incidentfacets(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
+        p.faces[1] = [_incidenthalfspaces(p, [Graphs.src(e), Graphs.dst(e)]) for e in Graphs.edges(graph(p))]
     else
         p.faces[k] = Vector{Vector{Int}}()
 

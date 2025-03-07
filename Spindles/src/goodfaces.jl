@@ -30,16 +30,16 @@ Compute the distance between vertices `u` and `v` in the graph of `p`.
 # Examples
 
 ```jldoctest
-julia> p = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
+julia> p = Polytope([0 0; 0 1; 1 1; 1 0]);
 
 julia> vertices(p)
 4-element iterator of Vector{Rational{BigInt}}:
- Rational{BigInt}[-1, -1]
- Rational{BigInt}[1, -1]
- Rational{BigInt}[-1, 1]
+ Rational{BigInt}[0, 0]
+ Rational{BigInt}[0, 1]
  Rational{BigInt}[1, 1]
+ Rational{BigInt}[1, 0]
 
-julia> dist(p, 1, 4)
+julia> dist(p, 1, 3)
 2
 ```
 """
@@ -147,12 +147,12 @@ function isgood2face(p::Polytope, indices::AbstractVector{Int}, src::Int, dst::I
             if max_dists_plus[1] + max_dists_minus[2] <= dim(p)-2
                 return FaceState(
                     # here we do not use `indices` but recompute the incident facets to catch all of them
-                    true, _incidentfacets(p, verticesinface), edges, 
+                    true, _incidenthalfspaces(p, verticesinface), edges, 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  # "plus" is closer to 1
                 )
             elseif max_dists_minus[1] + max_dists_plus[2] <= dim(p)-2
                 return FaceState(
-                    true, _incidentfacets(p, verticesinface), edges, 
+                    true, _incidenthalfspaces(p, verticesinface), edges, 
                     (cyclic[vertices_minus], cyclic[vertices_plus])   # "minus" is closer to 1
                 )
             end

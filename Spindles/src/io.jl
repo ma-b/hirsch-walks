@@ -24,7 +24,7 @@ function readrational(filename::AbstractString, ::Type{T}) where T<:Integer
 end
 
 """
-    readineq(fname, T; labels=true, comment_char='#'])
+    readineq(fname, T; labels=true, comment_char='#')
 
 Read `A, b, labels` from file `fname`. The element type of `A` and `b` is `Rational{T}`.
 
@@ -74,14 +74,14 @@ a system of linear inequalities to the file `fname`.
 The file format is `[rowlabels b -A]` where `rowlabels` is a vector of strings,
 or just `[b -A]` (without a label column) if `labels` is `false`.
 
-If no `rowlabels` are specified and `labels` is `true`, use the row indices as default labels.
+If no `rowlabels` are provided and `labels` is `true`, use the row indices as default labels.
 
 See also [`readineq`](@ref).
 
 # Keywords
 
 * `labels`: If `true` (default), print a first column with row labels as given by the argument `rowlabels`.
-  If no `rowlabels` are provided, each row is labeled by its index (ranging from 1 to the number of rows of `A`).
+  If `rowlabels` is unspecified, each row is labeled by its index (ranging from 1 to the number of rows of `A`).
 * `comments`: A vector of strings. 
   Each element in `comments` will be printed on its own line, following a `comment_char` 
   and a whitespace. Possible internal line breaks are ignored. The data `A` and `b` is 

@@ -62,8 +62,8 @@ end
     plot2face(
         p::Polytope, indices;
         usecoordinates = true,
-        vertexlabels = string.(1:nvertices(p)),
-        ineqlabels = string.(1:nhalfspaces(p)),
+        vertexlabels   = string.(1:nvertices(p)),
+        ineqlabels     = string.(1:nhalfspaces(p)),
         directed_edges = nothing,
         kw...
     )
@@ -84,7 +84,11 @@ The implementation relies on [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
   If unspecified, use vertex indices as default labels.
 * `ineqlabels`: A collection of strings to be used as facet labels, or `nothing` to disable labels.
   If unspecified, use inequality indices as default labels.
-* `directed_edges`: A tuple of edges `([s,t], [u,v])` that are drawn as directed edges.
+* `directed_edges`: An optional tuple of edges `([s,t], [u,v])` to be marked up in the plot. 
+  Non-parallel edges are drawn as directed edges in the following way: 
+  If the inequality ``\\langle a,x \\rangle \\le \\beta`` defines the edge `[s,t]`, 
+  then the other edge `[u,v]` is directed from `u` to `v` if and only if 
+  ``\\langle a, v-u \\rangle < 0`` (and vice versa).
 
 The remaining keyword arguments `kw...` are passed to [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot)
 and can be any plot, subplot, or axis attributes.
@@ -93,8 +97,8 @@ for a list of available attributes. Some of them are used with a
 different value than their default value in Plots.jl. 
 These include `size`, `aspect_ratio`, `title`, `legend`, `framestyle`, `ticks`, and others.
 
-The default behaviour of all of the above attributes can be overwritten by explicitly passing new values as keyword arguments in `kw...`
-to `plot2face`. Anything in `kw...` takes precedence over the default behaviour in `plot2face`, except for (most)
+To override the default behaviour of any of the above attributes, pass them as explicit keyword arguments in `kw`
+to `plot2face`. Anything in `kw` takes precedence over the default behaviour in `plot2face`, except for (most)
 attributes related to annotations, which are hardcoded in `plot2face`.
 """
 function plot2face(p::Polytope, indices::AbstractVector{Int}; 
@@ -195,7 +199,7 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
     if ineqlabels !== nothing
         for i=1:n
             j = mod(i,n)+1  # successor of i on the cycle
-            tightfacets = incidentfacets(p, cyclic[[i,j]])
+            tightfacets = _incidenthalfspaces(p, cyclic[[i,j]])
             tightfacets = [f for f in tightfacets if !(f in indices)]
             annotate!(
                 (sum(xs[[i,j]]) + sum(xs_offset[[i,j]])) / 2,
@@ -224,7 +228,7 @@ function plot2face(p::Polytope, indices::AbstractVector{Int};
 
         for k=1:2
             # get an edge-defining inequality for the other edge
-            edgefacets = incidentfacets(p, directed_edges[k==1 ? 2 : 1])
+            edgefacets = incidenthalfspaces(p, directed_edges[k==1 ? 2 : 1])
             ineq = findfirst(f -> !(f in indices), edgefacets)
 
             (u,v), uniquedir = directedge(p, directed_edges[k], edgefacets[ineq])

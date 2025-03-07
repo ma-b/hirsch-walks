@@ -12,7 +12,7 @@
             vs = incidentvertices(p, f)
 
             # do not reduce over empty `vs`
-            @test isempty(vs) || sort(f) == incidentfacets(p, vs)
+            @test isempty(vs) || sort(f) == incidenthalfspaces(p, vs)
             # `vs` can only be empty for the empty face at i=1 (if k=-1)
             @test !isempty(vs) || (i == 1 && k == -1)
 

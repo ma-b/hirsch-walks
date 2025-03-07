@@ -43,19 +43,12 @@ An equivalent description of the 2D polytope `p` is in terms of the following sy
 ```
 This translates to
 ```jldoctest polytopes
-julia> A = [-1 0; 1 0; 0 -1; 0 1]
-4×2 Matrix{Int64}:
- -1   0
-  1   0
-  0  -1
-  0   1
+julia> A = [ -1   0
+              1   0
+              0  -1
+              0   1 ];
 
-julia> b = [0, 1, 0, 1]
-4-element Vector{Int64}:
- 0
- 1
- 0
- 1
+julia> b = [0, 1, 0, 1];
 
 julia> r = Polytope(A, b)
 Polytope{Rational{BigInt}}

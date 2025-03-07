@@ -232,7 +232,7 @@ end
 # Interestingly, all 2-faces of `s` that satisfy this weaker condition are good:
 for f in sort(facesofdim(s, 2))
     min_total_length = sum(
-        minimum(  # minimum distance of any vertex of the face to each apex
+        minimum(  # minimum distance of the apices to any vertex on the face
             dist(s, a, v) for v in incidentvertices(s, f)
         ) for a in apx
     )

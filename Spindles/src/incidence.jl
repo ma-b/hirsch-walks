@@ -2,7 +2,7 @@
 # Incidence
 # ================================
 
-export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidentfacets
+export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidenthalfspaces
 
 """
     vertices(p::Polytope)
@@ -11,7 +11,10 @@ Return an iterator over the vertices of the polytope `p`.
 
 # Examples
 ````jldoctest
-julia> p = Polytope([1 0; 0 1; 0 1; 1//2 1//2]);
+julia> p = Polytope([    1     0
+                         0     1
+                         0     1
+                      1//2  1//2 ]);
 
 julia> collect(vertices(p))
 2-element Vector{Vector{Rational{Int64}}}:
@@ -58,14 +61,14 @@ end
 function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
     [v for v=1:nvertices(p) if all(p.inc[v][indices])]
 end
-function _incidentfacets(p::Polytope, indices::AbstractVector{Int})
+function _incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
     if isempty(indices)
         1:nhalfspaces(p)  # TODO type
     else
         findall(reduce(.&, p.inc[indices]))
     end
 end
-_incidentfacets(p::Polytope, v::Int) = _incidentfacets(p, [v])
+_incidenthalfspaces(p::Polytope, v::Int) = _incidenthalfspaces(p, [v])
 
 """
     incidentvertices(p::Polytope, indices::AbstractVector{Int})
@@ -83,13 +86,13 @@ function incidentvertices(p::Polytope, indices::AbstractVector{Int})
     _incidentvertices(p, indices)
 end
 
-function incidentfacets(p::Polytope, indices::AbstractVector{Int})
+function incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
     all(isvertexindex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
 
     if !inciscomputed(p)
         computeinc!(p)
     end
-    _incidentfacets(p, indices)
+    _incidenthalfspaces(p, indices)
 end
 
 # --------------------------------
@@ -120,21 +123,21 @@ The optional argument `apex` specifies the index of a vertex that is to be taken
 # Examples
 
 ```jldoctest
-julia> square = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
+julia> p = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
 
-julia> vertices(square)
+julia> vertices(p)
 4-element iterator of Vector{Rational{BigInt}}:
  Rational{BigInt}[-1, -1]
  Rational{BigInt}[1, -1]
  Rational{BigInt}[-1, 1]
  Rational{BigInt}[1, 1]
 
-julia> apices(square)
+julia> apices(p)
 2-element Vector{Int64}:
  1
  4
 
-julia> apices(square, 2)
+julia> apices(p, 2)
 2-element Vector{Int64}:
  2
  3

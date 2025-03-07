@@ -1,6 +1,6 @@
 # Plotting faces
 
-Since the initial purpose of *Spindles.jl* is the detection of special 2-faces, 
+As one of the initial purposes of *Spindles.jl* was the detection of special 2-faces, 
 the package includes a visualization function.
 
 ```@docs
@@ -11,19 +11,19 @@ plot2face
 Consider the following polytope, a perturbed cube:
 ````@example plots
 using Spindles #hide
-p = Polytope(
-    [ 1  0     0
-      0  1 -1//8
-      0  0     1
-      -1 0     0
-      0 -1 -1//8
-      0  0    -1 ], 
-    [1, 9//8, 1, 1, 9//8, 1]
-);
+A = [  1   0      0
+       0   1  -1//8
+       0   0      1
+      -1   0      0
+       0  -1  -1//8
+       0   0     -1 ]
+b = [1, 9//8, 1, 1, 9//8, 1]
+
+p = Polytope(A, b);
 nothing #hide
 ````
 
-Let's create a custom plot of two facets of `p`, facets `1` and `6`:
+Let's create a custom plot of two facets of `p`, namely facets `1` and `6`:
 ````@example plots
 plot_arr = [
     plot2face(p, [i];
@@ -46,7 +46,7 @@ end
 
 To turn off axis labels, pass the keywords `xguide=""` and `yguide=""` to [`plot2face`](@ref).
 Note that these are [axis attributes of Plots.jl](https://docs.juliaplots.org/latest/generated/attributes_axis/)
-and overwrite the default behaviour of `plot2face` with `usecoordinates=true`.
+and overwrite the default values used in `plot2face`.
 
 
 
