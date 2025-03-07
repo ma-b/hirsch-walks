@@ -23,7 +23,7 @@ p = Polytope(A, b);
 nothing #hide
 ````
 
-Let's create a custom plot of two facets of `p`, namely facets `1` and `6`:
+Let's create a custom plot of facets `1` and `6` of `p` (note that all facets of `p` are 2-faces):
 ````@example plots
 plot_arr = [
     plot2face(p, [i];
@@ -48,7 +48,7 @@ To turn off axis labels, pass the keywords `xguide=""` and `yguide=""` to [`plot
 Note that these are [axis attributes of Plots.jl](https://docs.juliaplots.org/latest/generated/attributes_axis/)
 and overwrite the default values used in `plot2face`.
 
-
+Pairs of edges can be marked up as follows:
 
 ````@example plots
 plot_arr = [
@@ -62,6 +62,9 @@ plot_arr = [
 using Plots
 plot(plot_arr..., layout=grid(1,2), size=(500,250), plot_title="Example")
 ````
+
+For facet `6`, the two edges marked up in the plot are parallel. The two chosen edges of facet `1`, however,
+are not and are therefore drawn as directed edges with arrows pointing away from each other. 
 
 !!! tip
     More examples can be found in [this tutorial](@ref "Spindles and the Hirsch conjecture I").
