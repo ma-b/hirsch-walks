@@ -13,7 +13,7 @@
 # ## Creating a spindle
 
 # In this tutorial, we will be working with one of the simplest examples of a spindle: a cube. 
-# For example, the unit cube in 3D is given by all points $(x_1,x_2,x_3)$ that satisfy 
+# For example, the unit cube in 3D is given by all points $x = (x_1,x_2,x_3)$ that satisfy 
 # ```math
 # \begin{aligned}
 # -1 \le x_1 &\le 1 \\

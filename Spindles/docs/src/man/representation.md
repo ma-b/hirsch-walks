@@ -29,7 +29,7 @@ Thus, the inequalities in a given description of a polytope may be partitioned i
 2. a (possibly empty) set of implicit equations contained in the inequality system, and 
 3. all remaining inequalities (that may safely be deleted). 
 This partition can be computed using the functions [`facets`](@ref) and [`impliciteqs`](@ref),
-which return the first two sets of the partition.
+which return the first two classes of the partition.
 
 ```@docs
 facets
