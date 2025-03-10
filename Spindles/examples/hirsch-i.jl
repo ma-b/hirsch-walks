@@ -157,10 +157,10 @@ plot(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false,
 # Note that there are exactly two edges of the face `15⁺ 19⁺ 21⁺` whose endpoints belong
 # to neither $V_1$ nor $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
 # between `25` and `57`, and between `33` and `81`.
-# Let's mark them up in the plot using the keyword argument `directed_edges`:
+# Let's mark them up in the plot using the keyword argument `markup_edges`:
 plot(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
-    directed_edges=([25,57], [33,81]),
+    markup_edges=([25,57], [33,81]),
     usecoordinates=false, title="V₁ and V₂"
 )
 #src nothing # hide
@@ -170,13 +170,13 @@ plot(s, face;
 # recall that each of them is contained in a shortest path between the apices of `s`
 # that walks along parts of the face `15⁺ 19⁺ 21⁺`. For example, coming from the second apex
 # (the one not contained in the face) and heading towards the first apex `1`,
-# the two red edges are traversed in exactly the direction indicated above. 
+# the two highlighted edges are traversed in exactly the direction indicated above. 
 # If we look at the "true" geometry of `15⁺ 19⁺ 21⁺`, though, we could also start from any vertex in $V_2$
-# and follow one of the two red arrows (through the interior of the face!)
+# and follow one of the two arrows (through the interior of the face!)
 # as far as possible without leaving the face.
 plot(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
-    directed_edges=([25,57], [33,81]),
+    markup_edges=([25,57], [33,81]),
     usecoordinates=true, title="V₁ and V₂",
     xguide="", yguide=""  # hide axis labels
 )
@@ -194,7 +194,7 @@ plot(s, face;
 #     It is important to note here that, unlike paths along edges,
 #     this shortcut has a direction associated to it. The direction
 #     is determined by the geometry of the 2-face `15⁺ 19⁺ 21⁺` and is indicated by the direction of the two
-#     red edges. When making a plot with `plot` as above, they are always drawn in such a way that the arrows
+#     highlighted edges. When making a plot with `plot` as above, they are always drawn in such a way that the arrows
 #     "point away" from each other.
 
 # Shortcuts like this are precisely what makes faces such as `15⁺ 19⁺ 21⁺` interesting for analyzing `s`

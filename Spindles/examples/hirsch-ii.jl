@@ -51,7 +51,7 @@ plot_arr = []  # collect subplots to make one subplot per face in the final plot
 for fstate in goodfaces
     push!(plot_arr, 
         plot(s, fstate.indices; usecoordinates=false,
-            vertexlabels=dist_labels, directed_edges=fstate.edges
+            vertexlabels=dist_labels, markup_edges=fstate.edges
         )
     )
 end
@@ -181,8 +181,8 @@ edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(
-    plot(s, face; usecoordinates=false, vertexlabels=dist_labels, directed_edges=edges),
-    plot(s20, face20; usecoordinates=false, vertexlabels=dist_labels20, ineqlabels=labels, directed_edges=edges20),
+    plot(s, face; usecoordinates=false, vertexlabels=dist_labels, markup_edges=edges),
+    plot(s20, face20; usecoordinates=false, vertexlabels=dist_labels20, ineqlabels=labels, markup_edges=edges20),
     layout=grid(1,2), size=(800,400)
 )
 
