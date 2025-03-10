@@ -50,7 +50,7 @@ end
 plot_arr = []  # collect subplots to make one subplot per face in the final plot
 for fstate in goodfaces
     push!(plot_arr, 
-        plot2face(s, fstate.indices; usecoordinates=false,
+        plot(s, fstate.indices; usecoordinates=false,
             vertexlabels=dist_labels, directed_edges=fstate.edges
         )
     )
@@ -160,8 +160,8 @@ isgood2face(s20, face20, apx20...).good
 # Let us plot this face and the original one in dimension 5 side by side.
 
 plot(
-    plot2face(s, face; vertexlabels=nothing),
-    plot2face(s20, face20; vertexlabels=nothing, ineqlabels=labels),
+    plot(s, face; vertexlabels=nothing),
+    plot(s20, face20; vertexlabels=nothing, ineqlabels=labels),
     layout=grid(1,2), size=(800,300)
 )
 
@@ -174,15 +174,15 @@ end)
 
 # Note here that we only generated labels for the vertices of `face20` and stored them in a more compact dictionary
 # rather than a (long) list of labels for *all* vertices of `s20`. For the purpose of plotting,
-# this does not make a difference, since the function [`plot2face`](@ref) also accepts a dictionary of labels: 
+# this does not make a difference, since the function `plot` also accepts a dictionary of labels: 
 
 #-
 edges = isgood2face(s, face, apx...).edges
 edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(
-    plot2face(s, face; usecoordinates=false, vertexlabels=dist_labels, directed_edges=edges),
-    plot2face(s20, face20; usecoordinates=false, vertexlabels=dist_labels20, ineqlabels=labels, directed_edges=edges20),
+    plot(s, face; usecoordinates=false, vertexlabels=dist_labels, directed_edges=edges),
+    plot(s20, face20; usecoordinates=false, vertexlabels=dist_labels20, ineqlabels=labels, directed_edges=edges20),
     layout=grid(1,2), size=(800,400)
 )
 

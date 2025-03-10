@@ -73,9 +73,10 @@ labels[face]
 # They indeed define a 2-face of `s`:
 face in facesofdim(s, 2)
 
-# To inspect `face`, we may use the function [`plot2face`](@ref) provided by *Spindles.jl* 
+# To inspect `face`, we may use the `plot` command from [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
 # to make a plot.
-plot2face(s, face; ineqlabels=labels)
+using Plots
+plot(s, face; ineqlabels=labels)
 #src nothing # hide
 
 # This creates a two-dimensional projection of `face` onto the two coordinates
@@ -103,8 +104,8 @@ end
 #     [dist(s, a, v) for a in apx]
 #     ````
 
-# Our custom vertex labels can now be passed to `plot2face` as follows:
-plot2face(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=false)
+# Our custom vertex labels can now be passed to `plot` as follows:
+plot(s, face; ineqlabels=labels, vertexlabels=dist_labels, usecoordinates=false)
 #src nothing # hide
 
 # Note here that the (optional) additional argument `usecoordinates=false` changed the plot mode 
@@ -139,7 +140,7 @@ apx
 
 #src We will come back to the choice of this number $k$ in a moment. First,
 # Let's visualize the two sets $V_1$ and $V_2$. Again, we tweak the arguments passed to
-# `plot2face` and label the vertices of the face by which set they belong to. For example, this
+# `plot` and label the vertices of the face by which set they belong to. For example, this
 # can be achieved by
 set_labels = map(1:nvertices(s)) do v
     if v == 1
@@ -150,14 +151,14 @@ set_labels = map(1:nvertices(s)) do v
         return "$v"  # default label for vertices in neither of the two sets
     end
 end
-plot2face(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false, title="V₁ and V₂")
+plot(s, face; ineqlabels=nothing, vertexlabels=set_labels, usecoordinates=false, title="V₁ and V₂")
 #src nothing # hide
 
-# Note that there are exactly two edges of the face `15⁺ 19⁺ 21⁺` whose endpoints do not belong
+# Note that there are exactly two edges of the face `15⁺ 19⁺ 21⁺` whose endpoints belong
 # to neither $V_1$ nor $V_2$ (and, hence, are only labeled by their index in the plot above). These edges are those
 # between `25` and `57`, and between `33` and `81`.
 # Let's mark them up in the plot using the keyword argument `directed_edges`:
-plot2face(s, face; 
+plot(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
     directed_edges=([25,57], [33,81]),
     usecoordinates=false, title="V₁ and V₂"
@@ -165,7 +166,7 @@ plot2face(s, face;
 #src nothing # hide
 
 # Not only are the two edges marked up in the plot, they are also drawn as *directed* edges now.
-# To see why (and how this direction is determined by `plot2face`),
+# To see why (and how this direction is determined by `plot`),
 # recall that each of them is contained in a shortest path between the apices of `s`
 # that walks along parts of the face `15⁺ 19⁺ 21⁺`. For example, coming from the second apex
 # (the one not contained in the face) and heading towards the first apex `1`,
@@ -173,7 +174,7 @@ plot2face(s, face;
 # If we look at the "true" geometry of `15⁺ 19⁺ 21⁺`, though, we could also start from any vertex in $V_2$
 # and follow one of the two red arrows (through the interior of the face!)
 # as far as possible without leaving the face.
-plot2face(s, face; 
+plot(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
     directed_edges=([25,57], [33,81]),
     usecoordinates=true, title="V₁ and V₂",
@@ -193,7 +194,7 @@ plot2face(s, face;
 #     It is important to note here that, unlike paths along edges,
 #     this shortcut has a direction associated to it. The direction
 #     is determined by the geometry of the 2-face `15⁺ 19⁺ 21⁺` and is indicated by the direction of the two
-#     red edges. When making a plot with `plot2face` as above, they are always drawn in such a way that the arrows
+#     red edges. When making a plot with `plot` as above, they are always drawn in such a way that the arrows
 #     "point away" from each other.
 
 # Shortcuts like this are precisely what makes faces such as `15⁺ 19⁺ 21⁺` interesting for analyzing `s`
