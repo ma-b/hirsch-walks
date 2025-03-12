@@ -106,7 +106,11 @@ include("faceenum.jl")
 include("dim.jl")
 include("redundancy.jl")
 include("goodfaces.jl")
+
+# plots
 include("plots.jl")
+include("arrow.jl")
+
 include("io.jl")
 
 end # module Spindles

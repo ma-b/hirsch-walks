@@ -71,7 +71,8 @@ face = [29, 37, 41]
 labels[face]
 
 # They indeed define a 2-face of `s`:
-face in facesofdim(s, 2)
+dim(s, face) == 2
+#src face in facesofdim(s, 2)
 
 # To inspect `face`, we may use the `plot` command from [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
 # to make a plot.

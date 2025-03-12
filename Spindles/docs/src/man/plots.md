@@ -101,11 +101,11 @@ Now the vertices are placed equidistantly on a cycle.
 
 Pairs of edges can be marked up as follows:
 ````@example plots
-plot(p, [1]; markup_edges = ([2,5], [7,8]))
+plot(p, [1]; markup_edges=([2,5], [7,8]))
 ````
 The two edges passed as a tuple in `markup_edges` are drawn as directed edges in such a way that the arrows point away from each other. If they were parallel, such as the other two edges of facet `1`, they would not have gotten arrowheads:
 ````@example plots
-plot(p, [1]; markup_edges = ([2,7], [5,8]))
+plot(p, [1]; markup_edges=([2,7], [5,8]))
 ````
 
 ### Customization
@@ -121,7 +121,7 @@ plot(p, [1];
     fc=:gold,                         # face colour
     markersize=10,                    # size of vertex markers
 
-    markup_edges = ([2,5], [7,8]),    # appearance of marked up edges
+    markup_edges=([2,5], [7,8]),    # appearance of marked up edges
     markup_linewidth=2.5, markup_linecolor=:turquoise3,
 
     grid=true, ticks=-2:0.5:2,        # 

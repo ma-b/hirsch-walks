@@ -2,9 +2,8 @@
 # Plots
 # ================================
 
-# see https://docs.juliaplots.org/stable/recipes/
-using RecipesBase
-using Plots: text  # TODO can we get rid of Plots dependency?
+using RecipesBase  # see https://docs.juliaplots.org/stable/recipes/
+import Plots
 
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
 # whether the direction is unique (False if edge and reference_edge are parallel)
@@ -59,7 +58,29 @@ function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
 end
 
 
-# WARNING: type annotations on kwargs not supported in recipes
+# return keyword dict with all attributes prefixed by `prefix`
+# and their full attribute names (aliases don't work inside recipes)
+function extract_prefix_kwargs(kwargs::Dict{Symbol, <:Any}, prefix::AbstractString, attrs)
+    kw = Dict{Symbol, Any}()
+
+    for (key, val) in kwargs
+        if startswith(prefix)(string(key))
+            newattr = Symbol(chopprefix(string(key), prefix))
+
+            for attr in attrs
+                # the list returned by aliases does not include the attribute itself, 
+                # so we need to check it separately
+                # (note that for custom attributes not from Plots.jl, this list will be empty)
+                if newattr == attr || newattr in Plots.aliases(attr)
+                    kw[attr] = val
+                end
+            end
+        end
+    end
+    kw
+end
+
+# type annotations on kwargs not supported in recipes
 @recipe function f(p::Polytope, indices::AbstractVector{<:Integer};
     # custom keyword arguments:
     usecoordinates=true,  #::Bool
@@ -67,8 +88,7 @@ end
     ineqlabels=string.(1:nhalfspaces(p)), #::Union{Nothing, AbstractVector{<:AbstractString}}
     unique_labels_only=true, #::Bool
     markup_edges=nothing,  #::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
-    markup_linecolor=:darkorange2, markup_linewidth=3,
-    linecolor=:steelblue,  # aliases like `lc` still seem to work(?)
+    linecolor=:steelblue,  # aliases like `lc` still work(?) # TODO
 )
     # TODO check arguments
 
@@ -146,13 +166,13 @@ end
         join( unique_labels_only ? unique(labels) : labels, ' ' )
     title --> (ineqlabels !== nothing ? concatlabels(get.(Ref(ineqlabels), indices, "")) : "")
 
-    # ---- calculate aspect ratio ----
+    # ---- set aspect ratio ----
 
-    # default aspect ratio fills the entire plot area
     # from https://docs.juliaplots.org/latest/generated/attributes_subplot/
     # >> Plot area is resized so that 1 y-unit is the same size as `aspect_ratio` x-units.
     xrange = maximum(x) - minimum(x)
     yrange = maximum(y) - minimum(y)
+    # default aspect ratio: fill the entire plot area
     ratio = xrange / yrange * plotattributes[:size][2] / plotattributes[:size][1]
     
     # replace all symbolic values by numeric ratio
@@ -188,10 +208,48 @@ end
         x, y
     end
 
+    # mark up edges
+    if markup_edges !== nothing
+        # series attributes with their default values
+        markup_attrs = Dict(
+            :linealpha => nothing,
+            :linecolor => :darkorange2,
+            :linestyle => :solid,
+            :linewidth => 3,
+            :headsize => 20,
+            :headpos  => 1,
+            :headshape => 0.7,
+        )
+        # extract and "de-alias" custom attributes prefixed with "markup_"
+        markup_kwargs = extract_prefix_kwargs(plotattributes, "markup_", keys(markup_attrs))
+
+        for k=1:2
+            # get an edge-defining inequality for the other edge
+            edgefacets = incidenthalfspaces(p, markup_edges[k==1 ? 2 : 1])
+            ineq = findfirst(f -> !(f in indices), edgefacets)
+
+            (u,v), uniquedir = directedge(p, markup_edges[k], edgefacets[ineq])
+            # get the indices of the endpoints of the current edge as they appear in the cyclic order
+            i,j = map(x -> findfirst(cyclic .== x), [u,v])
+            
+            @series begin
+                if uniquedir  # draw arrow only if non-parallel edges
+                    seriestype := :arrow
+                end
+                # set series attributes
+                for (attr, val) in markup_attrs
+                    plotattributes[attr] = get(markup_kwargs, attr, val)
+                    # FIXME `eval(attr) := ...` doesn't seem to work here
+                end
+                x[[i,j]], y[[i,j]]
+            end
+        end
+    end
+    
+    # edge labels
+
     # barycentre of face
     bx, by = sum(x)/length(x), sum(y)/length(y)
-
-    # edge labels
 
     # compute the angle (in radians) of the edge between vertex i and its successor in the cyclic order
     # !!! this is the angle as plotted and not necessarily the true angle 
@@ -226,9 +284,9 @@ end
 
         vec = vec ./ sqrt(sum(vec .^ 2))  # normalize by 2-norm
         # make orthogonal in plot
-        vec[1] *= ratio  # TODO
+        vec[1] *= ratio
         # normalize length relative to yrange
-        vec = vec .* yrange / 16
+        vec = vec .* yrange / 16  # TODO
 
         # `vec` is orthogonal but not necessarily an *outer* normal
         # to this end, take any point in the interior of the polygon, e.g., the barycentre
@@ -256,8 +314,8 @@ end
         @series begin
             seriestype := :scatter
             markeralpha := 0  # only annotations
-            # FIXME text() needs Plots dependency...?
-            series_annotations := [text(
+            # FIXME text() requires Plots
+            series_annotations := [Plots.text(
                 concatlabels(get.(Ref(ineqlabels), tightfacets[i], "")), 
                 8, :center, linecolor, rotation = α[i] * 180/π  # rotation angle is in degrees
             ) for i=1:n]
@@ -271,7 +329,7 @@ end
         @series begin
             seriestype := :scatter
             markeralpha := 0
-            series_annotations := [text(concatlabels(get.(Ref(ineqlabels), indices, "")), 10, :center, linecolor)]
+            series_annotations := [(concatlabels(get.(Ref(ineqlabels), indices, "")), 10, :center, linecolor)]
             [bx], [by]
         end
     end
@@ -283,32 +341,12 @@ end
             markeralpha := 0  # only annotations
 
             # if index/key not found, don't print a label
-            series_annotations := [text(get(vertexlabels, cyclic[i], ""), 10, :center) for i=1:n]
+            series_annotations := [(get(vertexlabels, cyclic[i], ""), 10, :center) for i=1:n]
 
             # offset vector = twice the mean of outer normals of both edges incident to i
             labelx = [x[i] + normals[i][1] + normals[pred(i)][1] for i=1:n]
             labely = [y[i] + normals[i][2] + normals[pred(i)][2] for i=1:n]
             labelx, labely
-        end
-    end
-
-    # mark up edges
-    if markup_edges !== nothing
-        for k=1:2
-            # get an edge-defining inequality for the other edge
-            edgefacets = incidenthalfspaces(p, markup_edges[k==1 ? 2 : 1])
-            ineq = findfirst(f -> !(f in indices), edgefacets)
-
-            (u,v), uniquedir = directedge(p, markup_edges[k], edgefacets[ineq])
-            # get the indices of the endpoints of the current edge as they appear in the cyclic order
-            i,j = map(x -> findfirst(cyclic .== x), [u,v])
-            
-            @series begin
-                linecolor := markup_linecolor
-                linewidth := markup_linewidth
-                arrow := uniquedir
-                x[[i,j]], y[[i,j]] 
-            end
         end
     end
 
