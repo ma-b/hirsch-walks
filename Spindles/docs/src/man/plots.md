@@ -12,12 +12,9 @@ This creates a plot of the face of `p` that is defined by the inequalities in `i
 provided that this face is 2-dimensional. If not, `plot` throws an error.
 To add to an existing plot, use `plot!`.
 
-The plot can be customized using keywords in `kw...`. There are two types of keywords: attributes
-that are inherited from [Plots.jl](https://github.com/JuliaPlots/Plots.jl), and custom attributes defined
-by *Spindles.jl*.
-The following attributes are supported:
+The plot can be customized using keywords in `kw...`. The following keywords are supported:
 
-###### Custom attributes
+###### 1. Plot type and labels
 * `usecoordinates`: If `true` (default), plot a 2D projection onto a coordinate subspace.
   `false` ignores vertex coordinates and arranges the vertices on a cycle.
 * `vertexlabels`: An indexable collection (such as `AbstractVector` or `AbstractDict`) of strings, 
@@ -26,29 +23,36 @@ The following attributes are supported:
   If unspecified, use vertex indices as default labels.
 * `ineqlabels`: Like `vertexlabels`, but for facet/inequality labels.
   If unspecified, use inequality indices as default labels.
-* `markup_edges`: An optional tuple of edges `([s,t], [u,v])` to be marked up in the plot. 
-  Non-parallel edges are drawn as directed edges in the following way: 
-  If the inequality ``\langle a,x \rangle \le \beta`` defines the edge `[s,t]`, 
-  then the other edge `[u,v]` is directed from `u` to `v` if and only if 
-  ``\langle a, v-u \rangle < 0`` (and vice versa).
 
-* `markup_linecolor`, `markup_linewidth` and everything prefixed by `markup_`. 
-  Note that aliases like `lc` or `lw` for the unprefixed attributes are currently not supported.
+###### 2. Attributes from Plots.jl
+Can be any [series](https://docs.juliaplots.org/latest/generated/attributes_series/),
+[plot](https://docs.juliaplots.org/latest/generated/attributes_plot/),
+[subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/),
+or [axis attribute](https://docs.juliaplots.org/latest/generated/attributes_axis/) defined by Plots.jl.
+See also the [Plots.jl documentation](https://docs.juliaplots.org/latest/attributes/) on attributes and aliases.
+Note that not all available attributes have an effect for plotting polytopes, though. 
 
-
-###### Notable attributes from Plots.jl
-* Series attributes such as `linewidth`, `linecolor`, `linealpha`, ...
-  `markersize`, `markercolor`, `markeralpha`, ... to customize vertex markers,
-  `fillcolor`, `fillalpha`, ... to customize the polygon shape,
-* Plot attributes such as `size`, ...
-* Subplot attributes such as `aspect_ratio`, `title`, ...
-* Axis attributes such as `grid`, `ticks`, ...
-
-See also the [Plots.jl documentation pages](https://docs.juliaplots.org/latest/attributes/) 
-for a list of all available attributes and their aliases. Not all of them have an effect for plotting polytopes, though.
+Among the supported series attributes, fill attributes such as `fillalpha`, `fillcolor`, `fillstyle` 
+apply to the face itself. Line attributes such as `linealpha`, `linecolor`, `linestyle`, `linewidth` apply to its edges and marker attributes such as `markersize`, `markeralpha`, `markercolor` apply to the vertex markers.
 
 !!! note "Hardcoded attributes"
-    Currently hardcoded: label attributes (font, size, colour)
+    Currently, label attributes (font, size, colour) cannot be modified. 
+    By default, the edge colour (`linecolor`) is also used for all edge labels.
+
+###### 3. Marking up edges
+* `markup_edges`: A tuple or vector of two edges `s,t` and `u,v` to be marked up in the plot. 
+  Non-parallel edges are drawn as directed edges in the following way: 
+  If the inequality ``\langle a,x \rangle \le \beta`` defines the first edge between `s` and `t`, 
+  then the second edge is directed from `u` to `v` if and only if 
+  ``\langle a, v-u \rangle < 0`` (and vice versa with the roles of the edges switched).
+  Here, ``u`` and ``v`` refer to the actual coordinates of the respective vertices, regardless of
+  whether `usecoordinates` is `true` or `false`.
+
+* `markup_headsize`: Size of the arrowhead for directed edges.
+* `markup_headpos`: A number between 0 and 1 that is taken as a relative offset of the arrow tip:
+  1 means that the tip is drawn at the sink, and 0 means it is drawn at the source of the directed edge.
+* Line attributes (or aliases) prefixed by `markup_` apply to the marked up edges only. For example, their
+  width is set with `markup_linewidth` (or `markup_lw` or any other alias).
 
 ## Examples
 Examples are best to demonstrate the usage of `plot`.
@@ -109,8 +113,8 @@ plot(p, [1]; markup_edges=([2,7], [5,8]))
 ````
 
 ### Customization
-All plots can be customized using various attributes. In the following example, some of them are set 
-to override the default behaviour. Note that we use aliases like `lw` for `linewidth`, `lc` for `linecolor`, or `fc` for `fillcolor`.
+All plots can be customized using various attributes. The following example features some of them,
+sometimes with their full name, sometimes with aliases (such as `lw` for `linewidth` or `fc` for `fillcolor`).
 
 ````@example plots
 plot(p, [1];
@@ -118,16 +122,18 @@ plot(p, [1];
     ineqlabels=["a", "b", "c", "d"],  # custom edge labels
 
     lw=5, lc=:purple,                 # appearance of edges
-    fc=:gold,                         # face colour
+    fc=:gold, fillstyle=:/,           # face colour and fill pattern
     markersize=10,                    # size of vertex markers
 
-    markup_edges=([2,5], [7,8]),    # appearance of marked up edges
-    markup_linewidth=2.5, markup_linecolor=:turquoise3,
+    markup_edges=([2,5], [7,8]),      # appearance of marked up edges
+    markup_lw=2.5, markup_lc=:turquoise3,
+    markup_ls=:dash,
+    markup_headsize=42,               # size of arrowheads
 
-    grid=true, ticks=-2:0.5:2,        # 
+    grid=true, ticks=-2:0.5:2,        # coordinate axes
     size=(350,250),                   # plot size
     aspect_ratio=:equal,              # set unit aspect ratio
     title="A fancy plot"              # custom title
 )
 ````
-Also note that we provided `ineqlabels` only for the first four facets above. Missing labels are treated as `""`.
+Note that we provided `ineqlabels` only for the first four facets above. Missing labels are treated as `""`.

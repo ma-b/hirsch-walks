@@ -108,7 +108,8 @@ include("redundancy.jl")
 include("goodfaces.jl")
 
 # plots
-include("plots.jl")
+include("plotutil.jl")
+include("plotrecipe.jl")
 include("arrow.jl")
 
 include("io.jl")

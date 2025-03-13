@@ -1,62 +1,9 @@
 # ================================
-# Plots
+# User recipe for plotting 2-faces
 # ================================
 
 using RecipesBase  # see https://docs.juliaplots.org/stable/recipes/
 import Plots
-
-# return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
-# whether the direction is unique (False if edge and reference_edge are parallel)
-function directedge(p::Polytope, edge::Vector{Int}, facet::Int)
-    u, v = edge  # TODO arg check
-
-    # direction from u to v
-    verts = collect(vertices(p))[[u,v]]
-    r = verts[2] - verts[1]
-    # index of first nonzero entry (exists since u and v are distinct)
-    i = findfirst(@. !isapprox(r, 0))
-    r ./= abs(r[i]) # normalize
-    dotproduct = collect(Polyhedra.halfspaces(p.poly))[facet].a' * r  # FIXME non-public API?
-
-    # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
-    if dotproduct == 0
-        # parallel
-        return (u,v), false  # arbitrary direction
-    elseif dotproduct > 0
-        # direction r points 'towards' the halfspace, so needs to be reversed
-        return (v,u), true
-    else
-        # direction r already points away
-        return (u,v), true
-    end
-end
-
-# given two nonzero vectors x and y in dimension at least 2, find two coordinates
-# such that the projections of x and y onto these coordinates
-# are linearly independent if and only if x and y are linearly independent
-function proj_onto_indices(x::Vector{<:Real}, y::Vector{<:Real})
-    # implementation strategy: use Gaussian elimination
-
-    # TODO assert nonzero
-
-    # find first nonzero component (must exist since x is nonzero)
-    i = findfirst(@. !isapprox(x, 0))  # TODO abs tol
-    #i !== nothing || # TODO what to return for type stability?
-
-    # perform a single Gauss step to eliminate component i of y
-    # (note that the choice of i ensures that we do not divide by zero here)
-    y_elim = y - x * y[i] / x[i]
-    
-    # find the first nonzero component of the resulting vector
-    # note that entry i must be zero by construction
-    @assert isapprox(y_elim[i], 0)
-    j = findfirst(@. !isapprox(y_elim, 0))  # TODO
-    # such a j must exist since x and y are linearly independent
-    # now the 2x2 matrix induced by components i and j of x and y_elim is of the form [* *; 0 *] and has rank 2,
-    # so projecting out all but i,j leaves projections of x and y_elim (and therefore y) linearly independent.
-    i,j
-end
-
 
 # return keyword dict with all attributes prefixed by `prefix`
 # and their full attribute names (aliases don't work inside recipes)
@@ -83,18 +30,28 @@ end
 # type annotations on kwargs not supported in recipes
 @recipe function f(p::Polytope, indices::AbstractVector{<:Integer};
     # custom keyword arguments:
-    usecoordinates=true,  #::Bool
-    vertexlabels=string.(1:nvertices(p)), #::Union{Nothing, AbstractVector{<:AbstractString}, AbstractDict{Int, <:AbstractString}}
-    ineqlabels=string.(1:nhalfspaces(p)), #::Union{Nothing, AbstractVector{<:AbstractString}}
-    unique_labels_only=true, #::Bool
-    markup_edges=nothing,  #::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
+    usecoordinates=true,
+    vertexlabels=string.(1:nvertices(p)),
+    ineqlabels=string.(1:nhalfspaces(p)),
+    unique_labels_only=true,
+    markup_edges=nothing,
     linecolor=:steelblue,  # aliases like `lc` still work(?) # TODO
 )
-    # TODO check arguments
+    # TODO check arguments: ignore invalid values
+    if !(usecoordinates isa Bool)
+        usecoordinates = true
+    end
 
-    if markup_edges !== nothing && 
-            (!all(@. length(markup_edges) == 2) || !all(Graphs.has_edge(graph(p), e...) for e in markup_edges))
-        throw(ArgumentError("invalid edges"))
+    if markup_edges !== nothing && !isempty(markup_edges)  # [] or () is treated as nothing
+        if length(markup_edges) !== 2
+            error("got $(length(markup_edges)) elements, expected 2")
+        end
+
+        isedge(e) = try length(e) == 2 && Graphs.has_edge(graph(p), e...) catch; false end
+        i = findfirst(!isedge, markup_edges)
+        if i !== nothing
+            error("not an edge: $(markup_edges[i])")
+        end
     end
 
     # warn user if trying to set the value of an attribute whose value
@@ -178,12 +135,13 @@ end
     # replace all symbolic values by numeric ratio
     # :equal is replaced by 1, :auto and :none by ratio of plot area
     if !haskey(plotattributes, :aspect_ratio)
-        aspect_ratio := ratio #(usecoordinates ? ratio : 1)
+        aspect_ratio := ratio
     elseif !(plotattributes[:aspect_ratio] isa Real)  # assuming that valid argument types are Real and Symbol(?)
         if plotattributes[:aspect_ratio] == :equal
             aspect_ratio := 1
         else  # :auto, :none
             aspect_ratio := ratio
+            @warn "Skipped non-numeric value for aspect ratio: $(plotattributes[:aspect_ratio])"
         end
     end
     
@@ -225,7 +183,7 @@ end
 
         for k=1:2
             # get an edge-defining inequality for the other edge
-            edgefacets = incidenthalfspaces(p, markup_edges[k==1 ? 2 : 1])
+            edgefacets = incidenthalfspaces(p, collect(markup_edges[(k==1)+1]))  # need `collect` for tuples
             ineq = findfirst(f -> !(f in indices), edgefacets)
 
             (u,v), uniquedir = directedge(p, markup_edges[k], edgefacets[ineq])

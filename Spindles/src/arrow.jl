@@ -1,3 +1,7 @@
+# ================================
+# Series recipe for arrows
+# ================================
+
 # compute a unit vector (with respect to the 2-norm)
 # such that its angle (in radians) with the first standard basis vector (1,0) is α
 function unitvector(α::Real)
@@ -34,7 +38,7 @@ end
 # series recipe
 # last line segment gets an arrowhead
 # arrow keyword in standard recipes has a bug and does not scale properly for many subplots
-@recipe function f(::Type{Val{:arrow}}, x, y, z; headsize=20, headpos=1, headshape=0.8)
+@recipe function f(::Type{Val{:arrow}}, x, y, z; headsize=25, headpos=1, headshape=0.8)
     if plotattributes[:subplot].attr[:aspect_ratio] isa Real
         ratio = plotattributes[:subplot].attr[:aspect_ratio]
     else
@@ -59,11 +63,15 @@ end
     
     markershape := markershapes
     markersize := headsize
+    
+    markercolor       := plotattributes[:linecolor]
+    markerstrokecolor := plotattributes[:linecolor]
+    markeralpha       := plotattributes[:linealpha]
+    markerstrokealpha := plotattributes[:linealpha]
 
     linewidth --> 1
-    markerstrokewidth := plotattributes[:linewidth]
-    markercolor       := plotattributes[:linecolor]
-    markerstrokecolor := plotattributes[:markercolor]
+    markerstrokewidth := plotattributes[:linewidth]    
+    markerstrokestyle := :solid
 
     seriestype := :path
     x := xy[:,1]
