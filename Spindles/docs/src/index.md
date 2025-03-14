@@ -40,7 +40,7 @@ Using *Spindles.jl* requires a working installation of Julia. Download files and
 
 To install the latest stable version of *Spindles.jl*, clone the parent [GitHub repository](https://github.com/ma-b/hirsch-walks) by running 
 
-    git clone --branch v0.3.1 https://github.com/ma-b/hirsch-walks.git
+    git clone --branch v0.3.2 https://github.com/ma-b/hirsch-walks.git
 
 in the command line. In the `Spindles` subdirectory of your local clone, open the Julia REPL and enter [Pkg](https://docs.julialang.org/en/v1/stdlib/Pkg/) mode by pressing `]`. Then run
 

@@ -1,6 +1,6 @@
 name = "Spindles"
 uuid = "9a708d6d-e1c5-4911-9b93-28ca33b2614e"
-version = "0.3.1"
+version = "0.3.2"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
