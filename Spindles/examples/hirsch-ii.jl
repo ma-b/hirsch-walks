@@ -183,11 +183,11 @@ edges20 = isgood2face(s20, face20, apx20...).edges
 
 plot(
     plot(s, face; usecoordinates=false, 
-        vertexlabels=dist_labels, 
-        markup_edges=edges, aspect_ratio=:equal),
+         vertexlabels=dist_labels, 
+         markup_edges=edges, aspect_ratio=:equal),
     plot(s20, face20; usecoordinates=false, 
-        vertexlabels=dist_labels20, ineqlabels=labels, 
-        markup_edges=edges20, aspect_ratio=:equal),
+         vertexlabels=dist_labels20, ineqlabels=labels, 
+         markup_edges=edges20, aspect_ratio=:equal),
     layout=grid(1,2), size=(800,400)
 )
 

@@ -28,12 +28,14 @@ The plot can be customized using keywords in `kw...`. The following keywords are
 Can be any [series](https://docs.juliaplots.org/latest/generated/attributes_series/),
 [plot](https://docs.juliaplots.org/latest/generated/attributes_plot/),
 [subplot](https://docs.juliaplots.org/latest/generated/attributes_subplot/),
-or [axis attribute](https://docs.juliaplots.org/latest/generated/attributes_axis/) defined by Plots.jl.
+or [axis attributes](https://docs.juliaplots.org/latest/generated/attributes_axis/) defined by Plots.jl.
 See also the [Plots.jl documentation](https://docs.juliaplots.org/latest/attributes/) on attributes and aliases.
 Note that not all available attributes have an effect for plotting polytopes, though. 
 
 Among the supported series attributes, fill attributes such as `fillalpha`, `fillcolor`, `fillstyle` 
-apply to the face itself. Line attributes such as `linealpha`, `linecolor`, `linestyle`, `linewidth` apply to its edges and marker attributes such as `markersize`, `markeralpha`, `markercolor` apply to the vertex markers.
+apply to the face itself. Line attributes such as `linealpha`, `linecolor`, `linestyle`, `linewidth` 
+apply to its edges and marker attributes such as `markersize`, `markeralpha`, `markercolor` 
+apply to vertex markers (see also the examples below).
 
 !!! note "Hardcoded attributes"
     Currently, label attributes (font, size, colour) cannot be modified. 
@@ -50,7 +52,7 @@ apply to the face itself. Line attributes such as `linealpha`, `linecolor`, `lin
 
 * `markup_headsize`: Size of the arrowhead for directed edges.
 * `markup_headpos`: A number between 0 and 1 that is taken as a relative offset of the arrow tip:
-  1 means that the tip is drawn at the sink, and 0 means it is drawn at the source of the directed edge.
+  1 means that the tip is drawn at the sink (default), and 0 means it is drawn at the source of the directed edge.
 * Line attributes (or aliases) prefixed by `markup_` apply to the marked up edges only. For example, their
   width is set with `markup_linewidth` (or `markup_lw` or any other alias).
 

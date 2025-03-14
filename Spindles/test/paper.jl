@@ -11,6 +11,7 @@
         @test length(gfs) == 32
 
         @test all(f in facesofdim(s, 2) for f in faces)
+        @test all(dim.(s, faces) .== 2)
     end
 
     function testfaces(filename::AbstractString, faces::Vector{String}=String[])
