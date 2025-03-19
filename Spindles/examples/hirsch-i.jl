@@ -167,40 +167,71 @@ plot(s, face;
 #src nothing # hide
 
 # Not only are the two edges marked up in the plot, they are also drawn as *directed* edges now.
-# To see why (and how this direction is determined by `plot`),
-# recall that each of them is contained in a shortest path between the apices of `s`
-# that walks along parts of the face `15⁺ 19⁺ 21⁺`. For example, coming from the second apex
-# (the one not contained in the face) and heading towards the first apex `1`,
-# the two highlighted edges are traversed in exactly the direction indicated above. 
-# If we look at the "true" geometry of `15⁺ 19⁺ 21⁺`, though, we could also start from any vertex in $V_2$
-# and follow one of the two arrows (through the interior of the face!)
-# as far as possible without leaving the face.
+# To see why (and how this direction is determined by `plot`), let's look at the true geometry of 
+# the face `15⁺ 19⁺ 21⁺` again:
 plot(s, face; 
     ineqlabels=nothing, vertexlabels=set_labels, 
     markup_edges=([25,57], [33,81]),
     usecoordinates=true, title="V₁ and V₂",
     xguide="", yguide=""  # hide axis labels
 )
-#src nothing # hide
 
-# The geometry of the 2-face tells us that the point on the boundary that we hit must be on one of the
-# two edges incident to the apex `1`. From that point, we walk along the edge and reach `1` within
-# (at most) two steps on the face, rather than three steps along its boundary.
-# So, in a relaxed regime where paths may pass through the interior of a face, one might consider taking
-# three edges steps from the second apex to some vertex in $V_2$, then apply the two-step "shortcut" through
-# the interior of the face `15⁺ 19⁺ 21⁺`, and end up at the first apex `1`. This yields (at most) 5 steps in total.
-# Recall that in the traditional setting that forbids paths through the interior, one cannot do better than 6 steps.
+# Now the two arrows point away from each other – this is precisely how the `plot` command decides
+# at which endpoints to place the arrow tips.
 
-# !!! note
-#     It is important to note here that, unlike paths along edges,
-#     this shortcut has a direction associated to it. The direction
-#     is determined by the geometry of the 2-face `15⁺ 19⁺ 21⁺` and is indicated by the direction of the two
-#     highlighted edges. When making a plot with `plot` as above, they are always drawn in such a way that the arrows
-#     "point away" from each other.
+# Yet what do these directions tell us?
+# To explain this, recall that each of the highlighted edges belongs to a shortest path (of length 6) between the apices of `s`.
+# For example, we saw above that there is path of length 3 between the second apex of `s`
+# (the one not contained in the face) and the vertex `156` (since `156` is in $V_2$). From `156`,
+# it's only 3 more edge steps to the first apex `1`. 
+# Now imagine that we travel along the edges of this path towards `1`, and orient each edge
+# according to our direction of travel. Then the path becomes a sequence of steps in certain directions,
+# where we follow each direction as far as we can – namely, until we hit the next vertex along the path.
 
-# Shortcuts like this are precisely what makes faces such as `15⁺ 19⁺ 21⁺` interesting for analyzing `s`
-# in the setting of the so-called *circuit diameter conjecture*, a relaxation of the Hirsch conjecture
-# that allows for paths through the interior of a polytope.
+# What happens if we choose different directions at each step? For example, suppose that we have reached `156`, 
+# and now choose one of the two highlighted edge directions.
+# To visualize the situation, we need a little extra code.
+# First, let's define a function that, given a starting point `z` and a direction `g`,
+# determines how far we can walk without leaving the face. In a formula, this is the maximum number
+# $\mu$ for which $A(z+\mu g) \le b$ (note that the maximum is indeed finite because the spindle `s` is a polytope).
+
+function maxsteplength(z, g)
+    ## ignore rows of A whose dot product with the given direction is <= 0
+    ## since the corresponding inequalities will be satisfied for any positive step length
+    divpos(x, y) = y > 0 ? x/y : Inf
+    minimum(divpos.(b - A * z, A * g))
+end
+nothing # hide
+
+# With this helper function, we can now visualize what happens after a hypothetical step along
+# either of the two arrows. In fact, we just add to the previous plot by using `plot!` instead of `plot`.
+edges = ((81,33), (57,25))  # the two edges marked up above
+source = collect(vertices(s))[156]
+
+for (u, v) in edges
+    edge_direction = collect(vertices(s))[v] - collect(vertices(s))[u]
+    μ = maxsteplength(source, edge_direction)
+    destination = source + μ * edge_direction
+
+    plot!(
+        ## project points onto the same two coordinates (1 and 5) as the face
+        [source[1], destination[1]], [source[5], destination[5]],
+        seriestype=:arrow, linestyle=:dash, linewidth=2, linecolor=:darkorange2, 
+    )
+end
+current()
+
+# !!! note "Plotting arrows"
+#     The series type `arrow` is a custom series type defined by *Spindles.jl*.
+
+# The plot above tells us that either of the two dashed arrows
+# (which are parallel to the marked up edges) leads us directly onto an edge that is incident with
+# `1`, rather than taking the "detour" along edges. In a nutshell, this is the reason why the face 
+# `15⁺ 19⁺ 21⁺` is so interesting for analyzing paths on the spindle `s`: It allows for a "shortcut" when
+# steps through the interior of the face are allowed.
+# Note that the choice of the vertex `156` above was arbitrary. 
+# Indeed, we could translate the tails of the two dashed arrows over to any other vertex in $V_2$ 
+# and still construct similar shortcuts on the face.
 
 # Let us call a 2-face of a spindle a *good 2-face* if it allows for such a shortcut between the apices as above
 # (regardless of its direction). 
@@ -222,7 +253,7 @@ fstate.good, fstate.vsets
 #src ==========================
 # ## Finding all good 2-faces
 
-# Using the function [`facesofdim`](@ref) and [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
+# Using the functions [`facesofdim`](@ref) and [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
 for f in sort(facesofdim(s, 2))
     if isgood2face(s, f, apx...).good
         println(join(labels[f], " "))
