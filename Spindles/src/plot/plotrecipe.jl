@@ -1,9 +1,7 @@
 # ================================
 # User recipe for plotting 2-faces
+# (see also https://docs.juliaplots.org/stable/recipes/)
 # ================================
-
-using RecipesBase  # see https://docs.juliaplots.org/stable/recipes/
-import Plots
 
 # return keyword dict with all attributes prefixed by `prefix`
 # and their full attribute names (aliases don't work inside recipes)
@@ -121,6 +119,7 @@ end
     # concatenate multiple inequality labels into a single string
     concatlabels(labels::AbstractVector{<:AbstractString}) = 
         join( unique_labels_only ? unique(labels) : labels, ' ' )
+    # wrap `ineqlabels` in a Ref() to enable broadcasting over collection of dict keys
     title --> (ineqlabels !== nothing ? concatlabels(get.(Ref(ineqlabels), indices, "")) : "")
 
     # ---- set aspect ratio ----
@@ -197,7 +196,6 @@ end
                 # set series attributes
                 for (attr, val) in markup_attrs
                     plotattributes[attr] = get(markup_kwargs, attr, val)
-                    # FIXME `eval(attr) := ...` doesn't seem to work here
                 end
                 x[[i,j]], y[[i,j]]
             end
@@ -209,55 +207,39 @@ end
     # barycentre of face
     bx, by = sum(x)/length(x), sum(y)/length(y)
 
-    # compute the angle (in radians) of the edge between vertex i and its successor in the cyclic order
-    # !!! this is the angle as plotted and not necessarily the true angle 
-    #     since aspect ratio might be different from 1
-    function edge_angle(i::Int, ratio::Real)
-        @assert 1 <= i <= n
+    # compute angle of drawn edge between i and j (i.e., angle as shown on the canvas)
+    function edge_angle(i::Int)
         j = succ(i)
-
-        if isapprox(x[i], x[j])  # edge is (nearly) vertical
+        α = angle(x[j]-x[i], y[j]-y[i], plotattributes[:aspect_ratio])
+        
+        if isapprox(abs(α), π/2)  # (near-)vertical edge
             # choose the unique rotation angle from ± π/2 so that text can be read normally
             # when rotating the polygon around to make the current edge the top (horizontal) edge,
             # i.e., the sign of the angle depends on whether the vertical edge is on the left or on the right
-            α = sign(bx-x[i]) * π/2
-        else
-            # need to rescale x in accordance with aspect ratio 
-            α = atan((y[j]-y[i]) / (x[j]-x[i]) * ratio)  # in radians
+            α = sign(bx - x[i]) * π/2
         end
         α
     end
 
-    # compute outer normal vector of the edge between i and its successor in the cyclic order, i.e.,
-    # a vector that, in the plot(!), is orthogonal to the drawn edge between i and its successor
-    function outernormal(i::Int, ratio::Real)
-        #α = edge_angle(i, ratio)
-        #vec = [1, tan(α+π/2)]
-
+    # compute outer normal vector of the drawn edge between i and its successor in the cyclic order, i.e.,
+    # a vector that, on the plot canvas, is orthogonal to the drawn edge between i and its successor
+    # and "points outwards"
+    function outernormal(i::Int; scale::Real=yrange/16)
         j = succ(i)
-        # actual edge direction in plot is (see above)
-        edgedir = [x[j]-x[i], (y[j]-y[i]) * ratio]
-        #vec = [(y[j]-y[i]) * ratio, x[i]-x[j]]  # TODO without ratio, this vector is orthogonal to the true edge
-        vec = [edgedir[2], -edgedir[1]]
-
-        vec = vec ./ sqrt(sum(vec .^ 2))  # normalize by 2-norm
-        # make orthogonal in plot
-        vec[1] *= ratio
-        # normalize length relative to yrange
-        vec = vec .* yrange / 16  # TODO
-
-        # `vec` is orthogonal but not necessarily an *outer* normal
-        # to this end, take any point in the interior of the polygon, e.g., the barycentre
+        vec = orthogonal_vector(x[j]-x[i], y[j]-y[i], plotattributes[:aspect_ratio])
+        
+        # this vector is orthogonal but not necessarily an *outer* normal of the edge between i and j.
+        # to make it one, take any point in the interior of the polygon, e.g., the barycentre,
         # then the dot product of ... with any outer normal must be nonnegative
-        if vec[1] * (x[i]-bx) / ratio^2 + vec[2] * (y[i]-by) < 0  # !!! rescale to get back true dot product
-            # both first entries have been scaled by `ratio` each
-            vec *= -1  # reverse direction to point in same direction as diff vector from barycentre
+        # (dot product on the canvas, i.e., need to apply the transformation to both vectors first)
+        if vec[1] * (x[i]-bx) / ratio^2 + vec[2] * (y[i]-by) < 0
+            vec *= -1
         end
-        vec
+        
+        # possibly rescale vector
+        vec .* scale
     end
-
-    # outer normals of edges
-    normals = outernormal.(1:n, plotattributes[:aspect_ratio])
+    normals = outernormal.(1:n)
 
     if ineqlabels !== nothing
         # incident halfspaces of each edge
@@ -266,16 +248,13 @@ end
             for i=1:n
         ]
 
-        # angles of edges
-        α = edge_angle.(1:n, plotattributes[:aspect_ratio])
-
         @series begin
             seriestype := :scatter
-            markeralpha := 0  # only annotations
+            markeralpha := 0  # no markers, only annotations
             # FIXME text() requires Plots
             series_annotations := [Plots.text(
                 concatlabels(get.(Ref(ineqlabels), tightfacets[i], "")), 
-                8, :center, linecolor, rotation = α[i] * 180/π  # rotation angle is in degrees
+                8, :center, linecolor, rotation = edge_angle(i) * 180/π  # rotation angle is in degrees
             ) for i=1:n]
 
             labelx = [(x[i] + x[succ(i)])/2 + normals[i][1] for i=1:n]
@@ -296,7 +275,7 @@ end
     if vertexlabels !== nothing
         @series begin
             seriestype := :scatter
-            markeralpha := 0  # only annotations
+            markeralpha := 0  # no markers, only annotations
 
             # if index/key not found, don't print a label
             series_annotations := [(get(vertexlabels, cyclic[i], ""), 10, :center) for i=1:n]
@@ -313,9 +292,7 @@ end
 
 
 # for compatibility with older versions
-export plot2face
-using Plots: plot
 function plot2face(args...; kw...)
-    @warn "`plot2face` is deprecated and has been replaced by `plot`"
-    plot(args...; kw...)
+    @warn "`plot2face` is deprecated, use `plot` instead."
+    Plots.plot(args...; kw...)
 end

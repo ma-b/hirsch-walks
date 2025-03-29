@@ -1,5 +1,3 @@
-export isgood2face, dist
-
 """
     FaceState
 
@@ -55,6 +53,38 @@ function dist(p::Polytope, u::Int, v::Int)
     return p.dists[u][v]
 end
 
+
+# check whether `g` is a cycle: if yes, list the vertices of `g` in cyclic order; if not, return nothing.
+# the arguments are the return values of Graphs.induced_subgraph
+# least index first in order
+function cyclicorder(g::Graphs.SimpleGraph, vmap::Vector{Int})
+    # pick an arbitrary starting vertex and traverse the graph g depth-first
+    start = minimum(Graphs.vertices(g))  # least vertex index first
+    cyclic = [start]
+
+    v = start
+    u = v  # will keep track of the predecessor of v throughout the following loop, initialize to v (arbitrary)
+    it = 0  # number of iterations
+    
+    while (v != start || it == 0) && it < Graphs.nv(g)
+        # find a neighbor of v distinct from u and append it to list
+        nb_idx = findfirst(Graphs.neighbors(g, v) .!= u)
+        nb = Graphs.neighbors(g, v)[nb_idx]
+        push!(cyclic, nb)
+
+        u = v
+        v = nb
+        it += 1
+    end
+
+    # for g to be a cycle, we must have traversed all vertices of g
+    if it < Graphs.nv(g)
+        return
+    end
+    
+    # map vertex indices back to vertices of the original graph
+    return vmap[cyclic[1:end-1]]  # last element is starting vertex again
+end
 
 """
     isgood2face(p::Polytope, indices, src, dst)

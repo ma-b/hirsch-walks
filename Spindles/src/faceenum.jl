@@ -2,8 +2,6 @@
 # Face enumeration
 # ================================
 
-export facesofdim, nfacesofdim, graph
-
 # --------------------------------
 # graph
 # --------------------------------

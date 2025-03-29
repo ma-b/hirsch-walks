@@ -2,8 +2,6 @@
 # Incidence
 # ================================
 
-export apices, vertices, nvertices, nhalfspaces, incidentvertices, incidenthalfspaces
-
 """
     vertices(p::Polytope)
 

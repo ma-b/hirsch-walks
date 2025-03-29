@@ -1,7 +1,3 @@
-using DelimitedFiles
-
-export readineq, writeineq
-
 # convert the string "1/3" to the rational 1//3
 str2rat(str::AbstractString, ::Type{T}) where T<:Integer =
     Rational(reduce(//, parse.(T, split(str, '/'))))

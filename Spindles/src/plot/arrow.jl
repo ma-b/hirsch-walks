@@ -2,31 +2,9 @@
 # Series recipe for arrows
 # ================================
 
-# compute a unit vector (with respect to the 2-norm)
-# such that its angle (in radians) with the first standard basis vector (1,0) is α
-function unitvector(α::Real)
-    # shift angle in the range between -π and π
-    while α < -π
-        α += 2π
-    end
-    while α > π
-        α -= 2π
-    end
-
-    if isapprox(abs(α), π/2)
-        return [0, sign(α)]
-    else
-        # tan is π-periodic, so to distinguish a vector and its negative, we first need to
-        # check whether the desired vector is contained in the halfplane x >= 0 or x < 0
-        s = abs(α) <= π/2 ? 1 : -1
-        vec = s * [1, tan(α)]
-        return vec / sqrt(sum(vec .^ 2))  # normalize
-    end
-end
-
 # θ angle by which the tip "opens" on either side
 # relative shape factor in [0,1]
-# ! shape will be used as a marker shape and therefore can be independent of the aspect ratio
+# ! shape will be used as a marker shape and can therefore be independent of the aspect ratio
 function arrowhead(rotation::Real; θ::Real=π/8, relshape::Real=0.75)
     relshape = max(min(relshape, 1), 0)  # truncate if necessary to fit between 0 and 1
     points = [  # cylic list of vertices of (not necessarily convex) polygon

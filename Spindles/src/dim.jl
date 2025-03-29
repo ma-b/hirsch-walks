@@ -2,8 +2,6 @@
 # Dimension of faces
 # ================================
 
-export dim, codim
-
 # Compute a maximal chain in the face lattice of `p` such that all faces only contain vertices in `vindices`,
 # and the minimal face of the chain is the face defined by inequalities `f`.
 # IMPORTANT: `f` must be the inclusion-maximal subset of halfspaces incident to the face because at each step 

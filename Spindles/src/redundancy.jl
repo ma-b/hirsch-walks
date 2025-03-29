@@ -2,8 +2,6 @@
 # Redundancy detection
 # ================================
 
-export facets, nfacets, impliciteqs
-
 # --------------------------------
 # H-redundancy
 # --------------------------------
