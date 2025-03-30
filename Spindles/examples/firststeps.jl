@@ -33,6 +33,10 @@ b = [1, 1, 1, 1, 1, 1]
 using Spindles # hide
 cube = Polytope(A, b)
 
+# !!! tip
+#     The 3D unit cube can also be created using the generator function [`cube`](@ref) implemented
+#     in *Spindles.jl*.
+
 # What sets a spindle apart from a general polytope is the existence of two vertices 
 # (the apices) whose incident facets partition the set of all facets. 
 # We may check `cube` for the existence of such a pair of vertices by running

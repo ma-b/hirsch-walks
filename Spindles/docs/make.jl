@@ -61,7 +61,7 @@ makedocs(
             "Dimension" => "man/polytopes/dimension.md",
             "Faces and graphs" => "man/polytopes/faces.md",
             "Plots" => "man/polytopes/plots.md",
-            #"Generators for standard polytopes" => "man/polytopes/generators.md",
+            "Generators for standard polytopes" => "man/polytopes/generators.md",
         ],
         "Analysis API" => [
             "Good 2-faces" => "man/goodfaces.md",
