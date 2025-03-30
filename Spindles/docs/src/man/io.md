@@ -1,4 +1,4 @@
-# File I/O
+# Reading and writing files
 
 ```@docs
 writeineq

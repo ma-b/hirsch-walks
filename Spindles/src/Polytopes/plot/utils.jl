@@ -67,7 +67,7 @@ end
 # (x, y) -> (x / ratio, y)
 # --------------------------------
 
-# Compute the angle (in radians) between the vector (x,y) and (1,0) as seen in the final plot
+# Compute the angle (in radians; between -π/2 and π/2) between the vector (x,y) and (1,0) as seen in the final plot
 # (i.e., respecting the aspect ratio)
 function angle(x::Real, y::Real, ratio::Real)
     # need to apply the canvas transformation first to rescale the vector in accordance with aspect ratio

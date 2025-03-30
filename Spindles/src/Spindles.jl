@@ -1,15 +1,16 @@
-"""
-Main module. The public API is listed below.
-"""
 module Spindles
 
-import Polyhedra
 import Graphs
 using DelimitedFiles: readdlm
-using RecipesBase
-import Plots  # TODO remove dependency
 
 export 
+    isgood2face,
+
+    # I/O
+    readineq, 
+    writeineq,
+    
+    # --- and everything from Polytopes: ---
     Polytope,
 
     # representations and incidence
@@ -28,26 +29,28 @@ export
     facesofdim,
     nfacesofdim,
     graph,
-    apices,
-    isgood2face, 
+    apices, 
     dist,
 
-    # I/O
-    readineq, 
-    writeineq,
+    # generators
+    cube,
+    crosspolytope,
+    permutahedron,
 
     # for compatibility with older versions
-    plot2face  # TODO remove
+    plot2face
 
-include("polytopes.jl")
-include("incidence.jl")
-include("faceenum.jl")
-include("dim.jl")
-include("redundancy.jl")
+"""
+    Spindles
+
+A lightweight package for representing and analyzing polytopes.
+"""
+#Spindles
+
+include("Polytopes/Polytopes.jl")
+using .Polytopes
+
 include("goodfaces.jl")
-include("plot/utils.jl")
-include("plot/arrow.jl")
-include("plot/plotrecipe.jl")
 include("io.jl")
 
 end # module

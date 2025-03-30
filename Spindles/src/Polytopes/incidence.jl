@@ -61,7 +61,7 @@ function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
 end
 function _incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
     if isempty(indices)
-        1:nhalfspaces(p)  # TODO type
+        1:nhalfspaces(p)  # FIXME type
     else
         findall(reduce(.&, p.inc[indices]))
     end

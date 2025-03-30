@@ -1,3 +1,40 @@
+module Polytopes
+
+import Polyhedra
+import Graphs
+using RecipesBase
+import Plots  # TODO remove dependency
+
+export 
+    Polytope,
+
+    # representations and incidence
+    vertices, 
+    nvertices, 
+    nhalfspaces, 
+    incidentvertices, 
+    incidenthalfspaces,
+    facets, 
+    nfacets, 
+    impliciteqs,
+
+    # combinatorics
+    dim, 
+    codim,
+    facesofdim,
+    nfacesofdim,
+    graph,
+    apices, 
+    dist,
+
+    # generators
+    cube,
+    crosspolytope,
+    permutahedron,
+
+    # for compatibility with older versions
+    plot2face  # TODO remove
+
 mutable struct Polytope{T}
     const poly::Polyhedra.Polyhedron{T}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
@@ -84,8 +121,21 @@ true
 """
 Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
 
-Base.show(io::IO, p::Polytope) = print(io, typeof(p))
+Base.show(io::IO, p::Polytope{T}) where T = print(io, "Polytope{$T}")
 Base.summary(p::Polytope) = "$(typeof(p))"
 
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
 Base.broadcastable(p::Polytope) = Ref(p)
+
+
+include("incidence.jl")
+include("faceenum.jl")
+include("dim.jl")
+include("redundancy.jl")
+include("distances.jl")
+include("plot/utils.jl")
+include("plot/arrow.jl")
+include("plot/plotrecipe.jl")
+include("generators.jl")
+
+end # module

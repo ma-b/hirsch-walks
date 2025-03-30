@@ -53,7 +53,7 @@ end
 # the maximum length of any entry in the same column
 function alignright!(A::AbstractMatrix{<:AbstractString})
     colwidths = maximum(length, A; dims=1)
-    for j=1:size(A,2)
+    for j in axes(A, 2)
         A[:,j] = lpad.(A[:,j], colwidths[j])
     end
     A

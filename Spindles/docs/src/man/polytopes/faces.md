@@ -33,13 +33,3 @@ graph
 ```@docs
 dist
 ```
-
-## Good faces
-
-```@docs
-Spindles.FaceState
-```
-
-```@docs
-isgood2face
-```

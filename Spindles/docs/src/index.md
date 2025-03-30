@@ -31,7 +31,7 @@ The latter two are examples of libraries that can also be used with [Polyhedra.j
 !!! note
     *Spindles.jl* currently relies on [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) to convert a polytope given by a system of linear inequalities into a list of its vertices and vice versa.
 
-See the [full API reference](@ref "API Index") for more technical details on the package design and its functionalities.
+See the [full API reference](@ref "Index") for more technical details on the package design and its functionalities.
 
 ---
 
@@ -59,7 +59,7 @@ julia> using Spindles
 
 ## Getting started
 For the basic usage of *Spindles.jl*, please read the tutorial on [first steps](@ref "First steps"). 
-The full documentation can be found [here](@ref "API Index").
+The full documentation can be found [here](@ref "Index").
 
 To learn more about how *Spindles.jl* can help analyze counterexamples to the Hirsch conjecture, please check out [this tutorial](@ref "Spindles and the Hirsch conjecture I").
 

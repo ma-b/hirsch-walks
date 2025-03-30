@@ -53,15 +53,19 @@ makedocs(
             name => "tutorials/$(example).md"
             for (example, name) in EXAMPLES
         ],
-        "API Reference" => [
-            "Index" => "man/api.md",
-            "Polytopes" => "man/polytopes.md",
-            "Minimal representations" => "man/representation.md",
-            "Spindles" => "man/spindles.md",
-            "Dimension" => "man/dimension.md",
-            "Faces and graphs" => "man/faces.md",
-            "Plots" => "man/plots.md",
-            "File I/O" => "man/io.md",
+        "Polytopes API" => [
+            "Index" => "man/polytopes/api.md",
+            "Polytopes" => "man/polytopes/polytopes.md",
+            "Minimal representations" => "man/polytopes/representation.md",
+            "Spindles" => "man/polytopes/spindles.md",
+            "Dimension" => "man/polytopes/dimension.md",
+            "Faces and graphs" => "man/polytopes/faces.md",
+            "Plots" => "man/polytopes/plots.md",
+            #"Generators for standard polytopes" => "man/polytopes/generators.md",
+        ],
+        "Analysis API" => [
+            "Good 2-faces" => "man/goodfaces.md",
+            "Reading and writing files" => "man/io.md",
         ],
     ]
 )

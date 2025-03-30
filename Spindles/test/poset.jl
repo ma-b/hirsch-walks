@@ -2,7 +2,7 @@
 
     # start chain at k-dimensional face
     function testchain(p::Polytope, face::Vector{Int}, k::Int; testenum::Bool=false)
-        mc = Spindles.maxchain(p, face)
+        mc = Spindles.Polytopes.maxchain(p, face)
         for (i,f) in enumerate(mc)
             # the i-th chain element is a face of dimension i+k-1 (since we start counting dimensions at k)
             # so it must consist of at least dim-(i+k-1) halfspace indices
@@ -32,7 +32,7 @@
             # pick a random vertex and start maximal chain from there
             v = rand(1:nvertices(p))
             #v = findfirst(i -> !(i in apices(p)), 1:nvertices(p))
-            @test dim(p) == length(Spindles.maxchain(p, findall(p.inc[v]))) - 1
+            @test dim(p) == length(Spindles.Polytopes.maxchain(p, findall(p.inc[v]))) - 1
 
             testchain(p, findall(p.inc[v]), 0; testenum=true)
         end
