@@ -28,9 +28,11 @@ export
     dist,
 
     # generators
+    simplex,
     cube,
     crosspolytope,
     permutahedron,
+    polarize,
 
     # for compatibility with older versions
     plot2face  # TODO remove

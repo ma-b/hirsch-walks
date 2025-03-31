@@ -7,7 +7,6 @@
         # f-vectors must be reverses of each other since the polytopes are dual to each other
         @test nfacesofdim.(p, -1:n) == nfacesofdim.(q, n:-1:-1)
 
-        polarize(poly::Polytope) = Polytope(hcat(vertices(poly)...)', ones(Int, nvertices(poly)))
         @test q == polarize(p)
         @test p == polarize(q)
     end
