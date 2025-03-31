@@ -157,9 +157,9 @@ function writeineq(fname::AbstractString, A::AbstractMatrix, b::AbstractVector;
     comment_char::AbstractChar='#'
 )
     if labels
-        rowlabels = string.(1:size(A,1))
+        rowlabels = string.(axes(A,1))
     else
-        rowlabels = ["" for i=1:size(A,1)]
+        rowlabels = ["" for i in axes(A,1)]
     end
     writeineq(fname, A, b, rowlabels; comments=comments, comment_char=comment_char)
 end

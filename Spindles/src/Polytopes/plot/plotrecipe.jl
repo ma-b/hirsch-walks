@@ -3,6 +3,13 @@
 # (see also https://docs.juliaplots.org/stable/recipes/)
 # ================================
 
+### TODO remove the following function in next versions
+function plot2face(args...; kw...)
+    @warn "`plot2face` is deprecated, use `plot` instead."
+    Plots.plot(args...; kw...)
+end
+
+
 # return keyword dict with all attributes prefixed by `prefix`
 # and their full attribute names (aliases don't work inside recipes)
 function extract_prefix_kwargs(kwargs::Dict{Symbol, <:Any}, prefix::AbstractString, attrs)
@@ -81,6 +88,7 @@ end
     # ---- coordinates ----
 
     if usecoordinates
+        # matrix with one row for each vertex of the face
         verts = hcat(collect(vertices(p))[cyclic]...)'
 
         # project out all but 2 coordinates in such a way that the projection is 2-dimensional again:
@@ -89,10 +97,7 @@ end
 
         # these two vectors are nonzero (and linearly independent) since they are differences of distinct vertices
         # (note here that a 2-face has at least 3 vertices)
-        r12 = verts[1,:] - verts[2,:]
-        r13 = verts[1,:] - verts[3,:]  # TODO normalize?
-
-        i,j = proj_onto_indices(r12, r13)
+        i,j = proj_onto_indices(verts[1,:] - verts[2,:], verts[1,:] - verts[3,:])
         x, y = verts[:,i], verts[:,j]  # TODO convert to float?
 
         # use indices of projection coordinates as default axis labels
@@ -119,13 +124,11 @@ end
     # concatenate multiple inequality labels into a single string
     concatlabels(labels::AbstractVector{<:AbstractString}) = 
         join( unique_labels_only ? unique(labels) : labels, ' ' )
-    # wrap `ineqlabels` in a Ref() to enable broadcasting over collection of dict keys
+    # wrap `ineqlabels` in Ref() to enable broadcasting over collection of dict keys
     title --> (ineqlabels !== nothing ? concatlabels(get.(Ref(ineqlabels), indices, "")) : "")
 
     # ---- set aspect ratio ----
 
-    # from https://docs.juliaplots.org/latest/generated/attributes_subplot/
-    # >> Plot area is resized so that 1 y-unit is the same size as `aspect_ratio` x-units.
     xrange = maximum(x) - minimum(x)
     yrange = maximum(y) - minimum(y)
     # default aspect ratio: fill the entire plot area
@@ -288,11 +291,4 @@ end
     end
 
     ()
-end
-
-
-# for compatibility with older versions
-function plot2face(args...; kw...)
-    @warn "`plot2face` is deprecated, use `plot` instead."
-    Plots.plot(args...; kw...)
 end

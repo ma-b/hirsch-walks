@@ -148,7 +148,7 @@ is given by the list of *all* halfspace indices, as the intersection of all face
 See also [`nfacesofdim`](@ref), [`dim`](@ref).
 """
 function facesofdim(p::Polytope, k::Int)
-    if !(-1 <= k <= size(Polyhedra.hrep(p.poly).A, 2))
+    if !(-1 <= k <= ambientdim(p))
         # there is no face of dimension less than -1 or greater than the dimension of the ambient space
         return Vector{Int}()
     elseif k == -1  # empty face

@@ -30,7 +30,7 @@ function directedge(p::Polytope, edge::Union{Tuple{Int, Int}, AbstractVector{Int
     end
 end
 
-# given two nonzero vectors x and y in dimension at least 2, find two coordinates
+# given two nonzero vectors x and y in dimension >= 2, find two coordinates
 # such that the projections of x and y onto these coordinates
 # are linearly independent if and only if x and y are linearly independent
 function proj_onto_indices(x::AbstractVector{<:Real}, y::AbstractVector{<:Real})

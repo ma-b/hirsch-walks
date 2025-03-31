@@ -38,15 +38,15 @@ export
 mutable struct Polytope{T}
     const poly::Polyhedra.Polyhedron{T}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
-    graph::Union{Nothing, Graphs.SimpleGraph{Int}}  # graph
-    dim::Union{Nothing, Int}  # dimension
+    graph::Union{Nothing, Graphs.SimpleGraph{Int}}
+    dim::Union{Nothing, Int}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
-    dists::Union{Nothing, Dict{Int, Vector{Int}}}  # cache graph distance matrix
+    dists::Union{Nothing, Dict{Int, Vector{Int}}}  # cache (sparse) graph distance matrix
 
     function Polytope{T}(p::Polyhedra.Polyhedron{T}) where T
         # First check whether `p` is a polytope. This triggers the computation of V-representation if necessary.
-        # INVARIANT: the V-representation has no redundancy,
-        # see https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription
+        # This V-representation has no redundancy, as asserted by
+        # https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Polyhedra.doubledescription
         if Polyhedra.nlines(p) + Polyhedra.nrays(p) > 0
             throw(ArgumentError("got an unbounded polyhedron"))
         end
@@ -100,28 +100,10 @@ function Polytope(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Uni
     Polytope(Polyhedra.hrep(A, b), lib)
 end
 
+# dimension of the ambient space
+ambientdim(p::Polytope) = size(Polyhedra.hrep(p.poly).A, 2)
 
-# overload useful Base methods
-
-"""
-    ==(p::Polytope, q::Polytope)
-
-Check whether the sets of vertices of `p` and `q` are identical.
-
-# Examples
-````jldoctest
-julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
-true
-
-julia> p = Polytope([-1 0; 0 -1; 2 1], [0, 0, 3]);
-
-julia> p == Polytope(collect(vertices(p)))
-true
-````
-"""
-Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
-
-Base.show(io::IO, p::Polytope{T}) where T = print(io, "Polytope{$T}")
+Base.show(io::IO, ::Polytope{T}) where T = print(io, "Polytope{$T}")
 Base.summary(p::Polytope) = "$(typeof(p))"
 
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
@@ -137,5 +119,6 @@ include("plot/utils.jl")
 include("plot/arrow.jl")
 include("plot/plotrecipe.jl")
 include("generators.jl")
+include("operators.jl")
 
 end # module

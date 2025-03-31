@@ -60,8 +60,8 @@ makedocs(
             "Spindles" => "man/polytopes/spindles.md",
             "Dimension" => "man/polytopes/dimension.md",
             "Faces and graphs" => "man/polytopes/faces.md",
-            "Plots" => "man/polytopes/plots.md",
             "Generators for standard polytopes" => "man/polytopes/generators.md",
+            "Plots" => "man/polytopes/plots.md",
         ],
         "Analysis API" => [
             "Good 2-faces" => "man/goodfaces.md",
