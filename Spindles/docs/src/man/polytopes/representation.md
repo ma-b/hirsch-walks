@@ -16,10 +16,8 @@ To express a polytope as the convex hull of some finite set of points, the set o
 Spindles.vertices
 nvertices
 ```
-The function [`vertices`](@ref Spindles.vertices) is also used to test two polytopes for equality:
-```@docs
-==
-```
+The function [`vertices`](@ref Spindles.vertices) is also used to test two polytopes for equality with
+the [`==`](@ref) operator, see [Basic operations](@ref).
 
 ## Redundancy and implicit equations
 A *redundant inequality* is one whose deletion leaves the polytope unchanged. If an inequality is satisfied 

@@ -57,11 +57,10 @@ makedocs(
             "Index" => "man/polytopes/api.md",
             "Polytopes" => "man/polytopes/polytopes.md",
             "Minimal representations" => "man/polytopes/representation.md",
+            "Combinatorics" => "man/polytopes/combinatorics.md",
             "Spindles" => "man/polytopes/spindles.md",
-            "Dimension" => "man/polytopes/dimension.md",
-            "Faces and graphs" => "man/polytopes/faces.md",
-            "Generators for standard polytopes" => "man/polytopes/generators.md",
             "Basic operations" => "man/polytopes/operations.md",
+            "Generators for standard polytopes" => "man/polytopes/generators.md",
             "Plots" => "man/polytopes/plots.md",
         ],
         "Analysis API" => [

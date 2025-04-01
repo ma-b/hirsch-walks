@@ -38,4 +38,8 @@
             @test apices(q, i) !== nothing
         end
     end
+
+    @testset "Check product of line segments" begin
+        @test cube(n) == reduce(*, repeat([Polytope([[-1], [1]])], n))
+    end
 end
