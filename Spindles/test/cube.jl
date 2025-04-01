@@ -3,12 +3,14 @@
     p = cube(n)
     q = crosspolytope(n)
 
-    @testset "Polar duality" begin
+    @testset "Check duality" begin
         # f-vectors must be reverses of each other since the polytopes are dual to each other
         @test nfacesofdim.(p, -1:n) == nfacesofdim.(q, n:-1:-1)
 
         @test q == polarize(p)
         @test p == polarize(q)
+        @test p == polarize(polarize(p))
+        @test q == polarize(polarize(q))
     end
 
     @testset "Check dim/codim" begin

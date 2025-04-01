@@ -5,9 +5,10 @@ using Spindles
 
 include("representations.jl")
 include("inc.jl")
-include("cube.jl")
 include("polymake.jl")
 include("poset.jl")
 include("paper.jl")
 include("redundancy.jl")
 include("issue_codim.jl")
+include("cube.jl")
+include("polar.jl")

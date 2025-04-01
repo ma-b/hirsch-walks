@@ -96,6 +96,35 @@ true
 julia> crosspolytope(4) == polarize(cube(4))
 true
 ````
+Note that polar duality is an involution:
+````jldoctest
+julia> p = cube(3);
+
+julia> p == polarize(polarize(p))
+true
+````
+
+The following polytope (a simplex) has a vertex at the origin. Therefore, `polarize` throws an error:
+````jldoctest polarize
+julia> p = Polytope([0 0; 1 0; 0 1]);
+
+julia> polarize(p)
+ERROR: polytope does not contain the origin in its interior
+[...]
+````
+However, we may make the origin an interior point by taking an arbitrary interior point `x` of `p` 
+and shifting the polytope by `-x`. Here we use the centroid of the simplex for `x`:
+````jldoctest polarize
+julia> x = sum(vertices(p)) / nvertices(p)
+2-element Vector{Rational{BigInt}}:
+ 1//3
+ 1//3
+
+julia> q = -x + p;
+
+julia> polarize(q)
+Polytope{Rational{BigInt}}
+````
 """
 function polarize(p::Polytope)
     # check whether 0 is in the interior of `p`
