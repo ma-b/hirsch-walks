@@ -53,7 +53,7 @@ function proj_onto_indices(x::AbstractVector{<:Real}, y::AbstractVector{<:Real})
     # such a j must exist since x and y are linearly independent
     # now the 2x2 matrix induced by components i and j of x and y_elim is of the form [* *; 0 *] and has rank 2,
     # so projecting out all but i,j leaves projections of x and y_elim (and therefore y) linearly independent.
-    i,j
+    sort([i, j])
 end
 
 

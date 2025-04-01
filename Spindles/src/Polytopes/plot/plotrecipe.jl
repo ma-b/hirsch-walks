@@ -97,7 +97,7 @@ end
 
         # these two vectors are nonzero (and linearly independent) since they are differences of distinct vertices
         # (note here that a 2-face has at least 3 vertices)
-        i,j = proj_onto_indices(verts[1,:] - verts[2,:], verts[1,:] - verts[3,:])
+        i, j = proj_onto_indices(verts[1,:] - verts[2,:], verts[1,:] - verts[3,:])
         x, y = verts[:,i], verts[:,j]  # TODO convert to float?
 
         # use indices of projection coordinates as default axis labels
