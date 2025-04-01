@@ -103,7 +103,8 @@ function Polytope(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Uni
 end
 
 # dimension of the ambient space
-ambientdim(p::Polytope) = size(Polyhedra.hrep(p.poly).A, 2)
+# (need to convert hrep for interval polytopes in 1D to proper type first)
+ambientdim(p::Polytope) = size(Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly)).A, 2)
 
 Base.show(io::IO, ::Polytope{T}) where T = print(io, "Polytope{$T}")
 Base.summary(p::Polytope) = "$(typeof(p))"
