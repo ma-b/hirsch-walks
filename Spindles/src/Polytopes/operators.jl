@@ -3,54 +3,21 @@
 # ================================
 
 """
-    ==(p::Polytope, q::Polytope)
+    map(f, p)
 
-Check whether the sets of vertices of `p` and `q` are identical.
-
-# Examples
-````jldoctest
-julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
-true
-
-julia> p = Polytope([-1 0; 0 -1; 2 1], [0, 0, 3]);
-
-julia> p == Polytope(collect(vertices(p)))
-true
-````
+Create a new [`Polytope`](@ref) whose vertices are the images of the vertices of `p` 
+under the function `f`.
 """
-Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
-
-"""
-    in(x, p)
-
-Check whether the vector `x` is in the polytope `p`.
-""" 
-function Base.in(x::AbstractVector{<:Real}, p::Polytope)
-    if length(t) != ambientdim(p)
-        throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
-    end
-    
-    @warn "not implemented"
-    false
-end
-
-
-# create a new polytope whose vertices are the images of vertices of `p` under `f`
-# FIXME function type?
-applyfunc(f, p::Polytope) =
-    Polytope(map(f, collect(vertices(p))))
+Base.map(f, p::Polytope) = Polytope(map(f, vertices(p)))
 
 """
     *(δ::Real, p::Polytope)
     *(p::Polytope, δ::Real)
 
-Rescale `p` by the scalar factor `δ`.
-
-Note that the element type of the resulting polytope may be different from that of `p` 
-(see the last example below).
+Rescale `p` by the scalar factor `δ`. Returns a new [`Polytope`](@ref).
 
 # Examples
-````jldoctest
+````jldoctest mult
 julia> p = Polytope([[0, 0], [1, 0], [0, 1]])
 Polytope{Rational{BigInt}}
 
@@ -62,19 +29,28 @@ julia> collect(vertices(p * 2))
 
 julia> 2p == p + p
 true
+````
+
+Note that the element type of the rescaled polytope may be different from that of `p`:
+````jldoctest mult
+julia> 1//2 * p
+Polytope{Rational{BigInt}}
 
 julia> 0.5 * p
 Polytope{BigFloat}
+
+julia> 1//2 * p == 0.5 * p
+true
 ````
 """
-Base.:(*)(δ::Real, p::Polytope) = applyfunc(v -> δ * v, p)
+Base.:(*)(δ::Real, p::Polytope) = map(v -> δ * v, p)
 Base.:(*)(p::Polytope, δ::Real) = δ * p
 
 """
     +(t, p)
     +(p, t)
 
-Translate the polytope `p` by the vector `t`.
+Translate the polytope `p` by the vector `t`. Returns a new [`Polytope`](@ref).
 
 # Examples
 ````jldoctest
@@ -93,7 +69,7 @@ function Base.:(+)(t::AbstractVector{<:Real}, p::Polytope)
         throw(DimensionMismatch("translation vector is of mismatched length: expected $(ambientdim(p)), got $(length(t))"))
     end
 
-    applyfunc(v -> t + v, p)
+    map(v -> t + v, p)
 end
 Base.:(+)(p::Polytope, t::AbstractVector{<:Real}) = t + p
 Base.:(-)(p::Polytope, t::AbstractVector{<:Real}) = -t + p

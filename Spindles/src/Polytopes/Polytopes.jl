@@ -112,6 +112,38 @@ Base.summary(p::Polytope) = "$(typeof(p))"
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
 Base.broadcastable(p::Polytope) = Ref(p)
 
+"""
+    ==(p::Polytope, q::Polytope)
+
+Check whether the sets of vertices of `p` and `q` are identical.
+
+# Examples
+````jldoctest
+julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
+true
+
+julia> p = Polytope([-1 0; 0 -1; 2 1], [0, 0, 3]);
+
+julia> p == Polytope(collect(vertices(p)))
+true
+````
+"""
+Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
+
+"""
+    in(x, p)
+
+Check whether the vector `x` is in the polytope `p`.
+""" 
+function Base.in(x::AbstractVector{<:Real}, p::Polytope)
+    if length(t) != ambientdim(p)
+        throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
+    end
+    
+    @warn "not implemented"
+    false
+end
+
 
 include("incidence.jl")
 include("faceenum.jl")
