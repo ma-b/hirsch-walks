@@ -12,7 +12,8 @@ in
 * Minkowski sum
 * rescalation and translation
 * polarization
-More complex operations that act on the set of vertices can be realized using [`map`](@ref).
+More complex operations that act on the set of vertices (such as projections)
+can be defined using [`map`](@ref), see the examples below.
 
 ```@autodocs
 Modules = [Spindles.Polytopes]

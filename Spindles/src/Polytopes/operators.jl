@@ -3,10 +3,24 @@
 # ================================
 
 """
-    map(f, p)
+    map(f, p::Polytope)
 
 Create a new [`Polytope`](@ref) whose vertices are the images of the vertices of `p` 
 under the function `f`.
+
+# Examples
+````jldoctest
+julia> p = Polytope([0 0 0; 1 0 0; 0 2 0; 0 0 3]);
+
+julia> q = map(x -> x[1:2], p);
+
+julia> collect(vertices(q))
+3-element Vector{Vector{Rational{BigInt}}}:
+ [0, 0]
+ [1, 0]
+ [0, 2]
+````
+projects `p` onto the first two coordinates.
 """
 Base.map(f, p::Polytope) = Polytope(map(f, vertices(p)))
 
@@ -124,7 +138,7 @@ Base.:(*)(p::Polytope, q::Polytope) =
     Polytope([[v; w] for v in vertices(p) for w in vertices(q)])
 
 """
-    polarize(p)
+    polarize(p::Polytope)
 
 Compute the polar dual of the polytope `p`.
 
@@ -175,15 +189,15 @@ Polytope{Rational{BigInt}}
 function polarize(p::Polytope)
     # check whether 0 is in the interior of `p`
     
-    b = Polyhedra.hrep(p.poly).b
+    h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))  # need to convert to proper type
     # construct a BitVector that indicates for each row of A whether the corresponding constraint
     # is an equality constraint (explicit/implicit) or not
-    eqs = falses(length(b))
-    eqs[collect(Polyhedra.hrep(p.poly).linset)] .= true  # linset is a BitSet and can't be used for indexing
+    eqs = falses(length(h.b))
+    eqs[collect(h.linset)] .= true  # linset is a BitSet and can't be used for indexing
     eqs[impliciteqs(p)] .= true
 
     # all non-flagged right-hand sides must be positive for 0 to be in the interior
-    all(b .> 0 .| eqs) || error("polytope does not contain the origin in its interior")
+    all(h.b .> 0 .| eqs) || error("polytope does not contain the origin in its interior")
     
     Polytope(hcat(vertices(p)...)', ones(Int, nvertices(p)))
 end
