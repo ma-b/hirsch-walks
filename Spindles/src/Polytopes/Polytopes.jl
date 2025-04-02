@@ -115,12 +115,18 @@ Base.broadcastable(p::Polytope) = Ref(p)
 """
     ==(p::Polytope, q::Polytope)
 
-Check whether the sets of vertices of `p` and `q` are identical.
+Check whether polytopes `p` and `q` have the same set of vertices.
 
 # Examples
 ````jldoctest
 julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
 true
+
+julia> Polytope([1 0; 0 1]) == Polytope([1.0 -0.0; 0 1])
+true
+
+julia> Polytope([1 0; 0 1]) == Polytope([0.999999 0; 0 1])
+false
 
 julia> p = Polytope([-1 0; 0 -1; 2 1], [0, 0, 3]);
 
@@ -134,14 +140,25 @@ Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collec
     in(x, p)
 
 Check whether the vector `x` is in the polytope `p`.
+
+# Examples
+````jldoctest
+julia> p = Polytope([0 0; 1 0; 0 1]);
+
+julia> [1, 1] in p
+false
+
+julia> (sum(vertices(p)) / nvertices(p)) in p
+true
+````
 """ 
 function Base.in(x::AbstractVector{<:Real}, p::Polytope)
-    if length(t) != ambientdim(p)
+    if length(x) != ambientdim(p)
         throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
     end
     
-    @warn "not implemented"
-    false
+    h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))  # FIXME
+    all(h.A * x .<= h.b) && all(isapprox.(h.A[collect(h.linset),:] * x, h.b[collect(h.linset)]))
 end
 
 
