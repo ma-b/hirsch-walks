@@ -9,7 +9,7 @@ Create a new [`Polytope`](@ref) whose vertices are the images of the vertices of
 under the function `f`.
 
 # Examples
-````jldoctest
+````jldoctest map
 julia> p = Polytope([0 0 0; 1 0 0; 0 2 0; 0 0 3]);
 
 julia> q = map(x -> x[1:2], p);
@@ -21,6 +21,18 @@ julia> collect(vertices(q))
  [0, 2]
 ````
 projects `p` onto the first two coordinates.
+
+````jldoctest map
+julia> q = map(x -> x .+ 1, p);
+
+julia> collect(vertices(q))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [1, 1, 1]
+ [2, 1, 1]
+ [1, 3, 1]
+ [1, 1, 4]
+````
+translates `p` by the vector `[1, 1, 1]`.
 """
 Base.map(f, p::Polytope) = Polytope(map(f, vertices(p)))
 
@@ -29,6 +41,8 @@ Base.map(f, p::Polytope) = Polytope(map(f, vertices(p)))
     *(p::Polytope, δ::Real)
 
 Rescale `p` by the scalar factor `δ`. Returns a new [`Polytope`](@ref).
+
+See also [`map`](@ref).
 
 # Examples
 ````jldoctest mult
@@ -59,12 +73,15 @@ true
 """
 Base.:(*)(δ::Real, p::Polytope) = map(v -> δ * v, p)
 Base.:(*)(p::Polytope, δ::Real) = δ * p
+Base.:(-)(p::Polytope) = -1 * p
 
 """
     +(t, p)
     +(p, t)
 
 Translate the polytope `p` by the vector `t`. Returns a new [`Polytope`](@ref).
+
+See also [`map`](@ref).
 
 # Examples
 ````jldoctest
@@ -150,7 +167,7 @@ which is a polytope if and only if `p` contains the origin in its interior.
 If this is not the case, `polarize` throws an error.
 
 # Examples
-Hypercubes and cross-polytopes are dual to each other:
+[Hypercubes](@ref cube) and [cross-polytopes](@ref crosspolytope) are dual to each other:
 ````jldoctest
 julia> cube(3) == polarize(crosspolytope(3))
 true
@@ -171,7 +188,7 @@ The following polytope (a simplex) has a vertex at the origin. Therefore, `polar
 julia> p = Polytope([0 0; 1 0; 0 1]);
 
 julia> polarize(p)
-ERROR: polytope does not contain the origin in its interior
+ERROR: got a polytope that does not contain the origin in its interior
 [...]
 ````
 However, we may make the origin an interior point by taking an arbitrary interior point `x` of `p` 
@@ -197,7 +214,7 @@ function polarize(p::Polytope)
     eqs[impliciteqs(p)] .= true
 
     # all non-flagged right-hand sides must be positive for 0 to be in the interior
-    all(h.b .> 0 .| eqs) || error("polytope does not contain the origin in its interior")
+    all(h.b .> 0 .| eqs) || error("got a polytope that does not contain the origin in its interior")
     
     Polytope(hcat(vertices(p)...)', ones(Int, nvertices(p)))
 end

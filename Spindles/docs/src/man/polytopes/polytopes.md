@@ -69,7 +69,7 @@ Even though all examples so far only featured *minimal* descriptions of the two-
 a `Polytope` object can be created from *any* description of the polytope, not necessarily a minimal one.
 In particular, the list of points whose convex hull is the polytope can include non-vertices. Likewise,
 redundant inequalities and implicit equations in a system of linear inequalities are permitted. 
-Such redundancy can be detected, see [Minimal representations](@ref).
+Such redundancy can be detected, see [Representations](@ref).
 
 
 !!! note "Type parameter"

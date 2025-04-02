@@ -1,4 +1,4 @@
-# Basic operations
+# Operations on polytopes
 
 ## Equality and containment
 ```@docs
@@ -7,13 +7,14 @@ in
 ```
 
 ## Constructions
-*Spindles.jl* currently supports the following operations on [`Polytope`](@ref)s: 
+The following operations on [`Polytope`](@ref)s are supported: 
 * Cartesian product
 * Minkowski sum
-* rescalation and translation
 * polarization
-More complex operations that act on the set of vertices (such as projections)
-can be defined using [`map`](@ref), see the examples below.
+* rescalation and translation
+To define more complex operations that act on the set of vertices, use [`map`](@ref).
+See below for an example of how projections can be defined using [`map`](@ref).
+More examples can be found in [this tutorial](@ref "Line segments, hypercubes, and permutahedra").
 
 ```@autodocs
 Modules = [Spindles.Polytopes]

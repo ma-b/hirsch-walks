@@ -1,9 +1,11 @@
-# Plotting faces
+# Plotting polytopes
 
-To visualize 2-faces of polytopes, a `Polytope` object can be passed to the [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot) command from [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
+*Spindles.jl* integrates with [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
+to visualize 2-dimensional polytopes (polygons) or 2-faces of higher-dimensional polytopes. 
 
 ## Basic usage
-The basic form of the `plot` command is
+
+A `Polytope` object can be passed directly to the [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot) command from [Plots.jl](https://github.com/JuliaPlots/Plots.jl) as follows:
 ````julia
 plot(p::Polytope [, indices]; kw...)
 ````
@@ -99,7 +101,7 @@ end
 ````
 Since these coordinates are difficult to check without any axis ticks, let's add them to the plot:
 ````@example plots
-plot(p, [1]; grid=true, ticks=-2:2)
+plot(p, [1]; ticks=-2:2)
 ````
 
 To ignore the geometry altogether, do

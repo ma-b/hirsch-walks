@@ -7,6 +7,7 @@ const EXAMPLES = [
     ("firststeps", "First steps"),
     ("hirsch-i", "Spindles and the Hirsch conjecture I"),
     ("hirsch-ii", "Spindles and the Hirsch conjecture II"),
+    ("permutahedra", "Line segments, hypercubes, and permutahedra"),
 ]
 EXAMPLE_DIR = joinpath(@__DIR__, "..", "examples")
 OUTPUT_DIR = joinpath(@__DIR__, "src", "tutorials")
@@ -56,12 +57,12 @@ makedocs(
         "Polytopes API" => [
             "Index" => "man/polytopes/api.md",
             "Polytopes" => "man/polytopes/polytopes.md",
-            "Minimal representations" => "man/polytopes/representation.md",
+            "Representations" => "man/polytopes/representation.md",
             "Combinatorics" => "man/polytopes/combinatorics.md",
             "Spindles" => "man/polytopes/spindles.md",
-            "Basic operations" => "man/polytopes/operations.md",
+            "Operations on polytopes" => "man/polytopes/operations.md",
             "Generators for standard polytopes" => "man/polytopes/generators.md",
-            "Plots" => "man/polytopes/plots.md",
+            "Plotting polytopes" => "man/polytopes/plots.md",
         ],
         "Analysis API" => [
             "Good 2-faces" => "man/goodfaces.md",

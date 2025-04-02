@@ -41,5 +41,6 @@
 
     @testset "Check product of line segments" begin
         @test cube(n) == reduce(*, repeat([Polytope([[-1], [1]])], n))
+        @test cube(n) == reduce(*, repeat([simplex(1)], n))
     end
 end
