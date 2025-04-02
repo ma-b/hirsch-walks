@@ -67,7 +67,7 @@ end
         if length(attrs) <= 2
             str = join(attrs, " and ")
         elseif length(attrs) > 2
-            str = join(attrs[1:end-1], ", ") * ", and " * attrs[end]
+            str = join(attrs, ", ", ", and ")
         end
         @warn "setting attribute" * (length(attrs)>1 ? "s" : "") * " " * str * " has no effect here"
     end
@@ -292,3 +292,6 @@ end
 
     ()
 end
+
+# second (user) recipe to handle polygons without the need to specify a face as a second argument
+@recipe f(p::Polytope) = (p, Int[])  # return series data

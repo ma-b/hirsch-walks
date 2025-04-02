@@ -5,11 +5,14 @@ To visualize 2-faces of polytopes, a `Polytope` object can be passed to the [`pl
 ## Basic usage
 The basic form of the `plot` command is
 ````julia
-plot(p::Polytope, indices; kw...)
+plot(p::Polytope [, indices]; kw...)
 ````
 
-This creates a plot of the face of `p` that is defined by the inequalities in `indices`,
-provided that this face is 2-dimensional. If not, `plot` throws an error.
+This creates a plot of `p`, or of the face of `p` that is defined by the inequalities 
+in the collection `indices` if specified, provided that this face (or `p` itself, respectively) is 2-dimensional. 
+If not, `plot` throws an error.
+Note that `plot(p)` is equivalent to `plot(p, Int[])`.
+
 To add to an existing plot, use `plot!`.
 
 The plot can be customized using keywords in `kw...`. The following keywords are supported:
