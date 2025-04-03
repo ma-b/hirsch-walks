@@ -112,55 +112,6 @@ Base.summary(p::Polytope) = "$(typeof(p))"
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
 Base.broadcastable(p::Polytope) = Ref(p)
 
-"""
-    ==(p::Polytope, q::Polytope)
-
-Check whether polytopes `p` and `q` have the same set of vertices.
-
-# Examples
-````jldoctest
-julia> Polytope([1 0; 0 1]) == Polytope([1 0; 0 1; 0 1; 1//2 1//2])
-true
-
-julia> Polytope([1 0; 0 1]) == Polytope([1.0 -0.0; 0 1])
-true
-
-julia> Polytope([1 0; 0 1]) == Polytope([0.999999 0; 0 1])
-false
-
-julia> p = Polytope([-1 0; 0 -1; 2 1], [0, 0, 3]);
-
-julia> p == Polytope(collect(vertices(p)))
-true
-````
-"""
-Base.:(==)(p::Polytope, q::Polytope) = sort(collect(vertices(p))) == sort(collect(vertices(q)))
-
-"""
-    in(x, p)
-
-Check whether the vector `x` is in the polytope `p`.
-
-# Examples
-````jldoctest
-julia> p = Polytope([0 0; 1 0; 0 1]);
-
-julia> [1, 1] in p
-false
-
-julia> (sum(vertices(p)) / nvertices(p)) in p
-true
-````
-""" 
-function Base.in(x::AbstractVector{<:Real}, p::Polytope)
-    if length(x) != ambientdim(p)
-        throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
-    end
-    
-    h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))  # FIXME
-    all(h.A * x .<= h.b) && all(isapprox.(h.A[collect(h.linset),:] * x, h.b[collect(h.linset)]))
-end
-
 
 include("incidence.jl")
 include("faceenum.jl")
@@ -171,6 +122,7 @@ include("plot/utils.jl")
 include("plot/arrow.jl")
 include("plot/plotrecipe.jl")
 include("generators.jl")
+include("setoperators.jl")
 include("operators.jl")
 
 end # module

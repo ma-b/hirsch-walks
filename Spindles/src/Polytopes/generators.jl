@@ -9,11 +9,14 @@ Create the `n`-dimensional simplex whose vertices are the standard basis vectors
 plus the origin.
 """
 function simplex(n::Integer)
+    n >= 1 || throw(ArgumentError("dimension must be at least 1"))
+
     A = [zeros(Int, n, n); ones(Int, 1, n)]
     for i=1:n
         A[i,i] = -1
     end
     b = [zeros(Int, n); 1]
+    
     Polytope(A, b)
 end
 
@@ -23,6 +26,8 @@ end
 Create the `n`-dimensional standard hypercube ``[-1,1]^n``.
 """
 function cube(n::Integer)
+    n >= 1 || throw(ArgumentError("dimension must be at least 1"))
+
     # matrix with one row for each 0/1 vector
     V = [(i >> j) & 1 for i=0:(2^n-1), j=0:(n-1)]
     Polytope(@. 2V-1)  # transform unit cube to standard cube
@@ -35,6 +40,8 @@ Create the `n`-dimensional standard cross-polytope
 whose vertices are the ``2n`` positive and negative standard basis vectors in ``\\mathbb{R}^n``.
 """
 function crosspolytope(n::Integer)
+    n >= 1 || throw(ArgumentError("dimension must be at least 1"))
+
     # matrix with one row for each of the 2n vertices
     V = zeros(Int, 2n, n)
     for i=1:n
@@ -64,6 +71,8 @@ julia> dim(p)
 ````
 """
 function permutahedron(n::Integer)
+    n >= 1 || throw(ArgumentError("dimension must be at least 1"))
+
     A = [(i >> j) & 1 for i=1:(2^n-1), j=0:(n-1)]
     sums = reshape(sum(A, dims=2), size(A,1))
     b = sums .* (sums .+ 1) .// 2

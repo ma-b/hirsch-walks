@@ -5,9 +5,9 @@ using Polyhedra, Graphs
 # generate example files using Literate.jl
 const EXAMPLES = [
     ("firststeps", "First steps"),
+    ("permutahedra", "Line segments, hypercubes, and permutahedra"),
     ("hirsch-i", "Spindles and the Hirsch conjecture I"),
     ("hirsch-ii", "Spindles and the Hirsch conjecture II"),
-    ("permutahedra", "Line segments, hypercubes, and permutahedra"),
 ]
 EXAMPLE_DIR = joinpath(@__DIR__, "..", "examples")
 OUTPUT_DIR = joinpath(@__DIR__, "src", "tutorials")
@@ -59,8 +59,7 @@ makedocs(
             "Polytopes" => "man/polytopes/polytopes.md",
             "Representations" => "man/polytopes/representation.md",
             "Combinatorics" => "man/polytopes/combinatorics.md",
-            "Spindles" => "man/polytopes/spindles.md",
-            "Operations on polytopes" => "man/polytopes/operations.md",
+            "Operators" => "man/polytopes/operators.md",
             "Generators for standard polytopes" => "man/polytopes/generators.md",
             "Plotting polytopes" => "man/polytopes/plots.md",
         ],

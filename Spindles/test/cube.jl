@@ -41,6 +41,14 @@
 
     @testset "Check product of line segments" begin
         @test cube(n) == reduce(*, repeat([Polytope([[-1], [1]])], n))
-        @test cube(n) == reduce(*, repeat([simplex(1)], n))
+        @test cube(n) == reduce(*, repeat([2simplex(1) - [1]], n))
+    end
+
+    @testset "Check sets" begin
+        @test simplex(n) ⊆ p
+        @test simplex(n) ⊆ q
+
+        @test zeros(Int, n) ∈ p ∩ q
+        @test simplex(n) ∪ q == q
     end
 end

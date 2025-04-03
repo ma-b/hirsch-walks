@@ -2,7 +2,7 @@
 
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/tutorials/Line segments, hypercubes, and permutahedra.ipynb)
 
-# In the tutorial on [First steps](@ref), we worked with a cube. (Hyper-)Cubes can be characterized
+# In the [first tutorial](@ref "First steps"), we worked with a cube. Cubes can be characterized
 # and constructed in many different ways. In this tutorial, we will build them (and more complicated
 # polytopes) from simpler polytopes, namely, *line segments*, 
 # only using basic polyhedral operations such as Cartesian products, Minkowski sums, and translations.
@@ -45,7 +45,7 @@ p == 1//2 * (cube(n) + ones(Int, n))
 # Note here that taking the sum of a polytope and a vector (like the all-ones vector created with 
 # [`ones`](https://docs.julialang.org/en/v1/base/arrays/#Base.ones)) 
 # is interpreted as a translation of the polytope. Likewise, multiplying a polytope by a scalar rescales the entire polytope
-# (see also [Operations on polytopes](@ref) in the API documentation).
+# (see also [Operators](@ref) in the API documentation).
 
 # !!! note "Operations and types"
 #     Both translations and rescalations of polytopes produce a new [`Polytope`](@ref).
