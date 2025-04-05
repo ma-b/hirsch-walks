@@ -6,6 +6,10 @@ DocTestSetup = quote
 end
 ```
 
+```@docs
+ambientdim
+```
+
 We saw that a [`Polytope`](@ref) may be created from either a V- or a H-representation. However, these representations 
 need not be minimal. Which points or inequalities from the given description suffice can be detected with 
 the following functions.

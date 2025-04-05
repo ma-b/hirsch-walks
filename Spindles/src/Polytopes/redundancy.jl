@@ -103,7 +103,7 @@ end
 """
     nfacets(p::Polytope)
 
-Count the facets of `p`. Shorthand for `length(facets(p))`.
+Return the number of facets of `p`. Shorthand for `length(facets(p))`.
 
 See also [`nfacesofdim`](@ref), [`facets`](@ref).
 """

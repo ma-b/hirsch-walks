@@ -19,13 +19,13 @@ Polytope
 
 ```jldoctest polytopes
 julia> p = Polytope([[0, 0], [1, 0], [0, 1], [1, 1]])
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 ```
 creates the polytope with vertices ``(0,0),(1,0),(0,1)``, and ``(1,1)`` (the two-dimensional 0/1 cube).
 This is the same as
 ```jldoctest polytopes
 julia> q = Polytope([0 0; 1 0; 0 1; 1 1])
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 
 julia> p == q
 true
@@ -51,7 +51,7 @@ julia> A = [ -1   0
 julia> b = [0, 1, 0, 1];
 
 julia> r = Polytope(A, b)
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 
 julia> p == r
 true
@@ -79,7 +79,7 @@ Such redundancy can be detected, see [Representations](@ref).
     Suppose that we change some of the input data above to floating-point numbers, such as
     ```jldoctest
     julia> Polytope([-1.0 0.0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
-    Polytope{Float64}
+    Polytope{Float64} in 2-space
     ```
     Then we get a different element type, namely `Float64`. 
     
@@ -88,7 +88,7 @@ Such redundancy can be detected, see [Representations](@ref).
     julia> using Polyhedra: DefaultLibrary
 
     julia> Polytope([-1.0 0.0; 1 0; 0 -1; 0 1], [0, 1, 0, 1], DefaultLibrary{Rational{BigInt}}())
-    Polytope{Rational{BigInt}}
+    Polytope{Rational{BigInt}} in 2-space
     ```
     This argument now specifies a library for polyhedral computations (the "backend" of [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl)) that is to be used for the internal representation of the `Polytope` object. In this case, we chose the [default library](https://juliapolyhedra.github.io/Polyhedra.jl/stable/polyhedron/#Default-libraries) implemented in Polyhedra.jl but forced rational data instead of `Float`s.
     

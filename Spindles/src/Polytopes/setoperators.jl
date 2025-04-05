@@ -113,7 +113,7 @@ true
 """
 Base.intersect(p::Polytope, polytopes...) = 
     Polytope(intersect(p.poly, mapreduce(q -> q.poly, intersect, polytopes)))
-# fallback implementation relying on `intersect` for Polyhedra.Polyhedron
+# TODO fallback implementation relying on `intersect` for Polyhedra.Polyhedron
 
 """
     union(p::Polytope, polytopes...)
@@ -142,3 +142,18 @@ Base.union(p::Polytope, polytopes...) =
     Polytope(union(collect(vertices(p)), mapreduce(collect ∘ vertices, union, polytopes)))
 # FIXME need `collect` here because intersect/union on Polyhedra vertices returns Vector{Any}
 #       (eltype of Polyhedra vertex iterator is Any)
+
+"""
+    isdisjoint(p::Polytope, q::Polytope)
+
+Check whether `p` and `q` are disjoint. Equivalent to `isempty(p ∩ q)`.
+
+See also [`intersect`](@ref), [`isempty`](@ref).
+
+# Examples
+````jldoctest
+julia> isdisjoint(Polytope([[-1, 0], [1, 0]]), Polytope([[0, -1], [0, 1]]))
+false
+````
+"""
+Base.isdisjoint(p::Polytope, q::Polytope) = isempty(intersect(p, q))

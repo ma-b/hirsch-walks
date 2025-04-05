@@ -32,7 +32,7 @@ julia> collect(vertices(q))
  [1, 3, 1]
  [1, 1, 4]
 ````
-translates `p` by the vector `[1, 1, 1]`.
+translates `p` by the all-ones vector `[1, 1, 1]`.
 """
 Base.map(f, p::Polytope) = Polytope(map(f, vertices(p)))
 
@@ -49,7 +49,7 @@ See also [`-`](@ref -(::Polytope)), [`/`](@ref), [`//`](@ref), [`map`](@ref).
 # Examples
 ````jldoctest mult
 julia> p = Polytope([[0, 0], [1, 0], [0, 1]])
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 
 julia> collect(vertices(p * 2))
 3-element Vector{Vector{Rational{BigInt}}}:
@@ -70,10 +70,10 @@ julia> collect(vertices(-p))
 Note that the element type of the rescaled polytope may be different from that of `p`:
 ````jldoctest mult
 julia> 1//2 * p
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 
 julia> 0.5 * p
-Polytope{BigFloat}
+Polytope{BigFloat} in 2-space
 
 julia> 1//2 * p == 0.5 * p
 true
@@ -85,14 +85,14 @@ Base.:(*)(δ::Number, p::Polytope) = p * δ
 """
     -(p::Polytope)
 
-Same as [`*`](@ref *(::Polytope, ::Number))`(-1, p)`.
+Equivalent to [`*`](@ref *(::Polytope, ::Number))`(-1, p)`.
 """
 Base.:(-)(p::Polytope) = -1 * p
 
 """
     /(p::Polytope, δ)
 
-Same as [`*`](@ref *(::Polytope, ::Number))`(p, 1/δ)`.
+Equivalent to [`*`](@ref *(::Polytope, ::Number))`(p, 1/δ)`.
 
 If the scalar `δ` is an integer or a rational number and the element type of `p` 
 is a subtype of `Integer` or `Rational`, use [`//`](@ref) to obtain a rational polytope again.
@@ -104,7 +104,7 @@ Base.:(/)(p::Polytope, δ::Number) = 1/δ * p
 """
     //(p::Polytope, δ)
 
-Same as [`*`](@ref *(::Polytope, ::Number))`(p, 1//δ)` 
+Equivalent to [`*`](@ref *(::Polytope, ::Number))`(p, 1//δ)` 
 where both the element type of `p` and the type of `δ` must be subtypes of `Integer` or `Rational`.
 
 See also [`/`](@ref).
@@ -112,13 +112,13 @@ See also [`/`](@ref).
 # Examples
 ````jldoctest
 julia> p = Polytope([[0, 0], [1, 0], [0, 1//1]])
-Polytope{Rational{Int64}}
+Polytope{Rational{Int64}} in 2-space
 
 julia> p / 1
-Polytope{Float64}
+Polytope{Float64} in 2-space
 
 julia> p // 1
-Polytope{Rational{Int64}}
+Polytope{Rational{Int64}} in 2-space
 
 julia> (p / 1) // 1
 ERROR: MethodError: no method matching //(::Polytope{Float64}, ::Int64)
@@ -159,7 +159,7 @@ Base.:(+)(t::AbstractVector{<:Number}, p::Polytope) = p + t
 """
     -(p, t)
 
-Same as [`+`](@ref +(::Polytope, ::AbstractVector{<:Number}))`(p, -t)`.
+Equivalent to [`+`](@ref +(::Polytope, ::AbstractVector{<:Number}))`(p, -t)`.
 
 # Examples
 ````jldoctest
@@ -198,6 +198,25 @@ function Base.:(+)(p::Polytope, q::Polytope)
 
     Polytope([v + w for v in vertices(p) for w in vertices(q)])
 end
+
+"""
+    sum(ps)
+
+Minkowski sum of the collection of [`Polytope`]s `ps`.
+
+# Examples
+````jldoctest
+julia> p = sum([Polytope([[0, 0], Int.(1:2 .== i)]) for i=1:2]);
+
+julia> collect(vertices(p))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [0, 0]
+ [0, 1]
+ [1, 0]
+ [1, 1]
+````
+"""
+Base.sum
 
 """
     *(p::Polytope, q::Polytope)
@@ -270,7 +289,7 @@ julia> x = sum(vertices(p)) / nvertices(p)
  1//3
 
 julia> polarize(p - x)
-Polytope{Rational{BigInt}}
+Polytope{Rational{BigInt}} in 2-space
 ````
 """
 function polarize(p::Polytope)

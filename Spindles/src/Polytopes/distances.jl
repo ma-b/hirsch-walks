@@ -18,12 +18,12 @@ Compute the distance between vertices `u` and `v` in the graph of `p`.
 ```jldoctest
 julia> p = Polytope([0 0; 0 1; 1 1; 1 0]);
 
-julia> vertices(p)
-4-element iterator of Vector{Rational{BigInt}}:
- Rational{BigInt}[0, 0]
- Rational{BigInt}[0, 1]
- Rational{BigInt}[1, 1]
- Rational{BigInt}[1, 0]
+julia> collect(vertices(p))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [0, 0]
+ [0, 1]
+ [1, 1]
+ [1, 0]
 
 julia> dist(p, 1, 3)
 2

@@ -25,7 +25,7 @@ vertices(p::Polytope) = Polyhedra.points(p.poly)
 """
     nvertices(p::Polytope)
 
-Count the vertices of `p`.
+Return the number of vertices of `p`.
 """
 nvertices(p::Polytope) = Polyhedra.npoints(p.poly)
 isvertexindex(p::Polytope, v::Int) = 1 <= v <= nvertices(p)
@@ -59,6 +59,7 @@ end
 function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
     [v for v=1:nvertices(p) if all(p.inc[v][indices])]
 end
+_incidentvertices(p::Polytope, i::Int) = _incidentvertices(p, [i])
 function _incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
     if isempty(indices)
         1:nhalfspaces(p)  # FIXME type

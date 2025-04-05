@@ -2,6 +2,15 @@
 # Dimension of faces
 # ================================
 
+"""
+    ambientdim(p::Polytope)
+
+Return the dimension of the ambient space of the polytope `p`.
+"""
+ambientdim(p::Polytope) = size(Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly)).A, 2)
+# (need to convert hrep for interval polytopes in 1D to proper type first)
+
+
 # Compute a maximal chain in the face lattice of `p` such that all faces only contain vertices in `vindices`,
 # and the minimal face of the chain is the face defined by inequalities `f`.
 # IMPORTANT: `f` must be the inclusion-maximal subset of halfspaces incident to the face because at each step 
@@ -44,8 +53,7 @@ See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/
 
 # Examples
 ```jldoctest
-julia> p = Polytope([0 0; 1 0; 0 1; 1 1])
-Polytope{Rational{BigInt}}
+julia> p = Polytope([0 0; 1 0; 0 1; 1 1]);
 
 julia> dim(p)
 2
@@ -73,8 +81,7 @@ See also [`codim`](@ref).
 
 # Examples
 ```jldoctest
-julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
-Polytope{Rational{BigInt}}
+julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1]);
 
 julia> dim(p, Int[])
 2
@@ -123,8 +130,7 @@ See also [`dim`](@ref).
 
 # Examples
 ```jldoctest
-julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1])
-Polytope{Rational{BigInt}}
+julia> p = Polytope([-1 0; 1 0; 0 -1; 0 1], [0, 1, 0, 1]);
 
 julia> codim(p, Int[])
 0

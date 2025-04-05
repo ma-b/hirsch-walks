@@ -17,6 +17,7 @@ export
     facets, 
     nfacets, 
     impliciteqs,
+    ambientdim,
 
     # combinatorics
     dim, 
@@ -102,11 +103,7 @@ function Polytope(A::AbstractMatrix{<:Real}, b::AbstractVector{<:Real}, lib::Uni
     Polytope(Polyhedra.hrep(A, b), lib)
 end
 
-# dimension of the ambient space
-# (need to convert hrep for interval polytopes in 1D to proper type first)
-ambientdim(p::Polytope) = size(Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly)).A, 2)
-
-Base.show(io::IO, ::Polytope{T}) where T = print(io, "Polytope{$T}")
+Base.show(io::IO, p::Polytope{T}) where T = print(io, "Polytope{$T} in $(ambientdim(p))-space")
 Base.summary(p::Polytope) = "$(typeof(p))"
 
 # avoid broadcasting over polytopes, see https://docs.julialang.org/en/v1/manual/interfaces/#man-interfaces-broadcasting
