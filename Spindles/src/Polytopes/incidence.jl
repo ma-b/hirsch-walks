@@ -124,12 +124,12 @@ The optional argument `apex` specifies the index of a vertex that is to be taken
 ```jldoctest
 julia> p = Polytope([1 0; 0 1; -1 0; 0 -1], [1, 1, 1, 1]);
 
-julia> vertices(p)
-4-element iterator of Vector{Rational{BigInt}}:
- Rational{BigInt}[-1, -1]
- Rational{BigInt}[1, -1]
- Rational{BigInt}[-1, 1]
- Rational{BigInt}[1, 1]
+julia> collect(vertices(p))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [-1, -1]
+ [1, -1]
+ [-1, 1]
+ [1, 1]
 
 julia> apices(p)
 2-element Vector{Int64}:
@@ -213,4 +213,64 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
         """
     end
     return nothing
+end
+
+# --------------------------------
+# simplicity and simpliciality
+# --------------------------------
+
+"""
+    issimple(p::Polytope) -> Bool
+
+Determine whether `p` is simple, i.e., whether each vertex of `p` is contained
+in exactly `dim(p)` facets.
+
+See also [`dim`](@ref), [`issimplicial`](@ref).
+
+# Examples
+````jldoctest
+julia> issimple(simplex(3))
+true
+
+julia> issimple(crosspolytope(3))
+false
+````
+"""
+function issimple(p::Polytope)
+    if graphiscomputed(p)
+        all(Graphs.degree(graph(p)) .== dim(p))
+    else
+        fs = facets(p)
+        # (assuming dim is cached)
+        all(v -> length(intersect(_incidenthalfspaces(p, v), fs)) == dim(p), 1:nvertices(p))
+    end
+end
+
+"""
+    issimplicial(p::Polytope) -> Bool
+
+Determine whether `p` is simplicial, i.e., whether each facet of `p` is a simplex.
+
+See also [`issimple`](@ref).
+
+# Example
+````jldoctest
+julia> issimplicial(Polytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]))
+true
+
+julia> issimplicial(crosspolytope(4))
+true
+
+julia> issimplicial(cube(3))
+false
+````
+"""
+function issimplicial(p::Polytope)
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+
+    # a d-face of a polytope is a simplex iff it has exactly d+1 vertices
+    # (since each face of a simplex is a simplex again, we don't need to filter out non-facets)
+    all(i -> length(_incidentvertices(p, i)) == dim(p, i) + 1, 1:nhalfspaces(p))
 end

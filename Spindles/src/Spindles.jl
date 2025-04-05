@@ -22,6 +22,7 @@ export
     facets, 
     nfacets, 
     impliciteqs,
+    ambientdim,
 
     # combinatorics
     dim, 
@@ -31,6 +32,8 @@ export
     graph,
     apices, 
     dist,
+    issimple,
+    issimplicial,
 
     # generators
     simplex,

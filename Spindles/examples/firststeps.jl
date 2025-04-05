@@ -75,6 +75,10 @@ dist(cube, apx...)
 using Graphs: degree
 all(degree(graph(cube)) .== dim(cube))
 
+# To make verifying this property more convenient, *Spindles.jl* provides the function 
+# [`issimple`](@ref) that checks a polytope for being simple:
+issimple(cube)
+
 #src ==========================
 # ## Counting and enumerating faces
 

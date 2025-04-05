@@ -42,3 +42,9 @@ Spindles are special polytopes for which each facet is incident to exactly one o
 ```@docs
 apices
 ```
+
+## Simplicity and simpliciality
+```@docs
+issimple
+issimplicial
+```

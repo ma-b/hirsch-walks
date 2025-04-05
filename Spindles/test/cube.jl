@@ -11,6 +11,9 @@
         @test p == polarize(q)
         @test p == polarize(polarize(p))
         @test q == polarize(polarize(q))
+
+        @test issimple(p)
+        @test issimplicial(q)
     end
 
     @testset "Check dim/codim" begin

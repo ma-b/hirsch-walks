@@ -27,7 +27,9 @@ export
     graph,
     apices, 
     dist,
-
+    issimple,
+    issimplicial,
+    
     # generators
     simplex,
     cube,
