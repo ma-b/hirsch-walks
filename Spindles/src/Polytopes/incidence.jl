@@ -232,6 +232,9 @@ See also [`dim`](@ref), [`issimplicial`](@ref).
 julia> issimple(simplex(3))
 true
 
+julia> issimple(cube(3))
+true
+
 julia> issimple(crosspolytope(3))
 false
 ````
@@ -255,14 +258,14 @@ See also [`issimple`](@ref).
 
 # Example
 ````jldoctest
-julia> issimplicial(Polytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]))
-true
-
-julia> issimplicial(crosspolytope(4))
+julia> issimplicial(simplex(3))
 true
 
 julia> issimplicial(cube(3))
 false
+
+julia> issimplicial(crosspolytope(3))
+true
 ````
 """
 function issimplicial(p::Polytope)

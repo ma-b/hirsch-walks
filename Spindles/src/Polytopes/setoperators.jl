@@ -84,6 +84,15 @@ Base.issubset(p::Polytope, q::Polytope) = all(v in q for v in vertices(p))
     isempty(p::Polytope) -> Bool
 
 Check whether `p` is the empty polytope ``\\emptyset``.
+
+# Example
+```jldoctest
+julia> isempty(Polytope([[1, 0], [0, 1]]))
+false
+
+julia> isempty(Polytope([[1, 0]]) ∩ Polytope([[0, 1]]))
+true
+```
 """
 Base.isempty(p::Polytope) = isempty(vertices(p))
 
@@ -105,10 +114,10 @@ julia> collect(vertices(p))
 
 julia> p = Polytope([0 0; 1 0; 0 1]);
 
-julia> q = intersect((Polytope([v]) for v in vertices(p))...);
-
-julia> isempty(q)
-true
+julia> nvertices(
+           intersect((Polytope([v]) for v in vertices(p))...)
+       )
+0
 ````
 """
 Base.intersect(p::Polytope, polytopes...) = 
@@ -154,6 +163,9 @@ See also [`intersect`](@ref), [`isempty`](@ref).
 ````jldoctest
 julia> isdisjoint(Polytope([[-1, 0], [1, 0]]), Polytope([[0, -1], [0, 1]]))
 false
+
+julia> isdisjoint(Polytope([[1, 0]]), Polytope([[0, 1]]))
+true
 ````
 """
 Base.isdisjoint(p::Polytope, q::Polytope) = isempty(intersect(p, q))

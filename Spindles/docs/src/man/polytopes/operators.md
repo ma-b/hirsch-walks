@@ -10,6 +10,7 @@ Pages = ["Polytopes/setoperators.jl"]
 ## Sums and products of polytopes
 ```@docs
 +(::Polytope, ::Polytope)
+sum
 *(::Polytope, ::Polytope)
 ```
 

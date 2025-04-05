@@ -183,12 +183,14 @@ Minkowski sum of polytopes `p` and `q`.
 # Examples
 Hypercubes are Minkowski sums of line segments:
 ````jldoctest
-julia> e1 = Polytope([-1 0; 1 0]);
+julia> p = Polytope([-1 0; 1 0]) + Polytope([0 -1; 0 1]);
 
-julia> e2 = Polytope([0 -1; 0 1]);
-
-julia> e1 + e2 == Polytope([-1 -1; 1 -1; -1 1; 1 1])
-true
+julia> collect(vertices(p))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [-1, -1]
+ [-1, 1]
+ [1, -1]
+ [1, 1]
 ````
 """
 function Base.:(+)(p::Polytope, q::Polytope)
@@ -202,7 +204,7 @@ end
 """
     sum(ps)
 
-Minkowski sum of the collection of [`Polytope`]s `ps`.
+Minkowski sum of the collection of [`Polytope`](@ref)s `ps`.
 
 # Examples
 ````jldoctest
