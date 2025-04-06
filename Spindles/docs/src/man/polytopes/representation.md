@@ -21,7 +21,7 @@ Spindles.vertices
 nvertices
 ```
 The function [`vertices`](@ref Spindles.vertices) is also used to test two polytopes for equality with
-the [`==`](@ref) operator, see [Operations on polytopes](@ref).
+the [`==`](@ref) operator, see [Operators](@ref).
 
 ## Redundancy and implicit equations
 A *redundant inequality* is one whose deletion leaves the polytope unchanged. If an inequality is satisfied 

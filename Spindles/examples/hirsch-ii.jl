@@ -106,8 +106,7 @@ apx20 = apices(s20; checkredund=false)
 collect(vertices(s20))[apx20]
 
 # Note that `s20` is simple:
-using Graphs: degree
-all(degree(graph(s20)) .== dim(s20))
+issimple(s20)
 
 # Its most important property, however, is the length of a shortest path between the apices:
 dist(s20, apx20...)

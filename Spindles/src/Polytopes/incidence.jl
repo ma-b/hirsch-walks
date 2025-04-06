@@ -256,7 +256,7 @@ Determine whether `p` is simplicial, i.e., whether each facet of `p` is a simple
 
 See also [`issimple`](@ref).
 
-# Example
+# Examples
 ````jldoctest
 julia> issimplicial(simplex(3))
 true
