@@ -296,17 +296,14 @@ Polytope{Rational{BigInt}} in 2-space
 """
 function polarize(p::Polytope)
     !isempty(p) || error("got an empty polytope")
-    # check whether 0 is in the interior of `p`
     
-    h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))  # need to convert to proper type
-    # construct a BitVector that indicates for each row of A whether the corresponding constraint
-    # is an equality constraint (explicit/implicit) or not
-    eqs = falses(length(h.b))
-    eqs[collect(h.linset)] .= true  # linset is a BitSet and can't be used for indexing
-    eqs[impliciteqs(p)] .= true
+    # check whether 0 is in the interior of `p`
+    A, b, eqs = repr(p; implicit_equations=true)
+    # convert the BitSet `eqs` to a BitVector
+    iseq = in.(axes(A, 1), Ref(eqs))
 
     # all non-flagged right-hand sides must be positive for 0 to be in the interior
-    all(h.b .> 0 .| eqs) || error("got a polytope that does not contain the origin in its interior")
+    all(iseq .| (b .> 0)) || error("got a polytope that does not contain the origin in its interior")
     
     Polytope(hcat(vertices(p)...)', ones(Int, nvertices(p)))
 end

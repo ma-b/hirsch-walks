@@ -3,7 +3,7 @@
 
 # Fields
 * `good::Bool`
-* `indices`: indices of all incident halfspaces
+* `indices`: indices of all tight inequalities for the face
 * `edges`
 * `vsets`
 """
@@ -74,12 +74,12 @@ function isgood2face(p::Polytope, indices::AbstractVector{Int}, src::Int, dst::I
             if max_dists_plus[1] + max_dists_minus[2] <= dim(p)-2
                 return FaceState(
                     # here we do not use `indices` but recompute the incident facets to catch all of them
-                    true, incidenthalfspaces(p, verticesinface), edges, 
+                    true, tightinequalities(p, verticesinface), edges, 
                     (cyclic[vertices_plus], cyclic[vertices_minus])  # "plus" is closer to 1
                 )
             elseif max_dists_minus[1] + max_dists_plus[2] <= dim(p)-2
                 return FaceState(
-                    true, incidenthalfspaces(p, verticesinface), edges, 
+                    true, tightinequalities(p, verticesinface), edges, 
                     (cyclic[vertices_minus], cyclic[vertices_plus])   # "minus" is closer to 1
                 )
             end

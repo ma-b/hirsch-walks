@@ -104,7 +104,7 @@ function computefacesofdim!(p::Polytope, k::Int)
             # face of dimension one less plus a vertex not contained in it such that 
             # both are still contained in at least the minimum number of dimension minus k facets
             f[p.inc[v][f]] for v=1:nv, f in lowerfaces
-            if !all(p.inc[v][f]) && sum(p.inc[v][f]) >= dim(p)-k  
+            if !all(p.inc[v][f]) && sum(p.inc[v][f]) >= dim(p)-k
         )
 
         nondegenerate_supsets = [f for f in proper_supsets if length(f) == dim(p)-k]
@@ -153,7 +153,7 @@ function facesofdim(p::Polytope, k::Int)
         return Vector{Int}()
     elseif k == -1  # empty face
         # here we use that the intersection of all facets of a polytope is empty
-        return [collect(1:nhalfspaces(p))]
+        return [collect(ineqindices(p))]
     else
         if !facescomputed(p, k)
             computefacesofdim!(p, k)

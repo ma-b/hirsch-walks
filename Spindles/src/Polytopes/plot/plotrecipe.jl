@@ -37,7 +37,7 @@ end
     # custom keyword arguments:
     usecoordinates=true,
     vertexlabels=string.(1:nvertices(p)),
-    ineqlabels=string.(1:nhalfspaces(p)),
+    ineqlabels=string.(ineqindices(p)),
     unique_labels_only=true,
     markup_edges=nothing,
     linecolor=:steelblue,  # aliases like `lc` still work(?) # TODO
@@ -185,7 +185,7 @@ end
 
         for k=1:2
             # get an edge-defining inequality for the other edge
-            edgefacets = incidenthalfspaces(p, collect(markup_edges[(k==1)+1]))  # need `collect` for tuples
+            edgefacets = tightinequalities(p, collect(markup_edges[(k==1)+1]))  # need `collect` for tuples
             ineq = findfirst(f -> !(f in indices), edgefacets)
 
             (u,v), uniquedir = directedge(p, markup_edges[k], edgefacets[ineq])

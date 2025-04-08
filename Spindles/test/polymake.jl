@@ -15,10 +15,9 @@ using Polyhedra: hrep
         @test [-1,0,0,0,0] in apx
 
         # verify that the given inequality description is minimal -- in four equivalent ways:
-        @test all(codim.(s, 1:nhalfspaces(s)) .== 1)
-        @test all(dim.(s, 1:nhalfspaces(s)) .== dim(s)-1)
-        @test nfacets(s) == nhalfspaces(s)
-        @test isempty(impliciteqs(s))
+        @test all(codim.(s, ineqindices(s)) .== 1)
+        @test all(dim.(s, ineqindices(s)) .== dim(s) - 1)
+        @test nfacets(s) == last(ineqindices(s))
 
         @testset "Test $(filename) against polymake" begin
             # parse polymake output from Hasse diagram command and return list of incident facets for each face
@@ -41,7 +40,7 @@ using Polyhedra: hrep
             @test nfacesofdim(s, -1) == 1
             @test nfacesofdim(s, 0) == nvertices(s) == nv(graph(s))
             @test nfacesofdim(s, 1) == ne(graph(s))
-            @test nfacesofdim(s, 4) == nfacets(s) == nhalfspaces(s)
+            @test nfacesofdim(s, 4) == nfacets(s) == last(ineqindices(s))
             @test nfacesofdim(s, 5) == 1
             @test nfacesofdim(s, 6) == 0
             @test dim(s) == 5

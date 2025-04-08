@@ -48,7 +48,7 @@ collect(vertices(cube))
 
 # !!! note
 #     By default, *Spindles.jl* uses exact rational arithmetic. Note that the components of each 
-#     vertex returned by [`vertices`](@ref Spindles.vertices) are of type `Rational` with numerators 
+#     vertex returned by [`vertices`](@ref Spindles.Polytopes.vertices) are of type `Rational` with numerators 
 #     and denominators of type `BigInt` to avoid integer overflows (see the Julia documentation pages on
 #     [rational numbers](https://docs.julialang.org/en/v1/manual/complex-and-rational-numbers/#Rational-Numbers) and
 #     [arbitrary-precision arithmetic](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Arbitrary-Precision-Arithmetic)).
@@ -71,7 +71,7 @@ dist(cube, apx...)
 # The graph can also be accessed directly using [`graph`](@ref), which returns a graph 
 # of a type defined by the [Graphs.jl](https://github.com/JuliaGraphs/Graphs.jl) package. 
 # For instance, we may verify the well-known fact that cubes are simple by using the 
-# functions [`dim`](@ref Spindles.dim) and [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
+# functions [`dim`](@ref Spindles.Polytopes.dim) and [`Graphs.degree`](https://juliagraphs.org/Graphs.jl/stable/core_functions/core/#Graphs.degree):
 using Graphs: degree
 all(degree(graph(cube)) .== dim(cube))
 
@@ -111,6 +111,6 @@ end
 # As expected, we obtain precisely the four vertices whose first component is equal to one.
 
 # !!! note
-#     [`vertices`](@ref Spindles.vertices) returns an iterator. To access a specific element, 
+#     [`vertices`](@ref Spindles.Polytopes.vertices) returns an iterator. To access a specific element, 
 #     use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) 
 #     as in the code above.

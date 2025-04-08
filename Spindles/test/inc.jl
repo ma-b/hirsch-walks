@@ -7,7 +7,7 @@ using Graphs: degree
     s = Polytope(A, b)
 
     @testset "Redundancy/dimension" begin
-        @test nhalfspaces(s) == size(A, 1)  # we know that Ax <= b is irredundant
+        @test nfacets(s) == size(A, 1)  # we know that Ax <= b is irredundant
         @test dim(s) == 5
     end
 
@@ -33,5 +33,5 @@ using Graphs: degree
 
     # test the two improper faces: s itself and the empty face
     @test incidentvertices(s, Int[]) == collect(1:nvertices(s))
-    @test isempty(incidentvertices(s, 1:nhalfspaces(s)))
+    @test isempty(incidentvertices(s, ineqindices(s)))
 end

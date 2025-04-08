@@ -19,7 +19,7 @@
     @testset "Check dim/codim" begin
         # check dim + codim for all subsets of facets
         function testalldim(p::Polytope)
-            nf = nhalfspaces(p)
+            nf = last(ineqindices(p))
             # enumerate the incidence vectors of all subsets of [nf]
             for i=0:(2^nf-1)
                 b = BitVector([(i >> j) & 1 for j=0:(nf-1)])

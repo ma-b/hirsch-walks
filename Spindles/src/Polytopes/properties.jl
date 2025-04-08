@@ -1,98 +1,6 @@
 # ================================
-# Incidence
+# Special combinatorial properties
 # ================================
-
-"""
-    vertices(p::Polytope)
-
-Return an iterator over the vertices of the polytope `p`.
-
-# Examples
-````jldoctest
-julia> p = Polytope([    1     0
-                         0     1
-                         0     1
-                      1//2  1//2 ]);
-
-julia> collect(vertices(p))
-2-element Vector{Vector{Rational{Int64}}}:
- [1, 0]
- [0, 1]
-````
-"""
-vertices(p::Polytope) = Polyhedra.points(p.poly)
-
-"""
-    nvertices(p::Polytope)
-
-Return the number of vertices of `p`.
-"""
-nvertices(p::Polytope) = Polyhedra.npoints(p.poly)
-isvertexindex(p::Polytope, v::Int) = 1 <= v <= nvertices(p)
-
-# convenient shorthands for index checks
-nhalfspaces(p::Polytope) = Polyhedra.nhalfspaces(p.poly)
-isineqindex(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
-
-# --------------------------------
-# vertex-halfspace incidences
-# --------------------------------
-
-inciscomputed(p::Polytope) = p.inc !== nothing
-function computeinc!(p::Polytope)
-    p.inc = Vector{BitVector}(undef, nvertices(p))
-
-    nh = Polyhedra.nhyperplanes(p.poly)
-    nf = Polyhedra.nhalfspaces(p.poly)
-
-    for v in eachindex(vertices(p))
-        p.inc[v.value] = falses(nf)
-        for f in Polyhedra.incidenthalfspaceindices(p.poly, v)
-            # the hyperplanes and halfspaces of p.poly are numbered consecutively (in this order),
-            # so we use the number of hyperplanes as a hacky offset here
-            p.inc[v.value][f.value - nh] = true
-        end
-    end
-end
-
-# internal functions without bound checks
-function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
-    [v for v=1:nvertices(p) if all(p.inc[v][indices])]
-end
-_incidentvertices(p::Polytope, i::Int) = _incidentvertices(p, [i])
-function _incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
-    if isempty(indices)
-        1:nhalfspaces(p)  # FIXME type
-    else
-        findall(reduce(.&, p.inc[indices]))
-    end
-end
-_incidenthalfspaces(p::Polytope, v::Int) = _incidenthalfspaces(p, [v])
-
-"""
-    incidentvertices(p::Polytope, indices::AbstractVector{Int})
-
-List the indices of all vertices of the polytope `p` for which each inequality in `indices` is tight.
-
-If `indices` is empty, this is the same as `collect(1:nvertices(p))`.
-"""
-function incidentvertices(p::Polytope, indices::AbstractVector{Int})
-    all(isineqindex.(p, indices)) || throw(ArgumentError("inequality indices must be between 1 and $(nhalfspaces(p))"))
-    
-    if !inciscomputed(p)
-        computeinc!(p)
-    end
-    _incidentvertices(p, indices)
-end
-
-function incidenthalfspaces(p::Polytope, indices::AbstractVector{Int})
-    all(isvertexindex.(p, indices)) || throw(ArgumentError("indices must be between 1 and $(nvertices(p))"))
-
-    if !inciscomputed(p)
-        computeinc!(p)
-    end
-    _incidenthalfspaces(p, indices)
-end
 
 # --------------------------------
 # spindle apices
@@ -243,9 +151,13 @@ function issimple(p::Polytope)
     if graphiscomputed(p)
         all(Graphs.degree(graph(p)) .== dim(p))
     else
-        fs = facets(p)
+        if !facetscomputed(p)
+            computefacets!(p)
+        end
         # (assuming dim is cached)
-        all(v -> length(intersect(_incidenthalfspaces(p, v), fs)) == dim(p), 1:nvertices(p))
+        # to make sure we don't overcount facets for which there are multiple defining inequalities in
+        # the H-representation of `p`, we supply `init` to filter a minimal subset of inequalities
+        all(v -> length(_incidenthalfspaces(p, [v]; init=p.isfacet)) == dim(p), 1:nvertices(p))
     end
 end
 
@@ -275,5 +187,5 @@ function issimplicial(p::Polytope)
 
     # a d-face of a polytope is a simplex iff it has exactly d+1 vertices
     # (since each face of a simplex is a simplex again, we don't need to filter out non-facets)
-    all(i -> length(_incidentvertices(p, i)) == dim(p, i) + 1, 1:nhalfspaces(p))
+    all(i -> length(_incidentvertices(p, i)) == dim(p, i) + 1, ineqindices(p))
 end

@@ -9,14 +9,15 @@ export
     Polytope,
 
     # representations and incidence
-    vertices, 
-    nvertices, 
-    nhalfspaces, 
-    incidentvertices, 
-    incidenthalfspaces,
-    facets, 
-    nfacets, 
-    impliciteqs,
+    vertices,
+    nvertices,
+    incidentvertices,
+    inequalities,
+    ineqindices,
+    tightinequalities,
+    facets,
+    nfacets,
+    affinehull,
     ambientdim,
 
     # combinatorics
@@ -43,6 +44,8 @@ export
 mutable struct Polytope{T}
     const poly::Polyhedra.Polyhedron{T}
     inc::Union{Nothing, Vector{BitVector}}  # vertex-halfspace incidences
+    isfacet::Union{Nothing, BitVector}  # indicates which constraints from the H-representation 
+        # of `poly` belong to a possible choice system of facet-defining inequalities
     graph::Union{Nothing, Graphs.SimpleGraph{Int}}
     dim::Union{Nothing, Int}
     faces::Dict{Int, Vector{Vector{Int}}}  # maps k to list of incident halfspaces for each face of dim k
@@ -56,7 +59,7 @@ mutable struct Polytope{T}
             throw(ArgumentError("got an unbounded polyhedron"))
         end
 
-        new{T}(p, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), Dict{Int, Vector{Int}}())
+        new{T}(p, nothing, nothing, nothing, nothing, Dict{Int, Vector{Vector{Int}}}(), Dict{Int, Vector{Int}}())
     end
 end
 # constructor that infers the element type T from the polyhedron
@@ -112,16 +115,16 @@ Base.summary(p::Polytope) = "$(typeof(p))"
 Base.broadcastable(p::Polytope) = Ref(p)
 
 
-include("incidence.jl")
+include("representations.jl")
 include("faceenum.jl")
 include("dim.jl")
-include("redundancy.jl")
 include("distances.jl")
-include("plot/utils.jl")
-include("plot/arrow.jl")
-include("plot/plotrecipe.jl")
+include("properties.jl")
 include("generators.jl")
 include("setoperators.jl")
 include("operators.jl")
+include("plot/utils.jl")
+include("plot/arrow.jl")
+include("plot/plotrecipe.jl")
 
 end # module

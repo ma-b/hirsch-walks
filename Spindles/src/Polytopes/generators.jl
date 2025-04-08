@@ -7,6 +7,16 @@
 
 Create the `n`-dimensional simplex whose vertices are the standard basis vectors in ``\\mathbb{R}^n``
 plus the origin.
+
+# Examples
+````jldoctest
+julia> collect(vertices(simplex(3)))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [1, 0, 0]
+ [0, 1, 0]
+ [0, 0, 1]
+ [0, 0, 0]
+````
 """
 function simplex(n::Integer)
     n >= 1 || throw(ArgumentError("dimension must be at least 1"))
@@ -24,6 +34,16 @@ end
     cube(n)
 
 Create the `n`-dimensional standard hypercube ``[-1,1]^n``.
+
+# Examples
+````jldoctest
+julia> collect(vertices(cube(2)))
+4-element Vector{Vector{Rational{BigInt}}}:
+ [-1, -1]
+ [1, -1]
+ [-1, 1]
+ [1, 1]
+````
 """
 function cube(n::Integer)
     n >= 1 || throw(ArgumentError("dimension must be at least 1"))
@@ -38,6 +58,18 @@ end
 
 Create the `n`-dimensional standard cross-polytope 
 whose vertices are the ``2n`` positive and negative standard basis vectors in ``\\mathbb{R}^n``.
+
+# Examples
+````jldoctest
+julia> collect(vertices(crosspolytope(3)))
+6-element Vector{Vector{Rational{BigInt}}}:
+ [1, 0, 0]
+ [-1, 0, 0]
+ [0, 1, 0]
+ [0, -1, 0]
+ [0, 0, 1]
+ [0, 0, -1]
+````
 """
 function crosspolytope(n::Integer)
     n >= 1 || throw(ArgumentError("dimension must be at least 1"))
@@ -62,6 +94,15 @@ Note that its dimension is ``n-1``.
 # Examples
 ````jldoctest
 julia> p = permutahedron(3);
+
+julia> collect(vertices(p))
+6-element Vector{Vector{Rational{Int64}}}:
+ [3, 2, 1]
+ [3, 1, 2]
+ [2, 3, 1]
+ [1, 3, 2]
+ [2, 1, 3]
+ [1, 2, 3]
 
 julia> nvertices(p) == factorial(3)
 true

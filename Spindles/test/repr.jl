@@ -15,7 +15,7 @@ using Polyhedra: hrep
         @test p == Polytope(collect(vertices(p)))
         @test p == q
 
-        @test reduce(.&, q.inc) == (codim.(q, 1:nhalfspaces(q)) .== 0)
+        @test reduce(.&, q.inc) == (codim.(q, ineqindices(q)) .== 0)
     end
 
     @testset "Preserve indices" begin

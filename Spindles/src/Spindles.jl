@@ -16,12 +16,13 @@ export
     # representations and incidence
     vertices, 
     nvertices, 
-    nhalfspaces, 
     incidentvertices, 
-    incidenthalfspaces,
-    facets, 
-    nfacets, 
-    impliciteqs,
+    inequalities,
+    ineqindices,
+    tightinequalities,
+    facets,
+    nfacets,
+    affinehull,
     ambientdim,
 
     # combinatorics

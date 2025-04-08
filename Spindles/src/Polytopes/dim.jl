@@ -2,15 +2,6 @@
 # Dimension of faces
 # ================================
 
-"""
-    ambientdim(p::Polytope)
-
-Return the dimension of the ambient space of the polytope `p`.
-"""
-ambientdim(p::Polytope) = size(Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly)).A, 2)
-# (need to convert hrep for interval polytopes in 1D to proper type first)
-
-
 # Compute a maximal chain in the face lattice of `p` such that all faces only contain vertices in `vindices`,
 # and the minimal face of the chain is the face defined by inequalities `f`.
 # IMPORTANT: `f` must be the inclusion-maximal subset of halfspaces incident to the face because at each step 
@@ -49,7 +40,8 @@ i.e., a finite sequence of faces
 ```
 for which ``d`` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and ``d`` is its dimension.
 
-See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
+See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim),
+[`ambientdim`](@ref).
 
 # Examples
 ```jldoctest
@@ -106,10 +98,10 @@ function dim(p::Polytope, indices::AbstractVector{Int})
     # the maximal face in the chain will have the desired dimension, 
     # so subtract 2 for the (-1)-dim and 0-dim faces (if present)
     if isempty(indices)
-        return length(maxchain(p, 1:nhalfspaces(p))) - 2
+        return length(maxchain(p, ineqindices(p))) - 2
     else
         # here we use that the minimal face containing all incident vertices of a face is the face itself
-        return length(maxchain(p, 1:nhalfspaces(p), _incidentvertices(p, indices))) - 2
+        return length(maxchain(p, ineqindices(p), _incidentvertices(p, indices))) - 2
     end
 end
 dim(p::Polytope, i::Int) = dim(p, [i])

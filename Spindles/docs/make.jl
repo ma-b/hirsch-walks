@@ -57,7 +57,7 @@ makedocs(
         "Polytopes API" => [
             "Index" => "man/polytopes/api.md",
             "Polytopes" => "man/polytopes/polytopes.md",
-            "Representations" => "man/polytopes/representation.md",
+            "Representations" => "man/polytopes/representations.md",
             "Combinatorics" => "man/polytopes/combinatorics.md",
             "Operators" => "man/polytopes/operators.md",
             "Generators for standard polytopes" => "man/polytopes/generators.md",

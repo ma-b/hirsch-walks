@@ -12,7 +12,7 @@
             vs = incidentvertices(p, f)
 
             # do not reduce over empty `vs`
-            @test isempty(vs) || sort(f) == incidenthalfspaces(p, vs)
+            @test isempty(vs) || sort(f) == tightinequalities(p, vs)
             # `vs` can only be empty for the empty face at i=1 (if k=-1)
             @test !isempty(vs) || (i == 1 && k == -1)
 
@@ -27,7 +27,7 @@
             p = Polytope(A, b)
 
             @test dim(p) == 5
-            testchain(p, collect(1:nhalfspaces(p)), -1; testenum=true)
+            testchain(p, collect(ineqindices(p)), -1; testenum=true)
 
             # pick a random vertex and start maximal chain from there
             v = rand(1:nvertices(p))
@@ -43,6 +43,6 @@
         A, b, _ = readineq(joinpath("..", "examples", "s-25.txt"), BigInt)
         s = Polytope(A, b)
         @test dim(p) == 20
-        testchain(p, collect(1:nhalfspaces(p)), -1) 
+        testchain(p, collect(ineqindices(p)), -1) 
     end=#
 end
