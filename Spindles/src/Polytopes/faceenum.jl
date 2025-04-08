@@ -118,7 +118,7 @@ function computefacesofdim!(p::Polytope, k::Int)
             end
         end
         for d in degenerate_supsets
-            if !any(issubset(d, dd) for dd in nondegenerate_supsets if length(dd) > length(d))
+            if !any(issubset(d, dd) for dd in degenerate_supsets if length(dd) > length(d))
                 push!(p.faces[k], d)
             end
         end
