@@ -94,9 +94,10 @@ directions = [Int.(1:n .== i) - Int.(1:n .== j) for i=1:n for j=i+1:n]
 # we create each line segment as its own [`Polytope`](@ref), take the Minkowski sum of all segments,
 # and finally translate the resulting polytope by the vector $(1,2,\dots,n)$.
 # We may do all of this in a single line using the Julia function
-# [`mapreduce`](https://docs.julialang.org/en/v1/base/collections/#Base.mapreduce-Tuple{Any,%20Any,%20Any}):
+# [`sum`](@ref):
 
-p = collect(1:n) + mapreduce(d -> Polytope([zeros(Int, n), d]), +, directions)
+#src p = collect(1:n) + mapreduce(d -> Polytope([zeros(Int, n), d]), +, directions)
+p = collect(1:n) + sum(d -> Polytope([zeros(Int, n), d]), directions)
 collect(vertices(p))
 
 # As desired, the vertices of the resulting polytope `p` are precisely the permutations of 1 to 3.

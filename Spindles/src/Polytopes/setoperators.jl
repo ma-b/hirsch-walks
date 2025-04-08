@@ -51,8 +51,8 @@ function Base.in(x::AbstractVector{<:Real}, p::Polytope)
         throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
     end
     
-    h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))  # FIXME
-    all(h.A * x .<= h.b) && all(isapprox.(h.A[collect(h.linset),:] * x, h.b[collect(h.linset)]))
+    A, b, eqs = repr(p)
+    all(A * x .<= b) && all(isapprox.(A[collect(eqs), :] * x, b[collect(eqs)]))
 end
 
 """
