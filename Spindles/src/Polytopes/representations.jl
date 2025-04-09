@@ -287,7 +287,7 @@ end
 
 Return the valid range of indices for the rows of the coefficient matrix `A` returned by [`inequalities`](@ref).
 
-See also [`inequalities`](@ref), [`axes`](https://docs.julialang.org/en/v1/base/arrays/#Base.axes-Tuple{Any}).
+See also [`inequalities`](@ref), [`Base.axes`](https://docs.julialang.org/en/v1/base/arrays/#Base.axes-Tuple{Any}).
 
 # Examples
 ````jldoctest

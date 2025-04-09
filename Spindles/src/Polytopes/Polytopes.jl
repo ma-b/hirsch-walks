@@ -36,10 +36,7 @@ export
     cube,
     crosspolytope,
     permutahedron,
-    polarize,
-
-    # for compatibility with older versions
-    plot2face  # TODO remove
+    polarize
 
 mutable struct Polytope{T}
     const poly::Polyhedra.Polyhedron{T}

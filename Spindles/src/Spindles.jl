@@ -41,10 +41,7 @@ export
     cube,
     crosspolytope,
     permutahedron,
-    polarize,
-
-    # for compatibility with older versions
-    plot2face
+    polarize
 
 """
     Spindles

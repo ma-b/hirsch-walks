@@ -3,6 +3,9 @@
 *Spindles.jl* integrates with [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
 to visualize 2-dimensional polytopes (polygons) or 2-faces of higher-dimensional polytopes. 
 
+!!! warning "Compatibility"
+    The deprecated function `plot2face` has been removed as of version 0.4.
+
 ## Basic usage
 
 A `Polytope` object can be passed directly to the [`plot`](https://docs.juliaplots.org/dev/api/#RecipesBase.plot) command from [Plots.jl](https://github.com/JuliaPlots/Plots.jl) as follows:

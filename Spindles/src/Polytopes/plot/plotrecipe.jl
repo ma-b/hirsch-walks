@@ -1,14 +1,7 @@
-# ================================
+# =======================================================
 # User recipe for plotting 2-faces
 # (see also https://docs.juliaplots.org/stable/recipes/)
-# ================================
-
-### TODO remove the following function in next versions
-function plot2face(args...; kw...)
-    @warn "`plot2face` is deprecated, use `plot` instead."
-    Plots.plot(args...; kw...)
-end
-
+# =======================================================
 
 # return keyword dict with all attributes prefixed by `prefix`
 # and their full attribute names (aliases don't work inside recipes)
