@@ -1,6 +1,6 @@
 using Documenter, Literate
 using Spindles
-using Polyhedra, Graphs
+using Graphs
 
 # generate example files using Literate.jl
 const EXAMPLES = [
