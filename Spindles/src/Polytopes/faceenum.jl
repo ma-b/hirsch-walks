@@ -29,7 +29,7 @@ function computegraph!(p::Polytope)
     p.graph = Graphs.SimpleGraph(nv)
 
     # to enumerate all edges, we follow Christophe Weibel's approach outlined here:
-    # https://sitep.google.com/site/christopheweibel/research/hirsch-conjecture    
+    # https://sites.google.com/site/christopheweibel/research/hirsch-conjecture
     
     # (1) brute-force all pairs of vertices that are contained in at least dimension minus 1 common facets
 
