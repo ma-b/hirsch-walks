@@ -83,7 +83,7 @@ Such redundancy can be detected, see [Representations](@ref).
     Then we get a different element type, namely `Float64`. 
     
     The type of arithmetic used to represent and manipulate the `Polytope` object can also be set using an optional constructor argument that is borrowed from [Polyhedra.jl](https://github.com/JuliaPolyhedra/Polyhedra.jl) (and that may be passed to any of the `Polytope` constructors):
-    ```jldoctest
+    ```julia
     julia> using Polyhedra: DefaultLibrary
 
     julia> Polytope([-1.0 0.0; 1 0; 0 -1; 0 1], [0, 1, 0, 1], DefaultLibrary{Rational{BigInt}}())

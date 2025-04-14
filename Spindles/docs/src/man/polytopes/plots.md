@@ -104,7 +104,7 @@ end
 ````
 Since these coordinates are difficult to check without any axis ticks, let's add them to the plot:
 ````@example plots
-plot(p, [1]; ticks=-2:2)
+plot(p, [1]; ticks=-2:2, minorticks=4, minorgrid=true)
 ````
 
 To ignore the geometry altogether, do
