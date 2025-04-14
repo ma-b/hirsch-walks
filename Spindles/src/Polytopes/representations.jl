@@ -305,7 +305,7 @@ isineqindex(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
 
 # determine whether rows i and j of A are (positive) nonzero scalar multiples of one another
 # (FIXME assuming rational data)
-function ismultiple(A::AbstractMatrix, i::Integer, j::Integer; positive=false)
+function ismultiple(A::AbstractMatrix, i::Int, j::Int; positive=false)
     # find a column r of A such that A[j,r] is nonzero
     # and scale the row j such that this entry matches A[i,r] in absolute value
     r = findfirst(A[j,:] .!= 0)

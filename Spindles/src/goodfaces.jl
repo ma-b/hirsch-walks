@@ -9,9 +9,9 @@
 """
 struct FaceState
     good::Bool
-    indices::Union{Nothing, Vector{Int}}
-    edges::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
-    vsets::Union{Nothing, Tuple{Vector{Int}, Vector{Int}}}
+    indices::Union{Nothing, AbstractVector{Int}}
+    edges::Union{Nothing, Tuple{AbstractVector{Int}, AbstractVector{Int}}}
+    vsets::Union{Nothing, Tuple{AbstractVector{Int}, AbstractVector{Int}}}
 end
 
 """

@@ -26,7 +26,7 @@ function extract_prefix_kwargs(kwargs::Dict{Symbol, <:Any}, prefix::AbstractStri
 end
 
 # type annotations on kwargs not supported in recipes
-@recipe function f(p::Polytope, indices::AbstractVector{<:Integer};
+@recipe function f(p::Polytope, indices::AbstractVector{Int};
     # custom keyword arguments:
     usecoordinates=true,
     vertexlabels=string.(1:nvertices(p)),

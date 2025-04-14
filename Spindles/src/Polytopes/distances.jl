@@ -45,7 +45,7 @@ end
 # check whether `g` is a cycle: if yes, list the vertices of `g` in cyclic order; if not, return nothing.
 # the arguments are the return values of Graphs.induced_subgraph
 # least index first in order
-function cyclicorder(g::Graphs.SimpleGraph, vmap::Vector{Int})
+function cyclicorder(g::Graphs.SimpleGraph, vmap::AbstractVector{Int})
     # pick an arbitrary starting vertex and traverse the graph g depth-first
     start = minimum(Graphs.vertices(g))  # least vertex index first
     cyclic = [start]
