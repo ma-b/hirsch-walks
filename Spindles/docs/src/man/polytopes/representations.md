@@ -1,11 +1,5 @@
 # Representations
 
-```@meta
-DocTestSetup = quote
-    using Spindles
-end
-```
-
 We saw that a [`Polytope`](@ref) may be created from either a V- or a H-representation.
 *Spindles.jl* provides functions to retrieve both types of representations for a given polytope,
 and to detect redundancy.
@@ -57,8 +51,4 @@ nfacets
 ```@docs
 incidentvertices
 tightinequalities
-``` 
-
-```@meta
-DocTestSetup = nothing
 ```

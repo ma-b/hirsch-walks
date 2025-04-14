@@ -2,7 +2,6 @@
 
 ```@meta
 DocTestSetup = quote
-    import Polyhedra
     using Spindles
 end
 ```
