@@ -114,10 +114,10 @@ julia> collect(vertices(p))
 
 julia> p = Polytope([0 0; 1 0; 0 1]);
 
-julia> nvertices(
+julia> isempty(
            intersect((Polytope([v]) for v in vertices(p))...)
        )
-0
+true
 ````
 """
 Base.intersect(p::Polytope, polytopes...) = 

@@ -5,7 +5,7 @@
 """
     map(f, p::Polytope)
 
-Create a new [`Polytope`](@ref) whose vertices are the images of the vertices of `p` 
+Return a new [`Polytope`](@ref) from the convex hull of the images of the vertices of `p` 
 under the function `f`.
 
 # Examples
@@ -97,7 +97,7 @@ Equivalent to [`*`](@ref *(::Polytope, ::Number))`(p, 1/δ)`.
 If the scalar `δ` is an integer or a rational number and the element type of `p` 
 is a subtype of `Integer` or `Rational`, use [`//`](@ref) to obtain a rational polytope again.
 
-See also [`//`](@ref).
+See also [`//`](@ref), [`*`](@ref *(::Polytope, ::Number)).
 """
 Base.:(/)(p::Polytope, δ::Number) = 1/δ * p
 
@@ -107,7 +107,7 @@ Base.:(/)(p::Polytope, δ::Number) = 1/δ * p
 Equivalent to [`*`](@ref *(::Polytope, ::Number))`(p, 1//δ)` 
 where both the element type of `p` and the type of `δ` must be subtypes of `Integer` or `Rational`.
 
-See also [`/`](@ref).
+See also [`/`](@ref), [`*`](@ref *(::Polytope, ::Number)).
 
 # Examples
 ````jldoctest
@@ -133,7 +133,7 @@ Base.:(//)(p::Polytope{T}, δ::Union{Integer, Rational}) where {T<:Union{Integer
 
 Translate the polytope `p` by the vector `t`. Returns a new [`Polytope`](@ref).
 
-See also [`-`](@ref -(::Polytope, ::Number)), [`map`](@ref).
+See also [`-`](@ref -(::Polytope, ::AbstractVector{<:Number})), [`map`](@ref).
 
 # Examples
 ````jldoctest
@@ -160,6 +160,8 @@ Base.:(+)(t::AbstractVector{<:Number}, p::Polytope) = p + t
     -(p, t)
 
 Equivalent to [`+`](@ref +(::Polytope, ::AbstractVector{<:Number}))`(p, -t)`.
+
+See also [`+`](@ref +(::Polytope, ::AbstractVector{<:Number})).
 
 # Examples
 ````jldoctest
@@ -279,11 +281,11 @@ The following polytope (a simplex) has a vertex at the origin. Therefore, `polar
 julia> p = Polytope([0 0; 1 0; 0 1]);
 
 julia> polarize(p)
-ERROR: got a polytope that does not contain the origin in its interior
+ERROR: got a polytope whose interior does not contain the origin
 [...]
 ````
 However, we may make the origin an interior point by taking an arbitrary interior point `x` of `p` 
-and shifting the polytope by `-x`. Here we use the centroid of the simplex for `x`:
+and shifting the polytope by `-x`. Here we use the centroid of `p` for `x`:
 ````jldoctest polarize
 julia> x = sum(vertices(p)) / nvertices(p)
 2-element Vector{Rational{BigInt}}:
@@ -297,13 +299,9 @@ Polytope{Rational{BigInt}} in 2-space
 function polarize(p::Polytope)
     !isempty(p) || error("got an empty polytope")
     
-    # check whether 0 is in the interior of `p`
-    A, b, eqs = repr(p; implicit_equations=true)
-    # convert the BitSet `eqs` to a BitVector
-    iseq = in.(axes(A, 1), Ref(eqs))
-
-    # all non-flagged right-hand sides must be positive for 0 to be in the interior
-    all(iseq .| (b .> 0)) || error("got a polytope that does not contain the origin in its interior")
+    # all constraints must be inequalities with positive right-hand sides for 0 to be in the interior
+    _, b, eqs = repr(p; implicit_equations=true)
+    isempty(eqs) && all(b .> 0) || error("got a polytope whose interior does not contain the origin")
     
     Polytope(hcat(vertices(p)...)', ones(Int, nvertices(p)))
 end

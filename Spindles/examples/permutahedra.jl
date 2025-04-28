@@ -4,7 +4,7 @@
 
 # In the [first tutorial](@ref "First steps"), we worked with a cube. Cubes can be characterized
 # and constructed in many different ways. In this tutorial, we will build them (and more complicated
-# polytopes) from simpler polytopes, namely, *line segments*, 
+# polytopes) from simpler polytopes, namely *line segments*, 
 # only using basic polyhedral operations such as Cartesian products, Minkowski sums, and translations.
 
 #md # !!! note

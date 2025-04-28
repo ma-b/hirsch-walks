@@ -28,8 +28,8 @@ nfacesofdim
 ```
 
 ## Graphs and distances
-For example, calling [`facesofdim`](@ref)`(p, 1)` lists the incident halfspaces of each edge of the polytope `p`.
-These edges, given as pairs of adjacent vertices, define the graph (or *1-skeleton*) of `p`. The graph
+For example, calling [`facesofdim`](@ref)`(p, 1)` lists the one-dimensional faces, the edges, of the polytope `p`.
+These edges, written as pairs of adjacent vertices, define the graph (or *1-skeleton*) of `p`. The graph
 can also be retrieved directly:
 
 ```@docs

@@ -89,10 +89,8 @@ end
 Create the `n`-th permutahedron. It is defined as the convex hull of the vectors 
 ``(\\pi(1), \\pi(2), \\dots, \\pi(n))`` for all permutations ``\\pi`` of ``\\{1,2, \\dots, n\\}``.
 
-Note that its dimension is ``n-1``.
-
 # Examples
-````jldoctest
+````jldoctest permutahedron
 julia> p = permutahedron(3);
 
 julia> collect(vertices(p))
@@ -106,7 +104,9 @@ julia> collect(vertices(p))
 
 julia> nvertices(p) == factorial(3)
 true
-
+````
+Note that the dimension of the ``n``-th permutahedron is ``n-1``:
+````jldoctest permutahedron
 julia> dim(p)
 2
 ````
