@@ -68,7 +68,10 @@ function apices(p::Polytope, apex::Union{Nothing, Int}=nothing; checkredund=true
     if checkredund
         nonfacet = codim.(p, 1:nf) .!= 1
     else
-        nonfacet = reduce(.&, p.inc)  # only filter out implicit equations
+        if !implicitscomputed(p)
+            computeimpliciteqs!(p)
+        end
+        nonfacet = p.isimpliciteq  # only filter out implicit equations
     end
 
     # incidences must be mutually exclusive except for non-facet defining inequalities, 

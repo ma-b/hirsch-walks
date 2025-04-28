@@ -83,13 +83,13 @@ issimple(cube)
 # ## Counting and enumerating faces
 
 # *Spindles.jl* also provides functions to count and enumerate the faces of `cube`. The following call to 
-# [`facesofdim`](@ref) returns a list of all two-dimensional faces, each one given by the indices of its 
+# [`facesofdim`](@ref) returns all two-dimensional faces, each one given by the indices of its 
 # incident facets.
 
 # !!! note
 #     Note here that facet indices refer to the corresponding rows of the coefficient matrix `A`. 
 
-facesofdim(cube, 2)
+collect(facesofdim(cube, 2))
 
 # Given that the two-dimensional faces of a cube are precisely its six facets, 
 # this should not be too surprising. 
@@ -111,6 +111,7 @@ end
 # As expected, we obtain precisely the four vertices whose first component is equal to one.
 
 # !!! note
-#     [`vertices`](@ref Spindles.Polytopes.vertices) returns an iterator. To access a specific element, 
+#     [`vertices`](@ref Spindles.Polytopes.vertices), like [`facesofdim`](@ref), returns an iterator. 
+#     To access a specific element, 
 #     use [`collect`](https://docs.julialang.org/en/v1/base/collections/#Base.collect-Tuple{Any}) 
 #     as in the code above.

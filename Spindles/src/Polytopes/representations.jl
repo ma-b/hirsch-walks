@@ -25,7 +25,6 @@ end
 
 # internal functions without bound checks
 function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
-    #[v for v=1:nvertices(p) if all(p.inc[v][indices])]
     filter(v -> all(p.inc[v][indices]), 1:nvertices(p))
 end
 _incidentvertices(p::Polytope, i::Int) = _incidentvertices(p, [i])
@@ -112,6 +111,19 @@ function tightinequalities(p::Polytope, indices::AbstractVector{Int})
 end
 
 # --------------------------------
+# implicit equations
+# --------------------------------
+
+implicitscomputed(p::Polytope) = p.isimpliciteq !== nothing
+function computeimpliciteqs!(p::Polytope)
+    if !inciscomputed(p)
+        computeinc!(p)
+    end
+    p.isimpliciteq = reduce(.&, p.inc)
+end
+
+
+# --------------------------------
 # V-representations
 # --------------------------------
 
@@ -192,15 +204,14 @@ function repr(p::Polytope; implicit_equations=false)
 
     if implicit_equations
         # detect implicit equations, i.e., inequalities that are satisfied at equality for each point in `p`
-        if !inciscomputed(p)
-            computeinc!(p)
+        if !implicitscomputed(p)
+            computeimpliciteqs!(p)
         end
-        implicits = findall(reduce(.&, p.inc))
-        
+
         # index offset is the number of hyperplanes in the internal `Polyhedra.Polyhedron`
         # (first block of rows of A corresponds to (explit) equality constraints,
         # second block below contains coefficients of inequality constraints)
-        eqs = union(h.linset, implicits .+ Polyhedra.nhyperplanes(p.poly))
+        eqs = union(h.linset, findall(p.isimpliciteq) .+ Polyhedra.nhyperplanes(p.poly))
     else
         eqs = h.linset
     end

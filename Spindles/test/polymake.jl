@@ -32,7 +32,7 @@ using Polyhedra: hrep
                 ps = readpolymake(joinpath("polymake", "$(filename)_f$(k).txt"))
                 # convert 0-based polymake indices to 1-based Julia indices
                 ps = map(x->x.+1, ps)
-                @test sort(facesofdim(s, k)) == sort(ps)
+                @test sort(collect(facesofdim(s, k))) == sort(ps)
             end
         end
 

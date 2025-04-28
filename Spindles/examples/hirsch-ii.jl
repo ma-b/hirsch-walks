@@ -31,7 +31,7 @@ apx = apices(s)
 
 # The following code finds all good 2-faces of `s`.
 goodfaces = []
-for f in sort(facesofdim(s, 2))
+for f in sort(collect(facesofdim(s, 2)))
     fstate = isgood2face(s, f, apx...)
     if fstate.good
         push!(goodfaces, fstate)

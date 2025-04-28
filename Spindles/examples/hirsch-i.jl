@@ -254,7 +254,7 @@ fstate.good, fstate.vsets
 # ## Finding all good 2-faces
 
 # Using the functions [`facesofdim`](@ref) and [`isgood2face`](@ref), all good 2-faces of `s` are easily enumerated.
-for f in sort(facesofdim(s, 2))
+for f in sort(collect(facesofdim(s, 2)))
     if isgood2face(s, f, apx...).good
         println(join(labels[f], " "))
     end
@@ -263,7 +263,7 @@ end
 # In particular, for each good 2-face, there must exist paths from both apices to
 # some vertex on the face of total length at most 3. 
 # Interestingly, all 2-faces of `s` that satisfy this weaker condition are good:
-for f in sort(facesofdim(s, 2))
+for f in sort(collect(facesofdim(s, 2)))
     min_total_length = sum(
         minimum(  # minimum distance of the apices to any vertex on the face
             dist(s, a, v) for v in incidentvertices(s, f)
