@@ -218,6 +218,47 @@ function repr(p::Polytope; implicit_equations=false)
     h.A, h.b, eqs
 end
 
+# determine whether rows i and j of A are (positive) nonzero scalar multiples of one another
+# (FIXME assuming rational data)
+function ismultiple(A::AbstractMatrix, i::Int, j::Int; positive=false)
+    # find a column r of A such that A[j,r] is nonzero
+    # and scale the row j such that this entry matches A[i,r] in absolute value
+    r = findfirst(A[j,:] .!= 0)
+    A[i,r] != 0 || return false  # dismiss right away, since we would have to scale j by 0  
+
+    α = A[i,r] / A[j,r]  # TODO preserves rational type if both are rationals
+    positive && α > 0 || !positive && α != 0 || return false   # dismiss if multiplier is zero (or negative)
+    
+    # is rescaled row j identical to i?
+    return A[j,:] * α == A[i,:]
+end
+
+# Partition the rows of `A` into equivalence classes under the equivalence relation `f`
+# and return a bit vector indicating a representative (least index) of each class.
+# If a filter function `g` is specified, consider only those row indices of `A`
+# for which `g` evaluates to true (default is all-true).
+function equivalence_classes(f::Function, A::AbstractMatrix, g::Function=x->true)
+    m = size(A, 1)
+    
+    # to keep track of which rows to keep, initialize the following bit vector to ignore all rows 
+    # for which `g` evaluates to false, and update it in the loop below
+    keep = g.(axes(A, 1))
+
+    for i=1:m
+        # since we build the equivalence classes one after the other, we may discard elements i that 
+        # belong to a previously identified class but were not chosen as a representative 
+        # (i.e., for which keep[i] == false)
+        keep[i] || continue
+        
+        for j=i+1:m
+            keep[j] || continue
+            # update: are elements i and j equivalent?
+            keep[j] = !f(A, i, j)
+        end
+    end
+    keep
+end
+
 """
     ambientdim(p::Polytope)
 
@@ -237,11 +278,13 @@ function ambientdim(p::Polytope)
 end
 
 """
-    affinehull(p::Polytope)
+    affinehull(p::Polytope; remove_rescaled=false)
 
 Return a tuple `(B, d)` of a matrix `B` and a vector `d` 
 such that the system of linear equations ``Bx = d`` defines the affine hull of `p`.
-Note that this system is not necessarily minimal.
+
+Note that this system is not necessarily minimal. If `remove_rescaled` is `true`, 
+a sufficient subsystem is returned for which no two equations are scalar multiples of one another.
 
 See also [`inequalities`](@ref), [`facets`](@ref).
 
@@ -258,15 +301,24 @@ can be modeled by replacing the equality constraint with two inequalities ``\\pm
 ````jldoctest
 julia> A = [-1 0; 1 0; 0 -1; 0 1]; b = [0, 1, 0, 0];
 
-julia> affinehull(Polytope(A, b))
+julia> p = Polytope(A, b);
+
+julia> affinehull(p)
 (Rational{BigInt}[0 -1; 0 1], Rational{BigInt}[0, 0])
+
+julia> affinehull(p; remove_rescaled=true)
+(Rational{BigInt}[0 -1], Rational{BigInt}[0])
 ````
 """
-function affinehull(p::Polytope)
+function affinehull(p::Polytope; remove_rescaled=false)
     A, b, eqs = repr(p; implicit_equations=true)
     
-    # TODO remove opposites/scalings
-    A[collect(eqs), :], b[collect(eqs)]
+    if remove_rescaled
+        issufficient = equivalence_classes(ismultiple, [A b], in(eqs))
+        A[issufficient, :], b[issufficient]
+    else
+        A[collect(eqs), :], b[collect(eqs)]
+    end
 end
 
 """
@@ -314,75 +366,21 @@ isineqindex(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
 # H-redundancy
 # --------------------------------
 
-# determine whether rows i and j of A are (positive) nonzero scalar multiples of one another
-# (FIXME assuming rational data)
-function ismultiple(A::AbstractMatrix, i::Int, j::Int; positive=false)
-    # find a column r of A such that A[j,r] is nonzero
-    # and scale the row j such that this entry matches A[i,r] in absolute value
-    r = findfirst(A[j,:] .!= 0)
-    A[i,r] != 0 || return false  # dismiss right away, since we would have to scale j by 0  
-
-    α = A[i,r] / A[j,r]  # TODO preserves rational type if both are rationals
-    positive && α > 0 || !positive && α != 0 || return false   # dismiss if multiplier is zero (or negative)
-    
-    # is rescaled row j identical to i?
-    return A[j,:] * α == A[i,:]
-end
-
 facetscomputed(p::Polytope) = p.isfacet !== nothing
 function computefacets!(p::Polytope)
     A, _, = repr(p)
     nh = Polyhedra.nhyperplanes(p.poly)
-    nf = Polyhedra.nhalfspaces(p.poly)
 
     # We first drop all inequalities that are not facet-defining. Detecting redundancy among the remaining
-    # inequalities is straightforward: Two inequalities define the same facet iff their outer normals are
-    # positive scalar multiples of each other. 
-    # Being multiples of one another partitions the rows of A into equivalence classes.
-    # We retain one representative of each class, the one with the least index.
-
-    # initialize with BitVector whose i-th entry indicates whether inequality i is facet-defining
-    p.isfacet = codim.(p, 1:nf) .== 1
-    # keep track of inequalities whose deletion will leave an irredundant inequality description
-    # their indices will be set to false in the following loop
-    keep = trues(nf)
-
-    for i=1:nf
-        # continue if i is not a facet or has already been flagged as redundant
-        p.isfacet[i] && keep[i] || continue
-        
-        for j=i+1:nf
-            p.isfacet[j] && keep[j] || continue
-            # since we build the equivalence classes one after the other, we may discard any row j that 
-            # belongs to a previously identified class but was not chosen as its representative (keep[j] == false)
-
-            # if rows i and j are positive scalar multiples of one another, then i and j must define the same facet
-            # (and the corresponding right-hand sides are necessarily identical too)
-            keep[j] = !ismultiple(A[(nh+1):end, :], i, j; positive=true)  # offset by number of hyperplanes
-
-            #=
-            # find a column r of A such that A[j+nh,r] is nonzero
-            # and scale the row j such that this entry matches A[i+nh,r] in absolute value
-            r = findfirst(A[j + nh, :] .!= 0)
-            A[i + nh, r] != 0 || continue  # dismiss right away, since we would have to scale j by 0  
-
-            α = A[i + nh, r] / A[j + nh, r]  # TODO preserves rational type if both are rationals
-            α > 0 || continue   # rows must be positive scalar multiples of 
-                                # each other in order to define the same facet
-            # if the rescaled row j is now identical to row i, then i and j must define the same facet
-            # (and the corresponding right-hand sides are necessarily identical too)
-            if A[j,:] * α == A[i,:]
-                @assert b[j] * α == b[i]
-                keep[j] = false
-            end
-            =#
-        end
-    end
-
-    p.isfacet = p.isfacet .& keep
+    # inequalities is straightforward: Two inequalities define the same facet if and only if 
+    # their outer normals are positive scalar multiples of each other. 
+    # Being multiples of one another partitions the rows of A into equivalence classes:
+    p.isfacet = equivalence_classes(
+        (A, i, j) -> ismultiple(A, i, j; positive=true), A,
+        i -> i > nh && codim(p, i-nh) == 1  # offset by number of hyperplanes
+    )
 end
 
-# minimal system Ax <= b that, together with the affine hull, defines `p`
 """
     facets(p::Polytope)
 
@@ -414,6 +412,11 @@ creates the polytope defined by the system
 0 \\le x_2 &\\le 1
 \\end{aligned}
 ```
+which is minimal:
+````jldoctest facets
+julia> facets(p) == (A, b)
+true
+````
 
 The following inequalities are also valid for `p`:
 ```math
