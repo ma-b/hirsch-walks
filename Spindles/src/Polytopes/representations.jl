@@ -245,14 +245,14 @@ function equivalence_classes(f::Function, A::AbstractMatrix, g::Function=x->true
     keep = g.(axes(A, 1))
 
     for i=1:m
-        # since we build the equivalence classes one after the other, we may discard elements i that 
+        # since we build the equivalence classes one after the other, we may discard rows i that 
         # belong to a previously identified class but were not chosen as a representative 
         # (i.e., for which keep[i] == false)
         keep[i] || continue
         
         for j=i+1:m
             keep[j] || continue
-            # update: are elements i and j equivalent?
+            # update: are rows i and j equivalent?
             keep[j] = !f(A, i, j)
         end
     end
@@ -334,8 +334,10 @@ See also [`ineqindices`](@ref), [`facets`](@ref), [`affinehull`](@ref Spindles.P
 
 # Examples
 ````jldoctest
-julia> inequalities(Polytope([-1 0; 0 -1; 2 3], [0, 0, 1]))
-(Rational{BigInt}[-1 0; 0 -1; 2 3], Rational{BigInt}[0, 0, 1])
+julia> A = [-1 0; 0 -1; 2 3]; b = [0, 0, 1];
+
+julia> inequalities(Polytope(A, b)) == (A, b)
+true
 ````
 """
 function inequalities(p::Polytope)
@@ -376,9 +378,10 @@ function computefacets!(p::Polytope)
     # their outer normals are positive scalar multiples of each other. 
     # Being multiples of one another partitions the rows of A into equivalence classes:
     p.isfacet = equivalence_classes(
-        (A, i, j) -> ismultiple(A, i, j; positive=true), A,
+        (A, i, j) -> ismultiple(A, i, j; positive=true), 
+        A,
         i -> i > nh && codim(p, i-nh) == 1  # offset by number of hyperplanes
-    )
+    )[(nh+1):end]  # ignore first few entries for hyperplanes
 end
 
 """

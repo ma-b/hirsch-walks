@@ -5,7 +5,7 @@
 """
     ==(p::Polytope, q::Polytope) -> Bool
 
-Check whether polytopes `p` and `q` have the same set of vertices.
+Test whether `p` and `q` have the same set of vertices.
 
 # Examples
 ````jldoctest
