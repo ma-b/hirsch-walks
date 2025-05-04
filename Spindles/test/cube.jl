@@ -12,11 +12,23 @@
         @test p == polarize(polarize(p))
         @test q == polarize(polarize(q))
 
+        # create dual from the primal H-representation
+        function polarize2(p::Polytope)
+            # (assuming that polarize does not throw an error)
+            V, v = inequalities(p)  # or facets(p) to avoid V-redundancy
+            Polytope(V ./ v)
+        end
+        @test polarize2(p) == polarize(p)
+        @test polarize2(q) == polarize(q)
+
+        # a polytope is simple if and only if its dual is simplicial
         @test issimple(p)
         @test issimplicial(q)
     end
 
     @testset "Check dim/codim" begin
+        @test dim(p) == dim(q) == n
+
         # check dim + codim for all subsets of facets
         function testalldim(p::Polytope)
             nf = last(ineqindices(p))

@@ -114,9 +114,7 @@ julia> collect(vertices(p))
 
 julia> p = Polytope([0 0; 1 0; 0 1]);
 
-julia> isempty(
-           intersect((Polytope([v]) for v in vertices(p))...)
-       )
+julia> intersect((Polytope([v]) for v in vertices(p))...) |> isempty
 true
 ````
 """
