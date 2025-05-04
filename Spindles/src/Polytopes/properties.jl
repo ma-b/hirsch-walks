@@ -151,6 +151,8 @@ false
 ````
 """
 function issimple(p::Polytope)
+    dim(p) > 2 || return true  # all polytopes of dimension <= 2 are simple
+
     if graphiscomputed(p)
         all(Graphs.degree(graph(p)) .== dim(p))
     else
@@ -187,6 +189,8 @@ function issimplicial(p::Polytope)
     if !inciscomputed(p)
         computeinc!(p)
     end
+
+    dim(p) > 2 || return true  # all polytopes of dimension <= 2 are simplicial
 
     # a d-face of a polytope is a simplex iff it has exactly d+1 vertices
     # (since each face of a simplex is a simplex again, we don't need to filter out non-facets)
