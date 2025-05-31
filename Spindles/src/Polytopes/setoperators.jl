@@ -51,7 +51,7 @@ function Base.in(x::AbstractVector{<:Real}, p::Polytope)
         throw(DimensionMismatch("vector is of mismatched length: expected $(ambientdim(p)), got $(length(x))"))
     end
     
-    A, b, eqs = repr(p)
+    A, b, eqs = hrepresentation(p)
     all(A * x .<= b) && all(isapprox.(A[collect(eqs), :] * x, b[collect(eqs)]))
 end
 

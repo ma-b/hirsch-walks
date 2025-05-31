@@ -198,7 +198,7 @@ end
 # --------------------------------
 
 # extract H-representation from internal `Polyhedra.Polyhedron` object
-function repr(p::Polytope; implicit_equations=false)
+function hrepresentation(p::Polytope; implicit_equations=false)
     # possibly need to convert to proper type (applies to 1D polytopes)
     h = Polyhedra.MixedMatHRep(Polyhedra.hrep(p.poly))
 
@@ -273,7 +273,7 @@ julia> ambientdim(Polytope([[1, 0], [0, 1]]))
 ````
 """
 function ambientdim(p::Polytope)
-    A, _, = repr(p)
+    A, _, = hrepresentation(p)
     size(A, 2)
 end
 
@@ -311,7 +311,7 @@ julia> affinehull(p; remove_rescaled=true)
 ````
 """
 function affinehull(p::Polytope; remove_rescaled=false)
-    A, b, eqs = repr(p; implicit_equations=true)
+    A, b, eqs = hrepresentation(p; implicit_equations=true)
     
     if remove_rescaled
         issufficient = equivalence_classes(ismultiple, [A b], in(eqs))
@@ -341,7 +341,7 @@ true
 ````
 """
 function inequalities(p::Polytope)
-    A, b, eqs = repr(p)
+    A, b, eqs = hrepresentation(p)
     isineq = (~).(in.(axes(A, 1), Ref(eqs)))  # BitVector whose i-th entry indicates 
                                               # whether i is an inequality (1) or equality (0) constraint
     A[isineq, :], b[isineq]
@@ -370,7 +370,7 @@ isineqindex(p::Polytope, i::Int) = 1 <= i <= nhalfspaces(p)
 
 facetscomputed(p::Polytope) = p.isfacet !== nothing
 function computefacets!(p::Polytope)
-    A, _, = repr(p)
+    A, _, = hrepresentation(p)
     nh = Polyhedra.nhyperplanes(p.poly)
 
     # We first drop all inequalities that are not facet-defining. Detecting redundancy among the remaining
@@ -458,7 +458,7 @@ function facets(p::Polytope)
         computefacets!(p)
     end
     
-    A, b, = repr(p)
+    A, b, = hrepresentation(p)
     nh = Polyhedra.nhyperplanes(p.poly)
     A[((nh+1):end)[p.isfacet], :], b[((nh+1):end)[p.isfacet]]  # offset
 end

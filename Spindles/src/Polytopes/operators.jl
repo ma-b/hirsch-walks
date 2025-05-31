@@ -300,7 +300,7 @@ function polarize(p::Polytope)
     !isempty(p) || error("got an empty polytope")
     
     # all constraints must be inequalities with positive right-hand sides for 0 to be in the interior
-    _, b, eqs = repr(p; implicit_equations=true)
+    _, b, eqs = hrepresentation(p; implicit_equations=true)
     isempty(eqs) && all(b .> 0) || error("got a polytope whose interior does not contain the origin")
     
     Polytope(hcat(vertices(p)...)', ones(Int, nvertices(p)))
