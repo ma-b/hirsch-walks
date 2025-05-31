@@ -62,8 +62,8 @@ function computegraph!(p::Polytope)
     # most pairs will be of the first type, and inclusion among their sets of common facets does not have to 
     # be checked because they are all distinct and of the same size.
 
-    nondegenerate_pairs = [e for (e,m) in pairs if m == n_implicits + dim(p) - 1]
-    degenerate_pairs  = [(e,m) for (e,m) in pairs if m > n_implicits + dim(p) - 1]
+    nondegenerate_pairs = [ e     for (e, m) in pairs if m == n_implicits + dim(p) - 1]
+    degenerate_pairs    = [(e, m) for (e, m) in pairs if m >  n_implicits + dim(p) - 1]
 
     # we use this predicate to check inclusion-maximality: return true if and only if 
     # each facet incident to all vertices in list `a` is also incident to all vertices in `b`, or
@@ -71,13 +71,13 @@ function computegraph!(p::Polytope)
     iscontained(a::Vector{Int}, b::Vector{Int}) = all(reduce(.&, p.inc[b]) .| (~).(reduce(.&, p.inc[a])))  # ~ bitwise NOT
     
     for e in nondegenerate_pairs
-        if !any(iscontained(e, d) for (d,_) in degenerate_pairs)
+        if !any(iscontained(e, d) for (d, _) in degenerate_pairs)
             Graphs.add_edge!(p.graph, e...)
         end
     end
-    for (d,m) in degenerate_pairs
+    for (d, m) in degenerate_pairs
         # strict superset must have strictly greater cardinality
-        if !any(iscontained(d, dd) for (dd,mm) in degenerate_pairs if mm > m)
+        if !any(iscontained(d, dd) for (dd, mm) in degenerate_pairs if mm > m)
             Graphs.add_edge!(p.graph, d...)
         end
     end
@@ -118,14 +118,14 @@ function computefacesofdim!(p::Polytope, k::Int)
 
     # find inclusion-maximal subsets among all subsets of facets found 
     # (some may be higher-dim faces contained in more than the minimum number of facets)
-    for e in nondegenerate_supsets
-        if !any(issubset(e, d) for d in degenerate_supsets)
-            push!(p.faces[k], e)
+    for f in nondegenerate_supsets
+        if !any(issubset(f, g) for g in degenerate_supsets)
+            push!(p.faces[k], f)
         end
     end
-    for d in degenerate_supsets
-        if !any(issubset(d, dd) for dd in degenerate_supsets if length(dd) > length(d))
-            push!(p.faces[k], d)
+    for f in degenerate_supsets
+        if !any(issubset(f, g) for g in degenerate_supsets if length(g) > length(f))
+            push!(p.faces[k], f)
         end
     end
 end

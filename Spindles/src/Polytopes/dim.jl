@@ -40,8 +40,8 @@ i.e., a finite sequence of faces
 ```
 for which ``d`` is maximal among all such sequences. Then ``F_d`` must be `p` itself, and ``d`` is its dimension.
 
-See also [`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim),
-[`ambientdim`](@ref).
+See also [`ambientdim`](@ref), 
+[`Polyhedra.dim`](https://juliapolyhedra.github.io/Polyhedra.jl/stable/redundancy/#Polyhedra.dim).
 
 # Examples
 ```jldoctest

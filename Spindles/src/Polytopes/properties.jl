@@ -186,11 +186,12 @@ true
 ````
 """
 function issimplicial(p::Polytope)
+    dim(p) > 2 || return true  # all polytopes of dimension <= 2 are simplicial
+    
+    # TODO the following check is probably not needed since `dim` already computes incidences if necessary
     if !inciscomputed(p)
         computeinc!(p)
     end
-
-    dim(p) > 2 || return true  # all polytopes of dimension <= 2 are simplicial
 
     # a d-face of a polytope is a simplex iff it has exactly d+1 vertices
     # (since each face of a simplex is a simplex again, we don't need to filter out non-facets)
