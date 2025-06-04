@@ -36,16 +36,9 @@ jobs:
         #  arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
       
-      #- uses: julia-actions/julia-buildpkg@v1
-      #- uses: julia-actions/julia-runtest@v1
-      
-      #- name: Install dependencies
-      #  shell: julia --color=yes --project=test {0}
-      #  run: |
-      #    using Pkg
-      #    Pkg.develop(PackageSpec(path=pwd()))
-      #    Pkg.instantiate()
-      #  working-directory: ./Spindles
+      # TODO: julia-actions/julia-buildpkg@v1 and julia-actions/julia-runtest@v1
+      # do not seem to work for unregistered packages(?)
+      # and package root is a subfolder
       
       # install step as for building docs (below) is not needed here
       # since Pkg.test() takes care of this already
@@ -56,7 +49,7 @@ jobs:
           Pkg.test()
         working-directory: ./Spindles
 
-  docs:
+  docs:  # see https://documenter.juliadocs.org/stable/man/hosting/#GitHub-Actions
     # These permissions are needed to:
     # - Deploy the documentation: https://documenter.juliadocs.org/stable/man/hosting/#Permissions
     # - Delete old caches: https://github.com/julia-actions/cache#usage
@@ -81,11 +74,9 @@ jobs:
           Pkg.develop(PackageSpec(path=pwd()))
           Pkg.instantiate()
         working-directory: ./Spindles
-        #run: julia --project=Spindles/docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=joinpath(pwd(), "Spindles"))); Pkg.instantiate()'
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GKSwstype: "100" # https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
+          GKSwstype: "100"  # https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
         run: julia --color=yes --project=docs docs/make.jl
         working-directory: ./Spindles
-        #run: julia --project=Spindles/docs --color=yes Spindles/docs/make.jl
