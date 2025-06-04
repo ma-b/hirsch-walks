@@ -8,13 +8,66 @@ on:
   pull_request:
 
 jobs:
+  test:
+    # needed to allow julia-actions/cache to delete old caches that it has created
+    permissions:
+      actions: write
+      contents: read
+    
+    runs-on: ubuntu-latest
+    #runs-on: ${{ matrix.os }}
+    #strategy:
+    #  matrix:
+    #    # test on a subset of possible platforms
+    #    include:
+    #      - version: '1'
+    #        os: ubuntu-latest
+    #        arch: x64
+    #    #  - version: '1'
+    #    #    os: ubuntu-latest
+    #    #    arch: x86
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+        #  version: ${{ matrix.version }}
+        #  arch: ${{ matrix.arch }}
+      - uses: julia-actions/cache@v2
+      
+      #- uses: julia-actions/julia-buildpkg@v1
+      #- uses: julia-actions/julia-runtest@v1
+      
+      #- name: Install dependencies
+      #  shell: julia --color=yes --project=test {0}
+      #  run: |
+      #    using Pkg
+      #    Pkg.develop(PackageSpec(path=pwd()))
+      #    Pkg.instantiate()
+      #  working-directory: ./Spindles
+      
+      # install step as for building docs (below) is not needed here
+      # since Pkg.test() takes care of this already
+      - name: Install dependencies and run tests
+        shell: julia --color=yes --project=. {0}
+        run: |
+          using Pkg
+          Pkg.test()
+        working-directory: ./Spindles
+
   docs:
+    # These permissions are needed to:
+    # - Deploy the documentation: https://documenter.juliadocs.org/stable/man/hosting/#Permissions
+    # - Delete old caches: https://github.com/julia-actions/cache#usage
     permissions:
       actions: write
       contents: write
       pull-requests: read
       statuses: write
+      
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
@@ -22,9 +75,17 @@ jobs:
           version: '1'
       - uses: julia-actions/cache@v2
       - name: Install dependencies
-        run: julia --project=Spindles/docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=joinpath(pwd(), "Spindles"))); Pkg.instantiate()'
+        shell: julia --color=yes --project=docs {0}
+        run: |
+          using Pkg
+          Pkg.develop(PackageSpec(path=pwd()))
+          Pkg.instantiate()
+        working-directory: ./Spindles
+        #run: julia --project=Spindles/docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=joinpath(pwd(), "Spindles"))); Pkg.instantiate()'
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GKSwstype: "100" # https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
-        run: julia --project=Spindles/docs --color=yes Spindles/docs/make.jl
+        run: julia --color=yes --project=docs docs/make.jl
+        working-directory: ./Spindles
+        #run: julia --project=Spindles/docs --color=yes Spindles/docs/make.jl
