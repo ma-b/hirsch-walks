@@ -2,8 +2,6 @@ module Polytopes
 
 import Polyhedra
 import Graphs
-using RecipesBase
-import Plots  # TODO remove dependency
 
 export 
     Polytope,
@@ -121,8 +119,5 @@ include("properties.jl")
 include("generators.jl")
 include("setoperators.jl")
 include("operators.jl")
-include("plot/utils.jl")
-include("plot/arrow.jl")
-include("plot/plotrecipe.jl")
 
 end # module

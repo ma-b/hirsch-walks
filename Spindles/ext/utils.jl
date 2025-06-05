@@ -5,7 +5,7 @@
 TOL = 1e-16  # FIXME
 
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
-# whether the direction is unique (False if edge and reference_edge are parallel)
+# whether the direction is unique (false if edge and reference_edge are parallel)
 function directedge(p::Polytope, edge::Union{Tuple{Int, Int}, AbstractVector{Int}}, facet::Int)
     u, v = edge  # TODO arg check
 

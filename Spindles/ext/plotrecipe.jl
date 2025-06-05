@@ -71,7 +71,7 @@ end
     n = length(verticesinface)
 
     # list the vertices in cyclic order around the polygon
-    cyclic = cyclicorder(Graphs.induced_subgraph(graph(p), verticesinface)...)
+    cyclic = Spindles.Polytopes.cyclicorder(Graphs.induced_subgraph(graph(p), verticesinface)...)
     cyclic !== nothing || throw(ArgumentError("the given face is not 2-dimensional"))
 
     # shorthands for indices of successor and predecessor of i in the cyclic order of vertices
@@ -240,7 +240,7 @@ end
     if ineqlabels !== nothing
         # incident halfspaces of each edge
         tightfacets = [
-            [f for f in _tightinequalities(p, cyclic[[i, succ(i)]]) if !(f in indices)] 
+            [f for f in Spindles.Polytopes._tightinequalities(p, cyclic[[i, succ(i)]]) if !(f in indices)] 
             for i=1:n
         ]
 
