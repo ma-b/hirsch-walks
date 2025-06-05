@@ -240,7 +240,7 @@ end
     if ineqlabels !== nothing
         # incident halfspaces of each edge
         tightfacets = [
-            [f for f in _incidenthalfspaces(p, cyclic[[i, succ(i)]]) if !(f in indices)] 
+            [f for f in _tightinequalities(p, cyclic[[i, succ(i)]]) if !(f in indices)] 
             for i=1:n
         ]
 

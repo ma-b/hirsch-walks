@@ -146,7 +146,7 @@ function codim(p::Polytope, indices::AbstractVector{Int})
 
     # to correctly compute a chain of faces, we need to begin with all facets that contain the given face,
     # even if the face can be expressed as the intersection of a strict subset of those facets
-    allindices = _incidenthalfspaces(p, _incidentvertices(p, indices))
+    allindices = _tightinequalities(p, _incidentvertices(p, indices))
     return length(maxchain(p, allindices)) - 1
 end
 codim(p::Polytope, i::Int) = codim(p, [i])

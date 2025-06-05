@@ -162,7 +162,7 @@ function issimple(p::Polytope)
         # (assuming dim is cached)
         # to make sure we don't overcount facets for which there are multiple defining inequalities in
         # the H-representation of `p`, we supply `init` to filter a minimal subset of inequalities
-        all(v -> length(_incidenthalfspaces(p, [v]; init=p.isfacet)) == dim(p), 1:nvertices(p))
+        all(v -> length(_tightinequalities(p, [v]; init=p.isfacet)) == dim(p), 1:nvertices(p))
     end
 end
 

@@ -28,10 +28,10 @@ function _incidentvertices(p::Polytope, indices::AbstractVector{Int})
     filter(v -> all(p.inc[v][indices]), 1:nvertices(p))
 end
 _incidentvertices(p::Polytope, i::Int) = _incidentvertices(p, [i])
-function _incidenthalfspaces(p::Polytope, indices::AbstractVector{Int}; init=trues(nhalfspaces(p)))
+function _tightinequalities(p::Polytope, indices::AbstractVector{Int}; init=trues(nhalfspaces(p)))
     findall(reduce(.&, p.inc[indices]; init=init))
 end
-_incidenthalfspaces(p::Polytope, v::Int) = _incidenthalfspaces(p, [v])
+_tightinequalities(p::Polytope, v::Int) = _tightinequalities(p, [v])
 
 """
     incidentvertices(p::Polytope, indices::AbstractVector{Int})
@@ -107,7 +107,7 @@ function tightinequalities(p::Polytope, indices::AbstractVector{Int})
     if !inciscomputed(p)
         computeinc!(p)
     end
-    _incidenthalfspaces(p, indices)
+    _tightinequalities(p, indices)
 end
 
 # --------------------------------

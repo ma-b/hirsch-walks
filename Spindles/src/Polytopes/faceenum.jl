@@ -154,9 +154,9 @@ function facesofdim(p::Polytope, k::Int)
         # here we use that the intersection of all facets of a polytope is empty
         return [collect(ineqindices(p))]  # FIXME type-stability
     elseif k == 0  # vertices
-        return Iterators.map(v -> _incidenthalfspaces(p, v), 1:nvertices(p))
+        return Iterators.map(v -> _tightinequalities(p, v), 1:nvertices(p))
     elseif k == 1  # edges
-        return Iterators.map(e -> _incidenthalfspaces(p, [Graphs.src(e), Graphs.dst(e)]), Graphs.edges(graph(p)))
+        return Iterators.map(e -> _tightinequalities(p, [Graphs.src(e), Graphs.dst(e)]), Graphs.edges(graph(p)))
     else
         if !facescomputed(p, k)
             computefacesofdim!(p, k)
