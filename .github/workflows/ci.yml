@@ -41,13 +41,30 @@ jobs:
       # and package root is a subfolder
       
       # install step as for building docs (below) is not needed here
-      # since Pkg.test() takes care of this already
+      # since Pkg.test() takes care of this already.
+      # Note that we need to tell Pkg explicitly to collect coverage data
+      # (this would be done automatically in julia-actions/julia-runtest)
       - name: Install dependencies and run tests
         shell: julia --color=yes --project=. {0}
         run: |
           using Pkg
-          Pkg.test()
+          Pkg.test("Spindles"; coverage=true)
         working-directory: ./Spindles
+        
+      # convert Julia coverage files into an lcov file
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: Spindles/src,Spindles/ext  # !! no whitespace after comma here!!
+      #- name: Preview coverage data
+      #  run: cat lcov.info
+      # generate a simple summary of the lcov file
+      - name: Print coverage report
+        run: julia --color=yes -- .github/workflows/codecoverage.jl lcov.info
+      
+      ## upload to codecov
+      #- uses: codecov/codecov-action@v5
+      #  with:
+      #    files: lcov.info
 
   docs:  # see https://documenter.juliadocs.org/stable/man/hosting/#GitHub-Actions
     # These permissions are needed to:
