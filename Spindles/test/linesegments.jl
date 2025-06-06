@@ -9,7 +9,7 @@ using Graphs: edges, src, dst
         p = reduce(*, repeat([lineseg], n))
 
         @test cube(n) == 2p - ones(n)
-        @test p == 1//2 * (cube(n) + ones(Int, n))
+        @test p == (cube(n) + ones(Int, n)) // 2
 
         @test cube(n) == -cube(n)  # standard hypercube is symmetric around 0
 
@@ -36,7 +36,7 @@ using Graphs: edges, src, dst
         # as projections of hypercubes
         T = hcat(directions...)
         m = length(directions)
-        c = (cube(m) + ones(Int, m)) // 2  # 0/1 hypercube in dimension m
+        c = 1//2 * (cube(m) + ones(Int, m))  # 0/1 hypercube in dimension m
         @test p == collect(1:n) + map(x -> T * x, c)
     end
 end
