@@ -5,16 +5,12 @@ using Printf
 
 # get string representation for single data point
 function coverage_str(ncovered::Int, ntotal::Int)
-    percentage = ncovered == 0 ? 0 : 100 * ncovered / ntotal
+    percentage = ntotal == 0 ? 100 : 100 * ncovered / ntotal
     colourmap(x) = x >= 90 ? 2 : (x >= 60 ? 3 : 1)  # red 1, yellow 3, green 2
 
-    str = "\e[3" * string(colourmap(percentage)) * "m\033[1m"  # bold
-    if ncovered == 0
-        str *= "  0%"
-    else
-        str *= @sprintf("%3d%%", 100 * ncovered / ntotal)
-    end
-    str *= "\033[0m"  # reset output text style
+    "\e[3" * string(colourmap(percentage)) * "m\033[1m" * # bold
+        @sprintf("%3d%%", percentage) * 
+        "\033[0m"  # reset output text style
 end
 
 # (single pass through file)
