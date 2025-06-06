@@ -4,6 +4,10 @@
     q = crosspolytope(n)
 
     @testset "Check duality" begin
+        # a polytope is simple if and only if its dual is simplicial
+        @test issimple(p)
+        @test issimplicial(q)
+
         # f-vectors must be reverses of each other since the polytopes are dual to each other
         @test nfacesofdim.(p, -1:n) == nfacesofdim.(q, n:-1:-1)
 
@@ -21,7 +25,8 @@
         @test polarize2(p) == polarize(p)
         @test polarize2(q) == polarize(q)
 
-        # a polytope is simple if and only if its dual is simplicial
+        # since the graph of `p` has been computed by now, checking simplicity again
+        # will trigger a different branch of the implementation (based on counting facets)
         @test issimple(p)
         @test issimplicial(q)
     end
