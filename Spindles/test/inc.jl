@@ -1,7 +1,7 @@
 using Polyhedra: hrep
 using Graphs: degree
 
-@testset "Tests for incidence/graph computations" begin
+@testset "Incidence/graph computations" begin
 
     A, b, _ = readineq("../examples/s-25-5.txt", BigInt)  # TODO for others too
     s = Polytope(A, b)

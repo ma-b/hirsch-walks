@@ -1,6 +1,6 @@
 using Polyhedra: polyhedron, hrep
 
-@testset "Tests for constructors and representations" begin
+@testset "Constructors and representations" begin
     @testset "Explicit vs implicit equations I" begin
         # line segment
         p = Polytope([1 0; 0 1])

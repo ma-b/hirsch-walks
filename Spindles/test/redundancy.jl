@@ -1,4 +1,4 @@
-@testset "Test for apices with redundancy" begin
+@testset "Apices with redundancy" begin
     @testset "Cube" begin
         # minimal description of the 3D unit cube
         A = [1 0 0; 0 1 0; 0 0 1; -1 0 0; 0 -1 0; 0 0 -1]

@@ -1,4 +1,4 @@
-@testset "Tests for operators" begin
+@testset "Operators" begin
     p = Polytope([[0, 0], [1, 0], [0, 1]])
     @test 2p == p + p
     @test 1//2 * p == 0.5 * p == p / 2 == p // 2

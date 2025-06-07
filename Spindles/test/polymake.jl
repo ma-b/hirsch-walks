@@ -1,7 +1,7 @@
 using Graphs: nv, ne
 using Polyhedra: hrep
 
-@testset "Tests for face enumeration" begin
+@testset "Face enumeration for spindles" begin
 
     for filename in ["s-25-5", "s-28-5", "s-48-5"]
         A, b, _ = readineq(joinpath("..", "examples", filename*".txt"), BigInt)
