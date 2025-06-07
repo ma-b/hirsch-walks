@@ -3,18 +3,24 @@
 
 using Printf
 
-# get string representation for single data point
+# ANSI escape sequences for console text styles/colours
+ANSI_BOLD   = "\e[1m"  # bold
+ANSI_RESET  = "\e[0m"  # reset output text style
+ANSI_RED    = "\e[31m"
+ANSI_GREEN  = "\e[32m"
+ANSI_YELLOW = "\e[33m"
+ANSI_CYAN   = "\e[36m"
+
+# get string representation for single coverage data point
 function coverage_str(ncovered::Int, ntotal::Int)
     percentage = ntotal == 0 ? 100 : 100 * ncovered / ntotal
-    colourmap(x) = x >= 90 ? 2 : (x >= 60 ? 3 : 1)  # red 1, yellow 3, green 2
+    colourmap(x) = x >= 90 ? ANSI_GREEN : (x >= 60 ? ANSI_YELLOW : ANSI_RED)
 
-    "\e[3" * string(colourmap(percentage)) * "m\033[1m" * # bold
-        @sprintf("%3d%%", percentage) * 
-        "\033[0m"  # reset output text style
+    ANSI_BOLD * colourmap(percentage) * @sprintf("%3d%%", percentage) * ANSI_RESET
 end
 
-# (single pass through file)
 function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
+    # ---- some book-keeping ----
     ncovered = 0
     ncovered_total = 0
     nlines_total = 0
@@ -23,11 +29,13 @@ function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
     # (used to generate proper output)
     has_uncovered_line = false
 
-    # book-keeping for line number ranges
+    # line number ranges
     prev_uncov_line = -1
-    isopen_range = false
+    isopen_range = false  # true if ...
 
-    println("\033[1mCode Coverage Summary:\033[0m")
+    # ---- print summary (single pass through lcov file) ----
+
+    println(ANSI_BOLD, "Code Coverage Summary:", ANSI_RESET)
 
     for line in eachline(ARGS[1])
         prefix, data = line[1:2], line[4:end]
@@ -35,6 +43,7 @@ function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
         if prefix == "SF"  # start of new file
             println(data)
             
+            # reset
             prev_uncov_line = -1
             isopen_range = false
 
@@ -42,20 +51,18 @@ function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
             ln, lc = parse.(Int, split(data, ","))  # (assuming a well-formed lcov file)
 
             if lc == 0  # line was never executed
-                #println((ln, prev_uncov_line, isopen_range))
-
                 if !isopen_range
                     if ln == prev_uncov_line + 1
                         # start new range from previous line number
                         # and do not print current line number (yet)
                         isopen_range = true
                     else
-                        # print
+                        # print current line number
                         if has_uncovered_line
                             print(", ", ln)
                         else
                             has_uncovered_line = true
-                            print("   Uncovered lines:  ", "\e[36m", ln)  # cyan
+                            print("   Uncovered lines:  ", ANSI_CYAN, ln)
                         end
                     end
                 elseif ln > prev_uncov_line + 1  # current range cannot be extended to current line
@@ -81,12 +88,12 @@ function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
                 has_uncovered_line = false
                 println()
             end
-            print("\033[0m")  # reset colour
+            print(ANSI_RESET)  # reset colour
 
             # store number of covered lines in current file
             ncovered = parse(Int, data)
-        elseif prefix == "LF"
-            # total line count of current file
+
+        elseif prefix == "LF"  # total line count of current file
             nlines = parse(Int, data)
             ncovered_total += ncovered
             nlines_total   += nlines
@@ -96,7 +103,7 @@ function print_coverage_report(fname::AbstractString; show_uncovered_lines=true)
         end
     end
 
-    print("\033[1mTotal coverage:\033[0m ", coverage_str(ncovered_total, nlines_total))
+    print(ANSI_BOLD, "Total coverage: ", ANSI_RESET, coverage_str(ncovered_total, nlines_total))
     println(" (", ncovered_total, "/", nlines_total, " lines)")
 end
 
