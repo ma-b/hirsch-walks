@@ -5,8 +5,8 @@
 TOL = 1e-16  # FIXME
 
 # return cyclic indices u,v (arrow from u to v) together with Boolean flag that indicates 
-# whether the direction is unique (false if edge and reference_edge are parallel)
-function directedge(p::Polytope, edge::Union{Tuple{Int, Int}, AbstractVector{Int}}, facet::Int)
+# whether the direction is unique (false if edge direction is parallel to the facet-defining hyperplane)
+function directedge(p::Polytope, edge::Union{Tuple{Int, Int}, AbstractVector{Int}}, ineq::Int)
     u, v = edge  # TODO arg check
 
     # direction from u to v
@@ -15,14 +15,16 @@ function directedge(p::Polytope, edge::Union{Tuple{Int, Int}, AbstractVector{Int
     # index of first nonzero entry (exists since u and v are distinct)
     i = findfirst(@. !isapprox(r, 0; atol=TOL))
     r ./= abs(r[i]) # normalize
-    dotproduct = collect(Polyhedra.halfspaces(p.poly))[facet].a' * r  # FIXME non-public API?
 
-    # check whether the vector r points away from or towards the halfspace (or is parallel to the hyperplane)
+    # dot product with the outer normal vector of the facet-defining hyperplane at index `ineq`
+    dotproduct = inequalities(p)[1][ineq,:]' * r
+
+    # check whether the vector r points away from or towards the hyperplane (or is parallel to the hyperplane)
     if dotproduct == 0
         # parallel
         return (u,v), false  # arbitrary direction
     elseif dotproduct > 0
-        # direction r points 'towards' the halfspace, so needs to be reversed
+        # direction r points 'towards' the hyperplane, so needs to be reversed
         return (v,u), true
     else
         # direction r already points away
