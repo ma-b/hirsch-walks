@@ -35,6 +35,9 @@ using Polyhedra: polyhedron, hrep
         @test inequalities(q) == (A[[1,2,4],:], b[[1,2,4]])
         @test affinehull(p) == affinehull(q)
         @test facets(p) == facets(q)
+
+        # remove redundant equality constraint leaves a single equation
+        @test length(affinehull(p; remove_rescaled=true)[2]) == 1
     end
 
     @testset "Preserve indices" begin

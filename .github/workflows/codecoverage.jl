@@ -50,14 +50,14 @@ function print_coverage_summary(fname::AbstractString; show_uncovered_lines=true
     # are uncovered (so that they could be merged into a line number range in the output)
     isrange = false
     # store the most recent uncovered line number
-    prev_uncov_line = -1
+    prev_uncovered_line = -1
 
     # ---- print summary (single pass through lcov file) ----
 
     println(ANSI_BOLD, "Code Coverage Summary:", ANSI_RESET)
 
     for line in eachline(ARGS[1])
-        if startswith(line, "end_of_record")
+        if startswith(line, "end_of_record")  # end of current file
             include_current_line = true  # reset
         else
             include_current_line || continue
@@ -74,7 +74,7 @@ function print_coverage_summary(fname::AbstractString; show_uncovered_lines=true
 
                     # reset
                     isrange = false
-                    prev_uncov_line = -1
+                    prev_uncovered_line = -1
                 end
 
             elseif prefix == "DA" && show_uncovered_lines  # coverage count for a single code line
@@ -82,7 +82,7 @@ function print_coverage_summary(fname::AbstractString; show_uncovered_lines=true
 
                 if lc == 0  # line was never executed
                     if !isrange
-                        if ln == prev_uncov_line + 1
+                        if ln == prev_uncovered_line + 1
                             # start new range from previous line number
                             # and do not print current line number (yet)
                             isrange = true
@@ -95,17 +95,17 @@ function print_coverage_summary(fname::AbstractString; show_uncovered_lines=true
                                 print("   Uncovered lines:  ", ANSI_CYAN, ln)
                             end
                         end
-                    elseif ln > prev_uncov_line + 1  # current range cannot be extended to current line
+                    elseif ln > prev_uncovered_line + 1  # current range cannot be extended to current line
                         # print end of range and open new range
-                        print("-", prev_uncov_line, ", ", ln)
+                        print("-", prev_uncovered_line, ", ", ln)
                         isrange = false
                     end
 
-                    prev_uncov_line = ln
+                    prev_uncovered_line = ln
                 else
                     if isrange
                         # print end of range
-                        print("-", prev_uncov_line)
+                        print("-", prev_uncovered_line)
 
                         # lines are listed consecutively, 
                         # so a covered line closes any open range of uncovered lines
