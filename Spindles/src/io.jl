@@ -13,12 +13,6 @@ function matrix2str(A::AbstractMatrix{<:Real})
     end
 end
 
-# read a rational matrix in custom format above, use type T for numerators and denominators
-function readrational(filename::AbstractString, ::Type{T}) where T<:Integer
-    arr = readdlm(filename, String)
-    return str2rat.(arr, T)
-end
-
 """
     readineq(fname, T; labels=true, comment_char='#')
 

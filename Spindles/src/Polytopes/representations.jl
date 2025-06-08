@@ -34,7 +34,7 @@ end
 _tightinequalities(p::Polytope, v::Int) = _tightinequalities(p, [v])
 
 """
-    incidentvertices(p::Polytope, indices::AbstractVector{Int})
+    incidentvertices(p::Polytope, indices)
 
 Return the indices of all vertices of the polytope `p` for which each inequality 
 in the collection `indices` is tight (i.e., satisfied at equality). 
