@@ -95,7 +95,7 @@ A[[3, 7, 2],:]
 #src ==========================
 # ### Building the spindle
 # Before we examine its faces, let us first
-# read the file and construct a `Spindle` object from it.
+# read the file and construct a `Polytope` object from it.
 
 A20, b20, labels = readineq("s-25.txt", BigInt)
 s20 = Polytope(A20, b20)
