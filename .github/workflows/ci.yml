@@ -59,7 +59,8 @@ jobs:
       #  run: cat lcov.info
       # generate a simple summary of the lcov file
       - name: Print code coverage report
-        run: julia --color=yes -- .github/workflows/codecoverage.jl lcov.info
+        shell: bash
+        run: .github/workflows/codecoverage.sh -v lcov.info
       
       ## upload to codecov
       #- uses: codecov/codecov-action@v5
