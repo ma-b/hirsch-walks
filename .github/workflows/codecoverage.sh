@@ -50,6 +50,11 @@ if [[ $# -ne 1 ]]; then
     exit 2
 fi
 
+if [[ ! -f $1 ]]; then
+    echo "File not found: $1"
+    exit 2
+fi
+
 
 # ANSI escape sequences for console text styles/colours
 bold="\e[1m"  # bold
@@ -118,18 +123,23 @@ while read -r line; do
         
         # start of new file
         if [[ $prefix == "SF" ]]; then
-            # if a directory filter is specified, the directory containing the current file
-            # must be a subdirectory of one the specified filters
             if [[ ${#directories[@]} -eq 0 ]]; then
                 # filter option not specified or empty list provided
                 include_current_line=1
             else
+                # if a directory filter is set, the directory containing the current file
+                # must be a subdirectory of one the specified filters
+                # (we check this using substring comparisons)
                 include_current_line=0
-                for directory in "${directories[@]}"; do
-                    if [[ $(realpath $data) == "$(realpath $directory)"* ]]; then
-                        include_current_line=1; break
-                    fi
-                done
+                if [[ -f $data ]]; then  # ignore filenames that are invalid (relative*/absolute) paths
+                                         # (* relative to current working directory!)
+                    for directory in "${directories[@]}"; do
+                        echo $directory
+                        if [[ $(realpath $data) == "$(realpath $directory)"* ]]; then
+                            include_current_line=1; break
+                        fi
+                    done
+                fi
             fi   
             
             if [[ $include_current_line -eq 1 ]]; then
