@@ -12,11 +12,22 @@ using RecipesBase, Plots  # need to also load Plots.jl to trigger loading the ex
             true
         end
 
+        p = cube(2)
         @test try
-            RecipesBase.apply_recipe(Dict{Symbol, Any}(), cube(2), [1])
-            false
-        catch
+            RecipesBase.apply_recipe(Dict{Symbol, Any}(), p, Int[])  # success
             true
+        catch
+            false
+        end
+
+        # try to plot faces of dim 1,0,-1
+        for i=1:3
+            @test try
+                RecipesBase.apply_recipe(Dict{Symbol, Any}(), p, (1:3)[1:i])  # fail
+                false
+            catch
+                true
+            end
         end
     end
     

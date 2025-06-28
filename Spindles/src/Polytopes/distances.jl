@@ -42,10 +42,12 @@ function dist(p::Polytope, u::Int, v::Int)
 end
 
 
-# check whether `g` is a cycle: if yes, list the vertices of `g` in cyclic order; if not, return nothing.
-# the arguments are the return values of Graphs.induced_subgraph
-# least index first in order
+# Check whether the given subgraph is a cycle and return a list of its vertices
+# in cyclic order (with the least index first), or `nothing` otherwise.
+# Note that the arguments are the return values of Graphs.induced_subgraph()
 function cyclicorder(g::Graphs.SimpleGraph, vmap::AbstractVector{Int})
+    Graphs.nv(g) > 0 || return  # empty graph cannot be a cycle
+
     # pick an arbitrary starting vertex and traverse the graph g depth-first
     start = minimum(Graphs.vertices(g))  # least vertex index first
     cyclic = [start]
@@ -55,8 +57,12 @@ function cyclicorder(g::Graphs.SimpleGraph, vmap::AbstractVector{Int})
     it = 0  # number of iterations
     
     while (v != start || it == 0) && it < Graphs.nv(g)
-        # find a neighbor of v distinct from u and append it to list
+        # try to find a neighbor of v distinct from u
         nb_idx = findfirst(Graphs.neighbors(g, v) .!= u)
+        
+        # if there is no such neighbour, then u has degree 1 and the graph cannot be a cycle
+        nb_idx !== nothing || return
+        # otherwise move to neighbour and append it to list
         nb = Graphs.neighbors(g, v)[nb_idx]
         push!(cyclic, nb)
 
@@ -66,9 +72,7 @@ function cyclicorder(g::Graphs.SimpleGraph, vmap::AbstractVector{Int})
     end
 
     # for g to be a cycle, we must have traversed all vertices of g
-    if it < Graphs.nv(g)
-        return
-    end
+    it == Graphs.nv(g) || return
     
     # map vertex indices back to vertices of the original graph
     return vmap[cyclic[1:end-1]]  # last element is starting vertex again

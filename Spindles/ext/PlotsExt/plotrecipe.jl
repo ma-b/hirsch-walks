@@ -72,7 +72,7 @@ end
 
     # list the vertices in cyclic order around the polygon
     cyclic = Spindles.Polytopes.cyclicorder(Graphs.induced_subgraph(graph(p), verticesinface)...)
-    cyclic !== nothing || throw(ArgumentError("the given face is not 2-dimensional"))
+    cyclic !== nothing || throw(ArgumentError("got a polytope (or face) of dimension not equal to 2"))
 
     # shorthands for indices of successor and predecessor of i in the cyclic order of vertices
     succ(i::Int) = mod(i,  n) + 1  # (i-1)+1
@@ -287,4 +287,4 @@ end
 end
 
 # second (user) recipe to handle polygons without the need to specify a face as a second argument
-@recipe f(p::Polytope) = (p, Int[])  # return series data
+@recipe f(p::Polytope) = (p, Int[])  # return series data that dispatches to first recipe above

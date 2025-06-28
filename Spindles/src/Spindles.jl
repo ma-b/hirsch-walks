@@ -46,9 +46,9 @@ export
 """
     Spindles
 
-A lightweight package for representing and analyzing polytopes.
+A lightweight package to create and analyze polytopes.
 """
-#Spindles
+Spindles
 
 include("Polytopes/Polytopes.jl")
 using .Polytopes
